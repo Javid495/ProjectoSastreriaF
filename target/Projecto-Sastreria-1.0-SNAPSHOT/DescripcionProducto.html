@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/DescripcionProducto.css">
+    <title>Document</title>
+</head>
+<body>
+    <header class="header">
+        <nav class="header__nav">
+          
+          <!-- Logo + nombre -->
+            <div class="header__logo">
+              <span class="icon icon--logoheader"><img src="images/Logo.png" alt=""></span>
+              <h1 class="header__titulo">Suescun</h1>
+            </div>
+
+            <!-- Barra de navegacion -->
+            <ul class="header__menu">
+                <a href="" class="header__item">Inicio</a>
+                <a href="" class="header__item">Catálogo</a>
+                <a href="" class="header__item">Pedidos</a>
+                <a href="" class="header__item">Usuario</a>
+            </ul>
+            
+            <!-- Boton menu hamburgesa -->
+            <button class="navbar__menu-boton">
+               <i class='navbar__icono-menu bx  bx-menu-close'  ></i> 
+            </button>
+
+            <!-- Boton apartado inicio de secion -->
+            <button class="header__login">Inicio de sesión</button>
+        </nav>
+    </header>
+
+    <main class="product">
+
+        <!-- Sección principal del producto -->
+        <section class="product__container">
+
+            <!-- Galería de imágenes -->
+            <div class="product__gallery">
+
+            <!-- Botón anterior -->
+            <button class="product__arrow product__arrow--left">
+                <img src="images/DetallesProducto/Vector.png" alt="Anterior">
+            </button>
+
+            <!-- Imagen principal -->
+            <figure class="product__image">
+                <img src="images/DetallesProducto/Rectangle 44.png" alt="Producto">
+            </figure>
+
+            <!-- Botón siguiente -->
+            <button class="product__arrow product__arrow--right">
+                <img src="images/DetallesProducto/Vector (1).png" alt="Siguiente">
+            </button>
+
+            <!-- Indicadores -->
+            <div class="product__dots">
+                <span class="product__dot"></span>
+                <span class="product__dot"></span>
+                <span class="product__dot"></span>
+                <span class="product__dot"></span>
+            </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="product__info">
+            <h2 class="product__title">Nombre del Producto</h2>
+            <p class="product__price">Precio: $XX.XXX</p>
+            <p class="product__size">Talla: S</p>
+            </div>
+
+        </section>
+
+        <!-- Descripción y acción -->
+        <section class="product__details">
+
+            <!-- Descripción -->
+            <article class="product__description">
+            <h3 class="product__subtitle">Descripción del producto:</h3>
+            <p class="product__text">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Minima provident natus quo, necessitatibus.
+            </p>
+            </article>
+
+            <!-- Botón carrito -->
+            <div class="product__action">
+            <button class="product__button">
+                Añadir al carrito
+                <img src="images/Catalogo/Vector (2).png" alt="Carrito">
+            </button>
+            </div>
+        </section>
+
+            <button class="product__button producto--comentarios">
+                Realizar un Comentario
+                <img src="images/DetallesProducto/VectorComentario.png" alt="Carrito">
+            </button>
+
+            <h2 class="product__subtitle product--resenas">Reseñas</h2>
+
+            <div class="resenas">
+                <article class="resenas__card">
+                    <h3 class="resenas__user">Prenda C</h3>
+                    <p class="resenas__comentario">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Minima provident natus quo, necessitatibus.</p>
+               </article>
+            </div>
+    </main>
+
+
+    <footer class="footer">
+        <div class="footer__content">
+
+            <div class="footer__contact">
+                <h3>Contáctanos:</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            </div>
+
+            <div class="footer__social">
+                <h3>Redes:</h3>
+                <div class="footer__icons">
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image" src="images/whatsapp.png" alt=""></span>
+                        Whatsapp
+                    </span>
+
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image"  src="images/Instagram.png" alt=""></span>
+                        Instagram
+                    </span>
+
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image"  src="images/Facebook.png" alt=""></span>
+                        Facebook
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+</body>
+</html>

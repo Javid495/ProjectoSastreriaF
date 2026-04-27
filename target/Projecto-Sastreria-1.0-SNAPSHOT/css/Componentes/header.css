@@ -1,0 +1,69 @@
+/* Botón principal (login, detalles) */
+.header__login,
+.card__button {
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-primario);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  font-family: "Courgette", cursive;
+}
+
+/* hover de los botones */
+.header__login:hover,
+.card__button:hover {
+  background-color: var(--color-gris);
+  color: var(--color-fondo);
+}
+
+/* Color de fondo */
+.header {
+  background-color: var(--color-secundario);
+}
+
+
+/* Estilos de la barra de navegacion */
+.header__logo{
+  display: flex;
+}
+
+.header__nav {
+  max-width: var(--ancho-maximo);
+  margin: auto;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header__menu {
+  list-style: none;
+  display: flex;
+  gap: 4rem;
+  font-size: 1rem;
+}
+
+.header__item{
+  color: var(--color-letra);
+  text-decoration: none;
+}
+
+.header__item:hover{
+  color: white;
+}
+
+.icon--logoheader img{
+  width: 50%;
+}
+
+.navbar__menu-boton{
+  width: 10%;
+  display: inline-block;
+  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 32px;
+  border-radius: 20%;
+  display: none;
+}

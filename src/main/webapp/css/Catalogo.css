@@ -1,0 +1,296 @@
+@import url(style.css);
+
+
+/* Estilos de lo botones */
+button {
+  border: none;
+  cursor: pointer;
+}
+
+body{
+  background-color: var(--color-primario);
+  color: var(--color-letra);
+}
+
+/* Estilos de la barra de busqueda */
+
+.search__container {
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search__brand {
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+.search__input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 25px;
+  border: 1px solid #000;
+}
+
+.search__voice {
+  background-color: var(--color-gris);
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.search__microfono{
+    display: flex;
+    justify-self: center;    
+    width: 40%;
+}
+
+
+.button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background-color: var(--color-secundario);
+  border: none;
+}
+
+.button-left{
+  left: 19vh;
+  top: 20vh;
+  background-color: var(--color-BotonesFlecha);
+}
+
+.button-rigth{
+  right: 19vh;
+  top: 20vh;
+  background-color: var(--color-BotonesFlecha);
+}
+
+.filtrados{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8vh;
+}
+
+.filtrados__filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.filter__label {
+  font-weight: 500;
+}
+
+.filter__select {
+  padding: 0.4rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--color-secundario);
+  cursor: pointer;
+}
+
+.filtrados__cart {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.cart__button {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--color-secundario);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cart__icon {
+  width: 22px;
+}
+
+/* Apartado de categorias de prendas */
+.popular {
+  padding: var(--padding-seccion);
+  position: relative;
+}
+
+.popular__category{
+  display: flex;
+  gap: 10px;
+}
+
+.popular__title {
+  padding-bottom: 2rem;
+}
+
+.popular__icon {
+  margin-top: 0.5vh;
+}
+
+.popular__icon img{
+  width: 70%;
+}
+
+.popular__cards {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 15%;
+  gap: 10px;
+}
+
+.card__image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+}
+
+.card__price {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Media query */
+@media (max-width: 992px) {
+
+  .button{
+    display: none;
+  }
+
+  /* Grid de productos */
+  .products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+   .icon--logoheader{
+    display: none;
+  }
+
+  .header__menu{
+    display: none;
+  }
+
+  .header__item {
+    display: block;
+  }
+
+  .header__titulo{
+    margin-left: 10%;
+
+  } 
+
+  .navbar__menu-boton{
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 10px;
+  }
+
+  .navbar__icono-menu{
+    margin-top: 10%;
+  }
+
+  /* Header */
+  .header__menu {
+    gap: 1rem;
+  }
+
+  .search__container{
+    margin: 0;
+    display: inline-block;
+    gap: 30px;
+  }
+
+  .search__brand{
+    width: 35%;
+    font-size: 20px;
+  }
+
+  .search__brand img{
+    width: 20%;
+  }
+
+  .search__voice{
+    position: relative;
+    bottom: -2.5vh;
+    margin-left: 10px;
+  }
+
+  /* Footer */
+  .footer__content {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .header__nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .header__menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .search__container {
+    align-self: center;
+  }
+
+   .search__brand img{
+    width: 15%;
+  }
+
+  .filtrados{
+    gap: 0;
+    flex-direction: column;
+  }
+
+  .popular__cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .products__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer__content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer__icons {
+    justify-content: center;
+  }
+
+  .footer__icon {
+    justify-content: center;
+  }
+}
+

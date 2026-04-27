@@ -1,0 +1,193 @@
+@import url(style.css);
+
+body{
+  color: var(--color-letra);
+  margin-bottom: 0;
+}
+
+/* Estilos del cuerpo principald de pagina */
+.login {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Ajustes de imagen tipo 1/2 */
+.login__image {
+  flex: 1.2;
+  background: url("../images/InicioSecion/image\ 1.png");
+  background-repeat: no-repeat;
+  position: relative;
+  background-size: 50% 100vh;
+}
+
+/* Estilos aplicados en los botones */
+.button {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 10px;
+  background-color: var(--color-gris);
+  border: none;
+}
+
+
+/* Estrutra principal del formulario */
+.login__form {
+  flex: 1;
+  background-image: url(../images/InicioSecion/Vector\ 1.png);
+  display: flex;
+  flex-direction: column;
+  align-items: center ;
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  width: 62%;
+  background-size: cover;
+  height: 100%;
+  background-repeat: no-repeat;
+}
+
+/* Tipo principal */
+.login__title{
+    margin-bottom: 20px;
+    margin-left: 20%;
+}
+
+/* Estilos de formlario  */
+.form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20%;
+  gap: 20px;
+}
+
+
+.form__group {
+  margin-bottom: 1.2rem;
+}
+
+.form__label {
+  font-size: 0.85rem;
+}
+
+.form__input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  border: none;
+  margin-top: 0.3rem;
+}
+
+.form__button{
+    border-style: none;
+    border-radius: 20px;
+    padding: 7px;
+}
+
+.form__button:hover{
+    background-color: var(--color-gris);
+    color: var(--color-fondo);
+    transition: all 1s;
+    
+}
+
+.form__link{
+    text-align: center;
+}
+
+.form__text{
+    text-align: center;
+}
+
+/* Ajustes de iconos */
+.icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+
+.icons{
+    width: 60%;
+    display: flex;
+    justify-self: center;
+}
+
+.icon--back{
+
+  width: 40%;
+}
+
+
+.icons--gmail{
+    margin-top: 20%;
+    margin-right: 3vh;
+    width: 100%;
+}
+
+@media (max-width: 992px) {
+
+  .login__form {
+    width: 60%;
+  }
+
+  .login__title,
+  .form {
+    margin-left: 10%;
+  }
+}
+
+
+@media (max-width: 576px) {
+
+  /* Layout general */
+  .login {
+    flex-direction: column;
+  }
+
+  /* Imagen superior */
+  .login__image {
+    flex: none;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Formulario */
+  .login__form {
+    position: static;         
+    width: 100%;
+    height: auto;
+    background-image: none;   
+    padding: 2rem 1rem;
+  }
+
+  /* Título */
+  .login__title {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  /* Formulario */
+  .form {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  /* Botón volver */
+  .button {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  /* Botón Google */
+  .icons--gmail {
+    margin-top: 0;
+  }
+}

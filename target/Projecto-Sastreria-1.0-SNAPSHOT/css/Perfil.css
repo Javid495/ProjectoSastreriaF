@@ -1,0 +1,107 @@
+@import url(style.css);
+
+.contenedor__principal{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    min-height:75vh;
+}
+
+/* carta perfil */
+
+.contenedor__perfil{
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;   
+    position: relative;
+}
+
+
+.contenedor__usuario {
+  background-color: var(--color-secundario);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  border-radius: 10px;
+  width: 60%;
+  padding: 30px;
+}
+
+.contenedor__image{
+    position: absolute;
+    width: 20%;
+    top: 7vh;
+}
+
+.card--username{
+    text-align: center;
+    margin-left: 10vh;
+}
+
+.card__datouse{
+    font-size: 25px;
+}
+
+.btn__config{
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    right: 18.5%;
+    top: 24%;
+    border: none;
+    background-color: #FF8F8F;
+}
+
+.icon__perfil{
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    display: flex;
+    justify-self: center;
+}
+
+.btn__edit{
+    top: 31%;
+    left: 37%;
+}
+
+/* Contenedor de historial de recientes */
+
+.historial__titulo{
+    margin-top: 20px;
+}
+
+.productos__historial{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.card {
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 45%;
+}
+
+.card__image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+}
+
+.card__price {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}

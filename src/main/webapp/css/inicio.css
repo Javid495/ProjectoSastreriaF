@@ -1,0 +1,264 @@
+@import url(style.css);
+
+/* Estilos de lo botones */
+button {
+  border: none;
+  cursor: pointer;
+}
+
+body{
+  background-color: var(--color-primario);
+  color: var(--color-letra);
+}
+
+
+
+/* Estilos de la barra de busqueda */
+
+.search__container {
+  max-width: var(--ancho-maximo);
+  margin: auto;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search__brand {
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+.search__input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 25px;
+  border: 1px solid;
+}
+
+.search__voice {
+  background-color: var(--color-gris);
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.search__microfono{
+    display: flex;
+    justify-self: center;    
+    width: 40%;
+}
+
+/* Seccion de populares */
+
+.button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background-color: var(--color-secundario);
+  border: none;
+}
+
+.button-left{
+  left: 13em;
+  top: 31em;
+  background-color: var(--color-BotonesFlecha);
+}
+
+.button-rigth{
+  right: 13em;
+  top: 31em;
+  background-color: var(--color-BotonesFlecha);
+}
+
+
+.popular {
+  padding: var(--padding-seccion);
+  gap: 10px;
+  
+}
+
+.popular__category{
+  display: flex;
+  gap: 10px;
+}
+
+.popular__title {
+  padding-bottom: 2rem;
+}
+
+.popular__icon {
+  margin-top: 0.5vh;
+}
+
+.popular__icon img{
+  width: 70%;
+}
+
+.popular__cards {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  
+}
+
+.card {
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 15%;
+  font-family: "Courgette", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.card__image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+}
+
+.card__price {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+
+/* Section de nuestros productos */
+.products {
+  padding: var(--padding-seccion);
+}
+
+.products__grid {
+  display: grid;
+  margin-top: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.products__grid img {
+  width: 90%;
+  margin: 0 20px;
+  height: 80%;
+  object-fit: cover;
+  border-radius: var(--radio-card);
+}
+
+/* Medias aplicadas */
+@media (max-width: 992px) {
+
+  .button{
+    display: none;
+  }
+
+  /* Grid de productos */
+  .products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .icon--logoheader{
+    display: none;
+  }
+
+  .header__menu{
+    display: none;
+  }
+
+  .header__item {
+    display: block;
+  }
+
+  .header__titulo{
+    margin-left: 10%;
+  } 
+
+  .navbar__menu-boton{
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 10px;
+  }
+
+  .navbar__icono-menu{
+    margin-top: 10%;
+  }
+
+  /* Header */
+  .header__menu {
+    gap: 1rem;
+  }
+
+  .search__container{
+    margin: 0;
+    display: inline-block;
+    gap: 30px;
+  }
+
+  .search__brand{
+    width: 35%;
+    font-size: 20px;
+  }
+
+  .search__brand img{
+    width: 20%;
+  }
+
+  .search__voice{
+    position: relative;
+    bottom: -2.5vh;
+    margin-left: 10px;
+  }
+
+  /* Footer */
+  .footer__content {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .header__nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .header__menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .search__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .popular__cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .products__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer__content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer__icons {
+    justify-content: center;
+  }
+
+  .footer__icon {
+    justify-content: center;
+  }
+}

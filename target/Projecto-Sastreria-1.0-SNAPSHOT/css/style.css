@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+
+@import url(Componentes/header.css);
+@import url(Componentes/footer.css);
+
+/* Ajustes */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+}
+
+:root {
+    /* Colores principales */
+    --color-primario: #ffffff;
+    --color-secundario: #A9C5D3;
+    --color-fondo: #ffffff;
+    --color-gris: #000000;
+    --color-letra: #000000;
+    --color-BotonesFlecha: #000000;
+
+
+
+    /* Tamaños frecuentes */
+    --ancho-maximo: 1200px;
+    --radio-card: 16px;
+    --padding-seccion: 2rem;
+
+    /* Tamaños de iconos */
+    --icon-size-sm: 25px;
+    --icon-size-md: 22px;
+    --icon-size-lg: 26px;
+
+    /* botones */
+    --estilo-borde:none;
+}
+
+
+

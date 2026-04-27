@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/Catalogo.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogo</title>
+</head>
+<body>
+    <header class="header">
+        <nav class="header__nav"> 
+            <div class="header__logo">
+              <span class="icon icon--logoheader"><img src="images/Logo.png" alt=""></span>
+              <h1 class="header__titulo">Suescun</h1>
+            </div>
+
+            <ul class="header__menu">
+                <a href="" class="header__item">Inicio</a>
+                <a href="" class="header__item">Catálogo</a>
+                <a href="" class="header__item">Pedidos</a>
+                <a href="" class="header__item">Usuario</a>
+            </ul>
+            
+            <button class="navbar__menu-boton">
+               <i class='navbar__icono-menu bx  bx-menu-close'  ></i> 
+            </button>
+
+            <button class="header__login">Inicio de sesión</button>
+        </nav>
+    </header>
+
+    <main class="main">
+
+    <!-- Barra de búsqueda -->
+    <section class="search">
+      <div class="search__container">
+        <span class="search__brand">
+            <span class="icon icon--logo"><img src="images/Logo.png" alt=""></span>
+        </span>
+        <span class="search__brand">Suescun</span>
+        <input type="text" class="search__input" placeholder="Buscar productos...">
+        <button class="search__voice"><img class="search__microfono" src="images/Microfono.png" alt=""></button>
+      </div>
+
+      <section class="filtrados">
+            <!-- Filtro de tallas -->
+            <div class="filtrados__filter">
+  
+              <!-- Etiqueta del filtro -->
+              <label for="size" class="filter__label">Talla:</label>
+  
+              <!-- Selector de talla -->
+              <select id="size" class="filter__select">
+                  <option value="">Seleccionar</option>
+                  <option value="s">S</option>
+                  <option value="m">M</option>
+                  <option value="l">L</option>
+                  <option value="xl">XL</option>
+              </select>
+            </div>
+  
+            <!-- Filtro de tallas -->
+            <div class="filtrados__filter">
+  
+              <!-- Etiqueta del filtro -->
+              <label for="size" class="filter__label">Tipo de Prenda: </label>
+  
+              <!-- Selector de talla -->
+              <select id="size" class="filter__select filter--ti">
+                  <option value="">Seleccionar</option>
+                  <option value="camisas">Camisas</option>
+                  <option value="pantalones">Pantalones</option>
+                  <option value="buzos">Buzos</option>
+                  <option value="pijamas">Pijamas</option>
+              </select>
+            </div>
+
+
+            <div class="filtrados__cart">
+  
+              <span class="cart__text">Ver Carrito:</span>
+  
+              <button class="cart__button">
+                  <img src="images/DetallesProducto/Vector (2).png" alt="Carrito de compras" class="cart__icon" >
+              </button>
+            </div>
+          
+      </section>
+
+    </section>
+
+
+    <section class="popular">
+        <div class="popular__category">
+            <h2 class="popular__title">Prendas Populares</h2>
+            <span class="popular__icon">
+            <img src="images/Vector (1).png" alt="">
+            </span>
+        </div>
+        <div class="popular__cards">
+
+            <!-- Card -->
+            <button class="button button-left">
+                <span class="icon icon--back"><img class="icons" src="images/InicioSecion/Vector.png" alt=""></span>
+            </button>
+
+            <article class="card">
+                <img src="images/Rectangle 11.png" alt="Prenda A" class="card__image">
+                <h3 class="card__title">Prenda A</h3>
+                <p class="card__price">Precio: 40.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+                <img src="images/Rectangle 26.png" alt="Prenda B" class="card__image">
+                <h3 class="card__title">Prenda B</h3>
+                <p class="card__price">Precio: 80.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+                <img src="images/image.png" alt="Prenda C" class="card__image">
+                <h3 class="card__title">Prenda C</h3>
+                <p class="card__price">Precio: 35.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+        </div>
+
+        <button class="button button-rigth">
+            <span class="icon icon--back"><img class="icons" src="images/Vector (1).png" alt=""></span>
+        </button>
+    </section>
+
+    <section class="popular">
+        <div class="popular__category">
+            <h2 class="popular__title">Prendas Populares</h2>
+            <span class="popular__icon">
+            <img src="images/Vector (1).png" alt="">
+            </span>
+        </div>
+        <div class="popular__cards">
+
+            <!-- Card -->
+            <button class="button button-left">
+                <span class="icon icon--back"><img class="icons" src="images/InicioSecion/Vector.png" alt=""></span>
+            </button>
+
+            <article class="card">
+                <img src="images/Rectangle 11.png" alt="Prenda A" class="card__image">
+                <h3 class="card__title">Prenda A</h3>
+                <p class="card__price">Precio: 40.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+                <img src="images/Rectangle 26.png" alt="Prenda B" class="card__image">
+                <h3 class="card__title">Prenda B</h3>
+                <p class="card__price">Precio: 80.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+                <img src="images/image.png" alt="Prenda C" class="card__image">
+                <h3 class="card__title">Prenda C</h3>
+                <p class="card__price">Precio: 35.000</p>
+                <button class="card__button">Ver detalles</button>
+            </article>
+        </div>
+
+        <button class="button button-rigth">
+            <span class="icon icon--back"><img class="icons" src="images/Vector (1).png" alt=""></span>
+        </button>
+    </section>
+
+    <section class="popular">
+        <div class="popular__category">
+            <h2 class="popular__title">Prendas Populares</h2>
+            <span class="popular__icon">
+            <img src="images/Vector (1).png" alt="">
+            </span>
+        </div>
+        <div class="popular__cards">
+
+            <!-- Card -->
+            <button class="button button-left">
+                <span class="icon icon--back"><img class="icons" src="images/InicioSecion/Vector.png" alt=""></span>
+            </button>
+
+            <article class="card">
+            <img src="images/Rectangle 11.png" alt="Prenda A" class="card__image">
+            <h3 class="card__title">Prenda A</h3>
+            <p class="card__price">Precio: 40.000</p>
+            <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+            <img src="images/Rectangle 26.png" alt="Prenda B" class="card__image">
+            <h3 class="card__title">Prenda B</h3>
+            <p class="card__price">Precio: 80.000</p>
+            <button class="card__button">Ver detalles</button>
+            </article>
+
+            <article class="card">
+            <img src="images/image.png" alt="Prenda C" class="card__image">
+            <h3 class="card__title">Prenda C</h3>
+            <p class="card__price">Precio: 35.000</p>
+            <button class="card__button">Ver detalles</button>
+            </article>
+        </div>
+
+        <button class="button button-rigth">
+            <span class="icon icon--back"><img class="icons" src="images/Vector (1).png" alt=""></span>
+        </button>
+    </section>
+
+
+    <footer class="footer">
+        <div class="footer__content">
+
+            <div class="footer__contact">
+                <h3>Contáctanos:</h3>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            </div>
+
+            <div class="footer__social">
+                <h3>Redes:</h3>
+                <div class="footer__icons">
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image" src="images/whatsapp.png" alt=""></span>
+                        Whatsapp
+                    </span>
+
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image"  src="images/Instagram.png" alt=""></span>
+                        Instagram
+                    </span>
+
+                    <span class="footer__icon">
+                        <span class="icon icon--social"><img class="icon__image"  src="images/Facebook.png" alt=""></span>
+                        Facebook
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+</body>
+</html>

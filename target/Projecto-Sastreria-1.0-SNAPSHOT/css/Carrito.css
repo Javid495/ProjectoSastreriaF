@@ -1,0 +1,122 @@
+@import url(style.css);
+
+/* Grid principal del cuerpo de la pagina */
+.main{
+
+    display: grid;
+    grid-template: 
+    "Compras Precio";
+    grid-template-columns: 3fr 1fr; 
+    padding: 3vh;
+}
+
+.main__producto{
+    grid-area: Compras;
+}
+
+.main__precio{    
+    grid-area: Precio;
+    border-left: 3px solid black;
+}
+
+.main__titulo{
+    margin: 30px ;
+}
+
+/* Tarjetas de productos */
+
+.popular__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4vh;
+  justify-items: center;
+}
+
+/* Diseño de tarjetas de productox */
+.card {
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 45%;
+  gap: 10px;
+  position: relative;
+}
+
+.card__image {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+}
+
+.card__price {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.button__closed{
+  background-color: red;
+  border: 1px ;
+  padding: 10px;
+  width: 11%;
+  height: 10%;
+  border-radius: 50%;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #ffffff;
+  font-weight: solid;
+  cursor: pointer;
+}
+
+/* Sidebar de la compra */
+
+.main__calculo{
+  padding: 20px;
+}
+
+.precio__titulo{
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.precio__prenda{
+  margin-top: 15px;
+  text-align: center;
+}
+
+.precio__total{
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 2px solid black;
+}
+
+.cont__checkbox{
+  width: 70%;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.btn__inicio{
+  background-color: var(--color-BotonesFlecha);
+  color: white;
+  font-size: 15px;
+  padding: 10px 15px;
+  width: 50%;
+  margin-top: 20px;
+  margin-left: 10vh;
+}
+
+.btn__inicio:hover{
+  background-color: var(--color-secundario);
+  color: black;
+}
