@@ -65,17 +65,20 @@
   background-color: red;
   border: 1px ;
   padding: 10px;
-  width: 11%;
-  height: 10%;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   font-size: 15px;
   transition: all 0.3s ease;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -4%;
+  right: -5%;
   color: #ffffff;
   font-weight: solid;
   cursor: pointer;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
 }
 
 /* Sidebar de la compra */
@@ -119,4 +122,20 @@
 .btn__inicio:hover{
   background-color: var(--color-secundario);
   color: black;
+}
+
+/* Estilos de confirmacion de compra */
+
+.compra__carrito{
+  position: absolute;
+  background-color: red;
+  padding: 30px;
+  border-radius: 20px;
+  width: 55%;
+}
+
+.carrito__formulario{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

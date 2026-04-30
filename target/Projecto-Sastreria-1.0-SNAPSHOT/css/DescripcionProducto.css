@@ -1,82 +1,21 @@
 @import url(style.css);
 
+/* Estilos del cuerpo principal */
+
 body{
   background-color: var(--color-primario);
   color: var(--color-letra);
 }
 
-/* Botón principal (login, detalles) */
-.header__login,
-.card__button {
-  background-color: var(--color-fondo);
-  border: 1px solid var(--color-primario);
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  transition: all 0.3s ease;
-}
-
-/* hover de los botones */
-.header__login:hover,
-.card__button:hover {
-  background-color: var(--color-gris);
-  color: var(--color-fondo);
-}
-
-/* Color de fondo */
-.header {
-  background-color: var(--color-secundario);
-}
-
-
-/* Estilos de la barra de navegacion */
-.header__logo{
-  display: flex;
-}
-
-.header__nav {
-  max-width: var(--ancho-maximo);
-  margin: auto;
-  padding: 0.8rem 1.5rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header__menu {
-  list-style: none;
-  display: flex;
-  gap: 4rem;
-  font-size: 1rem;
-}
-
-.header__item{
-  text-decoration: none;
-  color: var(--color-letra);
-}
-
-.icon--logoheader img{
-  width: 50%;
-}
-
-.navbar__menu-boton{
-  width: 10%;
-  display: inline-block;
-  border: none;
-  width: 40px;
-  height: 40px;
-  font-size: 32px;
-  border-radius: 20%;
-  display: none;
-}
 
 /* Estilos de main */
 .product {
   max-width: var(--ancho-maximo);
   margin: auto;
   padding: var(--padding-seccion);
+  
 }
+
 
 /* Contenedor principal */
 .product__container {
@@ -190,6 +129,8 @@ body{
   border-radius: 20px;
   font-size: 1rem;
   transition: all 0.3s;
+  cursor: pointer;
+  font-family: var(--tipo-letra);
 }
 
 .product__button img {
@@ -197,8 +138,8 @@ body{
 }
 
 .product__button:hover {
-  background-color: var(--color-gris);
-  color: var(--color-fondo);
+  background-color: var(--color-primario);
+  color: var(--color-letra);
 }
 
 .producto--comentarios{
@@ -290,6 +231,95 @@ body{
   gap: 0.5rem;
   font-size: 0.85rem;
 }
+
+/* Estilos del contenedor de comentarios */
+
+.cuerpo--opaco{
+  background-color: rgba(0,0,0, 0.40);
+  position: absolute;
+  width: 100%;
+  height: 84.3%;
+  z-index: 1;
+  transition: all 1s;
+}
+
+.section__comments{
+  width: 50%;
+  height: 30%;
+  background-color: #dadada;
+  position: absolute;
+  border: solid 3px white;
+  padding: 10px;
+  z-index: 2;
+  font-family: var(--tipo-letra);
+  border-radius: 10px;
+  top: 20%;
+  display: none;
+  transition: all 1s;
+} 
+
+.mostrarResena{
+  display: block;
+}
+
+.section__input{
+  display: flex;
+  margin-top: 20px;
+  justify-content: center;
+  height: 40%;
+}
+
+.section__titulo{
+  font-weight: bold;
+  font-size: 25px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.section__comment{
+  width: 90%;
+  height: 24vh;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: left;
+}
+
+.btn--resena{
+  background-color: #FD9B9B;
+  position:absolute;
+  font-family: var(--tipo-letra);
+}
+
+.btn--publicar{
+  bottom: -9%;
+  right: 2%;
+}
+
+.btn--agrega{
+  left: 2%;
+  bottom: -9%;
+}
+
+.button__closed{
+  background-color: red;
+  border: 1px ;
+  padding: 10px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: -5%;
+  right: -2%;
+  color: #ffffff;
+  font-weight: solid;
+  cursor: pointer;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+}
+
 
 @media (max-width: 992px) {
 

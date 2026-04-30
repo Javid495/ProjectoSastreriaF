@@ -5,6 +5,7 @@
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/DescripcionProducto.css">
+    <script src="js/Descripcion.js" defer></script>
     <title>Document</title>
 </head>
 <body>
@@ -34,8 +35,30 @@
             <button class="header__login">Inicio de sesión</button>
         </nav>
     </header>
-
-    <main class="product">
+    <!-- Apartado de añadir comentarios -->
+     <div class="sombreado"></div>
+     
+     <main class="product">
+         <div class="section__comments">
+            <h2d class="section__titulo">Ingrese su Reseña:</h2d>     
+            <div class="section__input">
+                <textarea class="section__comment" 
+                    required rows="5" 
+                    maxlength="500" 
+                    name="" 
+                    placeholder="Escribe tu Reseña..." 
+                    id="cajaComentario">
+                </textarea>
+            </div>
+            <button class="product__button btn--resena btn--agrega">
+                Añadir Imagenes
+                <img src="images/DetallesProducto/Vector (2).png" alt="Carrito">
+            </button>
+            <button class="product__button btn--resena btn--publicar">
+                Publicar Reseña
+            </button>
+            <button class="button__closed">X</button>
+         </div>
 
         <!-- Sección principal del producto -->
         <section class="product__container">

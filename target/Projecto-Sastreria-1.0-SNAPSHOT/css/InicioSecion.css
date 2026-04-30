@@ -3,6 +3,7 @@
 body{
   color: var(--color-letra);
   margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* Estilos del cuerpo principald de pagina */

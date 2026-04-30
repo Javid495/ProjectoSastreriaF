@@ -3,6 +3,7 @@
 body{
   color: var(--color-letra);
   margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* Mismos ajustes aplicados en el apartado inicio de secion */

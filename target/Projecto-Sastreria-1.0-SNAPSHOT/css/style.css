@@ -18,6 +18,7 @@ body{
     width: 100%;
     height: 100%;
     min-height: 100vh;
+    padding-bottom: 129px;
 }
 
 :root {
@@ -30,6 +31,8 @@ body{
     --color-BotonesFlecha: #000000;
 
 
+    /* Tipografia */
+    --tipo-letra: "Courgette", cursive;
 
     /* Tamaños frecuentes */
     --ancho-maximo: 1200px;
