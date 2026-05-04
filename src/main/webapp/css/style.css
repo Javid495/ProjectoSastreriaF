@@ -29,7 +29,8 @@ body{
     --color-gris: #000000;
     --color-letra: #000000;
     --color-BotonesFlecha: #000000;
-
+    --color-FondoInputs: #d9d9d9;
+    --color-FondoVentEmergetes: #fff;
 
     /* Tipografia */
     --tipo-letra: "Courgette", cursive;
@@ -45,7 +46,7 @@ body{
     --icon-size-lg: 26px;
 
     /* botones */
-    --estilo-borde:none;
+    --estilo-borde:solid 2px black;
 }
 
 

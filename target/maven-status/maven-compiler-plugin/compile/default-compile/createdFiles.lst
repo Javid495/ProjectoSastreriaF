@@ -1,5 +1,4 @@
 modelo\ClaseConexion.class
-modelo\Prueba.class
-modelo\PruebaDAO.class
-controlador\ServerPrueba.class
-modelo\ServeltPrueba.class
+modelo\ServeltRegistro.class
+modelo\RegistroDAO.class
+modelo\Registro.class

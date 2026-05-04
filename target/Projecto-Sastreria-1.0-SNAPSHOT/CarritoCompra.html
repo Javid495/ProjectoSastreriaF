@@ -5,9 +5,11 @@
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/Carrito.css">
+    <script src="js/CarritoCompra.js" defer></script>
     <title>Carrito</title>
 </head>
 <body>
+
     <!-- Header Principal -->
     <header class="header">
         <nav class="header__nav"> 
@@ -24,15 +26,16 @@
             </ul>
             
             <button class="navbar__menu-boton">
-               <i class='navbar__icono-menu bx  bx-menu-close'  ></i> 
+               <i class='navbar__icono-menu bx  bx-menu-close'></i> 
             </button>
-
-            <button class="header__login">Inicio de sesión</button>
+            <a href="inicioSecion.html">
+                <button class="header__login">Inicio de sesión</button>
+            </a>
         </nav>
     </header>
 
+    <!-- Carrito principal -->
     <main class = "main">
-
         <div class="main__producto">
             <h1 class="main__titulo">Tu Carrito De Compra</h1>
         
@@ -74,6 +77,7 @@
             
         </div>
 
+        <!-- Apartado de totalizacion -->
         <div class="main__precio">
             
             <article class="main__calculo">
@@ -85,9 +89,10 @@
                 <p class="precio__total"></p>
             </article>
 
-            
-            <button class="header__login btn__inicio">Realizar Compra</button>
+            <!-- Boton de realizar compra -->
+            <button class="header__login btn__inicio" id="RealizarCompra">Realizar Compra</button>
 
+            <!-- Terminos y condiciones -->
             <article class="cont__checkbox">
                 <input type="checkbox" name="" class="cont__contenedorcheck" id="cont_terminos">
                 <label for="" class="cont__parrafo">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam.</label>
@@ -96,29 +101,47 @@
 
         <div class="sombreado"></div>
 
-        <!-- Ventana emergenet Carrito de compra -->
+        <!-- Ventana emergente Carrito de compra -->
          <div class="compra__carrito">
             <h2 class="compra__titulo">Confirmacion de Pedido</h2>     
             <div class="section__input">
 
                 <form action="" class="carrito__formulario">
                     <label for="" class="carrito__subt">Direccion:</label>
-                    <input type="text">
+                    <input type="text" class="direccion__input">
 
                     <label for="" class="carrito__subt">Telefono:</label>
-                    <input type="text">
+                    <input type="text" class="direccion__input">
 
                     <label for="" class="carrito__subt">Total:</label>
-                    <p class="carrito__subtotal"></p>
+                    <p class="carrito__subtotal" id="MostrarTotal" >XX.XXX</p>
 
-                    <p>Metodos de pago:</p>
-                    <div>
+                    <p class="sub--titulo">Metodos de pago:</p>
 
+                    <div class="metodos__p">
+
+                        <button class="btn__metodop">
+                            <img src="images/Nequi.png" alt="" class="metodos__imagen img--nequi">
+                        </button>
+
+                        <button class="btn__metodop">
+                            <img src="images/Group 6.png" alt="" class="metodos__imagen img--daviplata">
+                        </button>
+                    </div>
+
+                    <div class="contenedor--botones">
+                        <button class="header__login boton--compra" id="cancelarCompra">Cancelar Compra</button>
+                        <button class="header__login boton--compra" id="ConfirmarCompra">Confirmar Compra</button>
                     </div>
                 </form>
-
             </div>
-            
+         </div>
+
+         <div class="confirmacion__pago">
+            <img src="images/ConfirmacionG.png" alt="" class="img__confirmacion">
+            <h2 class="confirmacion__text">Tu pedido fue Realizado con exito</h2>
+
+            <button class="header__login btn--confirmar" id="pagoConfirmado">Confirmar</button>
          </div>
     </main>
 
@@ -153,6 +176,5 @@
 
         </div>
     </footer>
-
 </body>
 </html>

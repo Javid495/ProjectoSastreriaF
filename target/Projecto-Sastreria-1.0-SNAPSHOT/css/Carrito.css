@@ -2,7 +2,7 @@
 
 /* Grid principal del cuerpo de la pagina */
 .main{
-
+    position: relative;
     display: grid;
     grid-template: 
     "Compras Precio";
@@ -117,6 +117,7 @@
   width: 50%;
   margin-top: 20px;
   margin-left: 10vh;
+  cursor: pointer;
 }
 
 .btn__inicio:hover{
@@ -128,14 +129,127 @@
 
 .compra__carrito{
   position: absolute;
-  background-color: red;
+  background-color: var(--color-FondoVentEmergetes);
   padding: 30px;
   border-radius: 20px;
   width: 55%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  align-self: center;
+  gap: 40px;
+  font-weight: solid;
+  display: none;
 }
+
+
 
 .carrito__formulario{
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.direccion__input{
+  border-radius: 10px;
+  padding: 6px;
+  background-color: var(--color-FondoInputs);
+  border-style: none;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.direccion__input:focus{
+  border-style: var(--estilo-borde);
+}
+
+.aparecerSombreado{
+  background-color: rgba(0,0,0, 0.40);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  transition: all 1s;
+}
+
+.carrito__subtotal{
+  font-size: 30px;
+  font-family: var(--tipo-letra);
+  margin-left:5%;
+}
+
+.sub--titulo{
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.metodos__p{
+  background-color: var(--color-FondoInputs);
+  display: flex;
+  justify-content: space-around;
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 20px;
+}
+
+.btn__metodop{
+  cursor: pointer;
+  border-style: none;
+  width: 50%;
+  background-color: transparent;
+}
+
+.contenedor--botones{
+  display: flex;
+  justify-content: space-around;
+}
+
+.boton--compra{
+  cursor: pointer;
+  width: 30%;
+  font-size: 20px;
+  background-color: #FD9B9B;
+}
+
+.boton--compra:hover{
+  border-style: var(--estilo-borde)
+}
+
+/* Tarjeta de confirmacion de pago */
+
+.confirmacion__pago{
+  background-color: #ffffff;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  align-self: center;
+  justify-items: center;
+  justify-self: center;
+  padding: 40px;
+  gap: 10px;
+  border-radius: 10px;
+  display: none;
+}
+
+.img__confirmacion{
+  width: 30%;
+  height: 30%;
+  margin-left: 35%;
+}
+
+.btn--confirmar{
+  position: absolute;
+  bottom: -6%;
+  left: 30%;
+  width: 40%;
+  padding: 10px;
+  background-color: #FD9B9B;
+  border-style: none;
+}
+
+.mostarConfirmacion{
+  display:block;
 }

@@ -8,6 +8,7 @@
   font-size: 0.85rem;
   transition: all 0.3s ease;
   font-family: "Courgette", cursive;
+  cursor: pointer;
 }
 
 /* hover de los botones */
