@@ -9,9 +9,11 @@ import java.io.IOException;
 import modelo.Registro;
 import dao.RegistroDAO;
 
+//Establece la conecion con el fetch de js para solicitar los datos del formulario
 @WebServlet (urlPatterns = {"/Registro"}, loadOnStartup = 1)
 public class ServeltRegistro extends HttpServlet{
     
+   
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         
         //Se recojen los datos del fromulario de registro
@@ -20,6 +22,7 @@ public class ServeltRegistro extends HttpServlet{
         String email = request.getParameter("correo");
         String tel = request.getParameter("tel");
         
+
         
         int telefonoFinal = 0; // Valor por defecto por si algo falla
 
@@ -49,6 +52,8 @@ public class ServeltRegistro extends HttpServlet{
         //Entregar un respuesta
         if (exitoInsert){
             response.getWriter().write("ok");
+            
+            
         }
         else {
             response.setStatus(500);
