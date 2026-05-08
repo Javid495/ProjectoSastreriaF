@@ -14,7 +14,7 @@ public class LoginDAO {
     
         //Indicamos ell comando o la peticion que queremos que mysql ejecute
         //Esta peticion nos retorna un resultado
-      String sql = "SELECT r.*, u.Permisos_roles_id " +
+      String sql = "SELECT r.*, u.Permisos_roles_id u." +
         "FROM Registro r " +
         "JOIN Usuarios u ON r.Registro_id = u.Registro_id " +
         "WHERE (r.Registro_Email = ? OR r.Registro_Usuario = ?) AND r.Registro_Contraseña = ?";   
@@ -43,6 +43,7 @@ public class LoginDAO {
                   ver.setUsuario(result.getString("Registro_Usuario"));
                   ver.setRol(result.getString("Permisos_roles_id"));
                   
+                  //añadir la manipulacion de los elementos cuando el usuario este activo
                   return ver;
               }
           }
@@ -54,7 +55,7 @@ public class LoginDAO {
           System.out.println("Error en la validacion del usuario al momento de haccer el login intente nuevamente" + e.getMessage());
       }
       
-      return null;
+    return null;
     }
     
 }

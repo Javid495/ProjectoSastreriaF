@@ -9,6 +9,7 @@ const confirmarComprar = document.querySelector(".compra__carrito");
 const sombreado = document.querySelector(".sombreado");
 const pagoConfirm = document.querySelector(".confirmacion__pago");
 
+//asignamos eventos a los botones del apartado
 btnRealizarC.addEventListener("click", (e) => {
     
     e.preventDefault();
