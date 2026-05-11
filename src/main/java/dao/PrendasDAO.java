@@ -41,18 +41,20 @@ public class PrendasDAO {
                 p.setEstado(rs.getString("Prenda_estado"));
                 p.setCategoria(rs.getString("Categoria_nombre"));
                 p.setImagen(rs.getString("Imagenes_link"));
-                p.setVisitas(rs.getInt("Populares_visitas"));
+                p.setVisitas(rs.getInt("visitas"));
                 
                 listaProductos.add(p);
             }
+            
+            System.out.println("DEBUG: Tamaño de la lista enviada: " + listaProductos.size());
         }
         
+        
         catch (SQLException e){
-            System.out.println("Hubo algun error al momento de obtener las prendas" );
+            e.printStackTrace( );
         }
         
         return listaProductos;
-    
     }
     
 }
