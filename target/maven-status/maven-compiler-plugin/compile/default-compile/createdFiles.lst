@@ -3,5 +3,8 @@ controlador\ServeltRegistro.class
 dao\RegistroDAO.class
 dao\LoginDAO.class
 modelo\IniciarSesion.class
+controlador\ServeltPrendas.class
+dao\PrendasDAO.class
 controlador\ServeltInicioSesion.class
 modelo\Registro.class
+modelo\Prendas.class

@@ -1,3 +1,5 @@
+use ModaS;
+
 SELECT 
     r.Registro_Email AS Email, 
     r.Registro_Usuario AS Nombre, 
@@ -13,3 +15,4 @@ SELECT r.*, u.Permisos_roles_id, u.Usuario_imagen
 FROM Registro r 
 JOIN Usuarios u ON r.Registro_id = u.Registro_id
 WHERE (r.Registro_Usuario = 'javid49' OR r.Registro_Email = 'javid49') AND r.Registro_Contraseña = 'hola2027';
+
