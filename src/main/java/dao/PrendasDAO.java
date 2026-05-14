@@ -57,4 +57,43 @@ public class PrendasDAO {
         return listaProductos;
     }
     
+    public Prendas obtenerPorId(int id){
+        
+        Prendas prenda = null;
+        
+        String sql = "SELECT p.*, c.Categoria_nombre, " +
+             "(SELECT i.Imagenes_link FROM imagenes i WHERE i.Prenda_id = p.Prenda_id LIMIT 1) as Imagenes_link " +
+             "FROM Prendas p " +
+             "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
+             "WHERE p.Prenda_id = ?";
+        
+        try (Connection con = ClaseConexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, id);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                prenda = new Prendas();
+                // 3. Mapeo exhaustivo (todos los campos de tu clase)
+                prenda.setId(rs.getInt("Prenda_id"));
+                prenda.setNombre(rs.getString("Prenda_nombre"));
+                prenda.setDescripcion(rs.getString("Prenda_descripcion"));
+                prenda.setValor(rs.getDouble("Prenda_valor"));
+                prenda.setTalla(rs.getString("Prenda_talla"));
+                prenda.setEstado(rs.getString("Prenda_estado"));
+                prenda.setImagen(rs.getString("Imagenes_link"));
+                prenda.setVisitas(rs.getInt("Prenda_visitas"));
+                
+                System.out.println(prenda);
+                
+            }
+        }
+        
+        } catch (SQLException e) {
+            System.err.println("Error al obtener prenda por ID: " + e.getMessage());
+         }
+    
+        return prenda;
+    }
 }

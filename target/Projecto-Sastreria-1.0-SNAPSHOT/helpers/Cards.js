@@ -14,13 +14,19 @@ export function crearCards(datos){
     precio.classList.add("card__price");
     boton.classList.add("card__button");
 
+    // Le asignamos un evento a los botones de las cards que funcionaran
+    // Para redireccionar a los detalles de los productos
+    boton.addEventListener("click" , () => {
+
+        window.location.href = `DescripcionProducto.html?${datos.id}`
+    });
 
     // Datos mostrados en las cards
-    imagen.src = datos.imagen || "../images/image.png";
+    imagen.src = "../images/Rectangle 11.png";
     imagen.alt = datos.nombre;
 
     nombreP.textContent = datos.nombre;
-    precio.textContent = `$${datos.valor.toFixed(2)}`;
+    precio.textContent = `Precio: $${datos.valor.toFixed(2)}`;
     boton.innerText= "Detalles";
 
     //Asignamos datos tecnicos para los filtrados
@@ -34,6 +40,8 @@ export function crearCards(datos){
     article.appendChild(nombreP);
     article.appendChild(precio);
     article.appendChild(boton);
+
+
 
     return article;
 }

@@ -1,8 +1,9 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
 
-document.addEventListener("DOMContentLoaded", (e) =>{
+document.addEventListener("DOMContentLoaded", async (e) =>{
 
     e.preventDefault();
 
-    aparecerCont();
+    await aparecerCont("./");
+
 })

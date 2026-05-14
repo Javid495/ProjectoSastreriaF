@@ -1,13 +1,13 @@
 import { crearCards } from "../helpers/Cards.js";
-import { aparecerCont } from "../helpers/RelizarPeticion.js"
+import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
 
-const contenedor = document.querySelector(".popular");
+const contenedor = document.querySelector(".popular__cards");
 
 async function cargarCatalogo(){
 
     try {
         // Obtenemos la lista de productos del catalogo
-        const respuesta = await fetch("ObtenerPrendas");
+        const respuesta = await fetch("../ObtenerPrendas");
     
         //verificamos que los datos hayan llegado correctamente 
         if(!respuesta.ok) throw new Error("Error en la obtencion de datos");
@@ -21,9 +21,10 @@ async function cargarCatalogo(){
         prendas.forEach(prenda => {
             //Llamamos la funcion crearCards y vamos creando nuestras cards
             const nuevaCard = crearCards(prenda);
-
-            contenedor.innerHTML += nuevaCard;
-        })
+            console.log(nuevaCard);
+            
+            contenedor.appendChild(nuevaCard);
+        });
     }
 
     //En caso de un error en la creacion de las cards mostramos el error
@@ -31,13 +32,15 @@ async function cargarCatalogo(){
 
         console.error("Hubo algun error en la carga del catalogo: ", error);
 
-        contenedor.innerHTML = "<p>No se cargaraon las prendas correctamente por favor vuelva a intentarlo mas adelante</p>"
+        contenedor.innerHTML = "<p>No se cargaron las prendas correctamente por favor vuelva a intentarlo mas adelante</p>";
     }
 }
 
-document.addEventListener("DOMContentLoaded", e =>{
+document.addEventListener("DOMContentLoaded", (e) =>{
 
-    aparecerCont();
-
+    e.preventDefault();
+    
+    aparecerCont("../");
     cargarCatalogo();
-})
+
+});
