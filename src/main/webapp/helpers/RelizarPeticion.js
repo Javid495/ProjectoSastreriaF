@@ -35,3 +35,9 @@ export async function aparecerCont(ruta){
     //     }
 
 }
+
+export async function MostrarSide(){
+
+    llamarComponente(".sidebar","../componentesWeb/aside.html")
+
+}

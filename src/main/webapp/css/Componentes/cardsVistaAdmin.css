@@ -1,0 +1,64 @@
+/* --- TARJETAS DE INVENTARIO (LISTADO) --- */
+.inventario-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.card-inventario {
+    background-color: var(--color-FondoInputs);
+    border-radius: var(--radio-card);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    max-width: 1000px;
+}
+
+.img-placeholder {
+    width: 200px;
+    height: 230px;
+    background-color: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.img-placeholder img {
+    max-width: 100%;
+    height: auto;
+}
+
+.info-prenda {
+    flex: 1;
+    font-family: var(--tipo-letra);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 2;
+}
+
+.acciones-prenda {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btn-blanco {
+    background-color: var(--color-primario);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 25px;
+    font-family: var(--tipo-letra);
+    font-size: 18px;
+    font-style: italic;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    text-align: center;
+}
+
+.btn-blanco:hover {
+    filter: brightness(0.95);
+}
