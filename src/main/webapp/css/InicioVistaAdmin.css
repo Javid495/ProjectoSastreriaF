@@ -1,6 +1,7 @@
 @import url(style.css);
 @import url(Componentes/sidebar.css);
 @import url(Componentes/cardsVistaAdmin.css);
+@import url(Componentes/BotonesAdmin.css);
 
 body{
     padding-bottom:0 ;

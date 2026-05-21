@@ -14,7 +14,7 @@
             
         </aside>
 
-        <main class="main-content">
+        <main class="main-content" id="modulo-catalogo">
 
             <section class="search">
               <div class="search__container">
@@ -43,7 +43,7 @@
                     <div class="filtrados__filter">
           
                       <!-- Etiqueta del filtro -->
-                      <label for="size" class="filter__label">Tipo de Prenda: </label>
+                      <label for="size" class="filter__label">Categoria: </label>
           
                       <!-- Selector de talla -->
                       <select id="size" class="filter__select filter--ti">
@@ -73,17 +73,20 @@
                         <button class="btn-blanco">Modificar Detalles</button>
                         <button class="btn-blanco">Eliminar Prenda</button>
                     </div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" name="productosSeleccionados" value="001" class="custom-checkbox">
+                    </div>
                 </article>
             </div>
 
             <div class="btn--edicion">
-                <button class="btn-blanco btn--eliminar">Eliminar Grupo</button>
-                <button class="btn-blanco btn--agregar">Agregar Prendas</button>
+                <button class="btn-blanco btn--eliminar" id="Eliminar" >Eliminar Varios</button>
+                <button class="btn-blanco btn--agregar" id="AgregarP" >Agregar Prenda</button>
             </div>
 
         </main>
     </div>
-
 
     <script src="../js/CatalogoAdmin.js" type="module"></script>
 </body>

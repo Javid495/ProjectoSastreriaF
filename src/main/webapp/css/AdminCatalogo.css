@@ -1,6 +1,7 @@
 @import url(style.css);
 @import url(Componentes/sidebar.css);
 @import url(Componentes/cardsVistaAdmin.css);
+@import url(Componentes/BotonesAdmin.css);
 
 body{
   color: var(--color-letra);
@@ -111,17 +112,43 @@ body{
   gap: 0.8rem;
 }
 
-.btn--edicion{
-    position: absolute;
-    bottom: 5%;
-    display: flex;
-    gap: 90vh;
+.checkbox-container {
+    display: none; /* Oculto por defecto en vista normal */
+    align-self: flex-start;
+    margin-top: 5px;
 }
 
-.btn--eliminar{
-    background-color: #FF9494;
+/* Custom Checkbox fiel a los cuadros rojos del diseño */
+.custom-checkbox {
+    width: 35px;
+    height: 35px;
+    border: solid 4px var(--color-borde-checkbox);
+    border-radius: 6px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: white;
+    display: block;
+    transition: background 0.2s;
 }
 
-.btn--agregar{
-    background-color: #97FF92;
+.custom-checkbox:checked {
+    background-color: var(--color-borde-checkbox); /* Se rellena al seleccionarse */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
+
+.modo-edicion .checkbox-container {
+  display: block; /* Muestra los checkboxes */
+}
+
+.modo-edicion .action-footer {
+  display: flex; /* Muestra los botones de abajo */
+}
+
+.modo-edicion .btn-trigger-delete {
+  display: none; /* Oculta el botón inicial de "Eliminar Varios" */
+}
+

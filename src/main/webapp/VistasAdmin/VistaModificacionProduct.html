@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificación de Productos - Suescun</title>
+    <link rel="stylesheet" href="../css/ModificarPrendas.css">
+</head>
+<body>
+
+    <!-- Sidebar principal -->
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-circle">S</div>
+                <span class="brand-name">Suescun</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link">Inicio</a></li>
+                    <li><a href="#" class="nav-link active">Catalogo</a></li>
+                    <li><a href="#" class="nav-link">Pedidos</a></li>
+                    <li><a href="#" class="nav-link">Historial de Pago</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteido formulario modificacion -->
+        <main class="main-content">
+            <form action="TuServletModificar" method="POST">
+                
+                <label class="seccion-label" style="font-family: var(--font-main); font-style: normal;">Imagenes del Producto:</label>
+                <div class="imagenes-galeria-container">
+                    <div class="grid-imagenes">
+                        <div class="img-miniatura">
+                            <img src="https://via.placeholder.com/160x140?text=Saco+1" alt="Imagen producto">
+                        </div>
+                        <div class="img-miniatura">
+                            <img src="https://via.placeholder.com/160x140?text=Saco+2" alt="Imagen producto">
+                        </div>
+                        <div class="img-miniatura">
+                            <img src="https://via.placeholder.com/160x140?text=Saco+3" alt="Imagen producto">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-subir-imagenes">Agregar imagenes</button>
+                </div>
+
+                <div class="form-row-inline">
+                    <label class="seccion-label">Nombre del Producto :</label>
+                    <input type="text" name="nombreProducto" class="input-largo" value="Prenda B">
+                </div>
+
+                <div class="precios-row">
+                    <div class="precio-group">
+                        <label class="seccion-label">Precio:</label>
+                        <input type="text" name="precio1" class="input-precio" placeholder="XX.XXX">
+                    </div>
+                    <div class="precio-group">
+                        <label class="seccion-label">Talla:</label>
+                        <input type="text" name="precio2" class="input-precio" placeholder="Ejem: S">
+                    </div>
+                    <div class="precio-group">
+                        <label class="seccion-label">Categoria:</label>
+                        <input type="text" name="precio3" class="input-precio" placeholder="Ejem: Pijama">
+                    </div>
+                </div>
+
+                <div class="form-block">
+                    <label class="seccion-label">Descripcion del producto:</label>
+                    <textarea name="descripcion" class="textarea-modificar">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Minima provident natus quo, necessitatibus.</textarea>
+                </div>
+
+                <div class="btn--edicion">
+                    <button class="btn-blanco btn--eliminar">Eliminar Grupo</button>
+                    <button class="btn-blanco btn--agregar">Agregar Prendas</button>
+                </div>
+
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>
