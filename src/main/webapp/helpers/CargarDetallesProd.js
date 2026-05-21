@@ -76,7 +76,29 @@ export async function CargarDetallesProd(id) {
     
             let carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
 
-            const prodductoActual = 
+            const productoActual = carrito.find(item => item.id === producto.id);
+
+            if(productoActual){
+                productoActual.cantidad +=1;
+            }
+
+            
+            else{
+
+                //si el producto es nuevo, guardamos los productos especificos de esa prenda
+                carrito.push({
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: producto.valor,
+                    imagen: producto.imagen || (producto.listaImagenes && producto.listaImagenes[0]),
+                    talla: producto.tall,
+                    cantidad: 1
+                });
+            }
+
+            localStorage.setItem("carritoSastreria", JSON.stringify(carrito))
+
+            alert(`El producto ${producto.nombre} se agrego correctamente al carrito`);
         })
     }
 } 
