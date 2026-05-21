@@ -8,6 +8,13 @@ export async function aparecerCont(ruta){
     await llamarComponente(".footer", `${ruta}componentesWeb/footer.html`);
 
     const links = document.querySelectorAll(".header__item");
+    const inicioSesion = document.querySelector(".header__login");
+    const images = document.querySelectorAll(".icon__image");
+
+    console.log(inicioSesion);
+    
+
+    // Verificar rutas de navegacion 
     links.forEach(link => {
         const hrefOriginal = link.getAttribute("href");
         // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
@@ -16,7 +23,7 @@ export async function aparecerCont(ruta){
         }
     });
 
-    const images = document.querySelectorAll(".icon__image");
+    // Para verificar las rutas de la imagenes del footer
     images.forEach(img => {
         const srcOriginal = img.getAttribute("src");
         // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
@@ -25,13 +32,20 @@ export async function aparecerCont(ruta){
         }
     });
 
-    // const logo = document.querySelector("#logo");
+    // Para verificar los logos
+    const logo = document.querySelector("#logo");
 
-    //     const logoRuta = logo.getAttribute("src");
+        const logoRuta = logo.getAttribute("src");
 
-    //     // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
-    //     if (logoRuta && logoRuta.startsWith("images/")) {
-    //         logo.setAttribute("src", ruta + logoRuta);
-    //     }
+        // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
+        if (logoRuta && logoRuta.startsWith("images/")) {
+            logo.setAttribute("src", ruta + logoRuta);
+        }
+
+}
+
+export async function MostrarSide(){
+
+    llamarComponente(".sidebar","../componentesWeb/aside.html")
 
 }

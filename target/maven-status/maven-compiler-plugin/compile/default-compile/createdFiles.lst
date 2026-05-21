@@ -1,12 +1,11 @@
 dao\ClaseConexion.class
 controlador\ServeltRegistro.class
+dao\RegistroDAO.class
 dao\LoginDAO.class
 modelo\IniciarSesion.class
 controlador\ServeltObtenerDetallesProd.class
 controlador\ServeltPrendas.class
-controlador\ServeltInicioSesion.class
-dao\RegistroDAO.class
-controlador\ServeltObtenerDetallesProd$ObtenerProdutosDetalle.class
 dao\PrendasDAO.class
+controlador\ServeltInicioSesion.class
 modelo\Registro.class
 modelo\Prendas.class

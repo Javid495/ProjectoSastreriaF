@@ -31,3 +31,12 @@ SELECT p.*, c.Categoria_nombre, max(i.Imagenes_link) as Imagenes_link, IFNULL(po
                  GROUP BY p.Prenda_id, c.Categoria_nombre, pop.Populares_visitas 
                  -- y las ordenamos segun el numero de visitas de manera decendente
                  ORDER BY visitas DESC;
+                 
+-- Peticion buscar una prenda en especifico en el catalogo
+SELECT p.*, c.Categoria_nombre 
+             FROM Prendas p 
+             JOIN Categoria c ON p.Categoria_id = c.Categoria_id  
+             WHERE p.Prenda_id = 1;	
+             
+-- Consulta para buscar todas las imagenes
+select Imagenes_link from imagenes where Prenda_id = 1;

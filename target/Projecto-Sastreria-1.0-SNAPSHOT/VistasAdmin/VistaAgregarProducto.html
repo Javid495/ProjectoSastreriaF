@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Prendas - Suescun</title>
+    <link rel="stylesheet" href="../css/AgregarProductos.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-circle">S</div>
+                <span class="brand-name">Suescun</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link">Inicio</a></li>
+                    <li><a href="#" class="nav-link active">Catalogo</a></li>
+                    <li><a href="#" class="nav-link">Pedidos</a></li>
+                    <li><a href="#" class="nav-link">Historial de Pago</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <button class="btn-back" onclick="window.history.back();">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <h1 class="titulo-formulario">Agregar Prendas</h1>
+
+            <form action="TuServletControlador" method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label>Nombre Del Producto:</label>
+                    <input type="text" name="nombreProducto" class="input-text">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group-inline">
+                        <label>Talla:</label>
+                        <input type="text" name="talla" class="input-inline">
+                    </div>
+                    
+                    <div class="form-group-inline">
+                        <label>Precio:</label>
+                        <input type="text" name="precio" class="input-inline">
+                    </div>
+
+                    <div class="form-group-inline">
+                        <label>Stock:</label>
+                        <input type="text" name="stock" class="input-inline">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagenes del Producto:</label>
+                    <div class="image-upload-container">
+                        <button type="button" class="btn-add-image">
+                            <span>+</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripcion del Producto</label>
+                    <textarea name="descripcion" class="textarea-description"></textarea>
+                </div>
+
+            <div class="btn--edicion">
+                <button class="btn-blanco btn--eliminar">Cancelar</button>
+                <button class="btn-blanco btn--agregar">Agregar Prendas</button>
+            </div>
+
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>

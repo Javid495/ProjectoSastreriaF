@@ -1,6 +1,9 @@
 
 package modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Prendas {
     
@@ -16,6 +19,7 @@ public class Prendas {
     
     private String categoria;
     private String imagen;
+    private List<String> listaImagenes = new ArrayList();
     private int visitas;
 
     //Se declaran los getters y setters de los datos anteriores
@@ -105,5 +109,14 @@ public class Prendas {
 
     public void setVisitas(int visitas) {
         this.visitas = visitas;
-    }    
+    }   
+
+    public List<String> getListaImagenes() {
+        return listaImagenes;
+    }
+
+    public void setListaImagenes(List<String> listaImagenes) {
+        this.listaImagenes = listaImagenes;
+    }
+    
 }

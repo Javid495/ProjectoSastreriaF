@@ -40,6 +40,7 @@ body{
   display: flex;
   justify-self: center;
   border-radius: var(--radio-card);
+  width: 100%;
 }
 
 /* Flechas */

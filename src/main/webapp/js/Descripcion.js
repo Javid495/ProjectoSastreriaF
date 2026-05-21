@@ -10,9 +10,7 @@ const sombreado = document.querySelector(".sombreado");
 
 document.addEventListener("DOMContentLoaded", async (e) =>{
 
-    
-    
-    // await aparecerCont("../");
+    await aparecerCont("../");
 
     //Guardamos la url de la busqueda
     const url = new URLSearchParams(window.location.search);
@@ -21,9 +19,10 @@ document.addEventListener("DOMContentLoaded", async (e) =>{
     // de la url tomamos el id que hace referencia al producto
     const ProductoId = url.get("id");
 
+    console.log(ProductoId);
+    
     
     if (ProductoId){
-
         CargarDetallesProd(ProductoId);
     }
 

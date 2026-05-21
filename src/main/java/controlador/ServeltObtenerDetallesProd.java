@@ -12,12 +12,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ServeltObtenerDetallesProd {
-    
     @WebServlet("/ObtenerProductosDetalle")
-    public class ObtenerProdutosDetalle extends HttpServlet{
+    public class ServeltObtenerDetallesProd extends HttpServlet{
     
-        protected void toGet(HttpServletRequest request, HttpServletResponse response)
+        //Para que que le metodo pueda procesar de manera correcta el doGet
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException{
         
             //Transformamos los elementos a un json
@@ -60,5 +60,4 @@ public class ServeltObtenerDetallesProd {
             }
         }
     }
-    
-}
+
