@@ -68,3 +68,30 @@
   border-radius: 20%;
   display: none;
 }
+
+/* estilos del carrito */
+.filtrados__cart {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.cart__text{
+  text-decoration: none;
+}
+
+.cart__button {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--color-secundario);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cart__icon {
+  width: 22px;
+}

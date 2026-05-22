@@ -14,11 +14,10 @@ public class LoginDAO {
     
         //Indicamos ell comando o la peticion que queremos que mysql ejecute
         //Esta peticion nos retorna un resultado
-      String sql = "SELECT r.*, u.Permisos_roles_id u." +
-        "FROM Registro r " +
-        "JOIN Usuarios u ON r.Registro_id = u.Registro_id " +
-        "WHERE (r.Registro_Email = ? OR r.Registro_Usuario = ?) AND r.Registro_Contraseña = ?";   
-      
+      String sql = "SELECT r.*, u.Usuarios_id, u.Permisos_roles_id, u.Usuario_imagen " +
+                    "FROM Registro r " + 
+                    "JOIN Usuarios u ON r.Registro_id = u.Registro_id " + 
+                    "WHERE (r.Registro_Usuario = ? OR r.Registro_Email = ?) AND r.Registro_Contraseña = ?;";
       
       try(
           //Establecemos conexion con la base de datos
@@ -39,6 +38,7 @@ public class LoginDAO {
                   //En caso de encontrar coincidencias en la base de datos
                   //Se creo un objeto con los datos del usuario
                   IniciarSesion ver = new IniciarSesion();
+                  ver.setId(result.getInt("Usuarios_id"));
                   ver.setEmail(result.getString("Registro_Email"));
                   ver.setUsuario(result.getString("Registro_Usuario"));
                   ver.setRol(result.getString("Permisos_roles_id"));

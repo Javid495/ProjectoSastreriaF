@@ -61,7 +61,42 @@ export async function CargarDetallesProd(id) {
         
                 contenedorDots.appendChild(dot);
             });
+            
         }
+
+
+        if (btnAgregarCarrito && producto){
+                
+                //asignamos el evento click al botont añadir al carrito
+                btnAgregarCarrito.addEventListener("click", (e) => {
+            
+                    let carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
+        
+                    const productoActual = carrito.find(item => item.id === producto.id);
+        
+                    if(productoActual){
+                        productoActual.cantidad +=1;
+                    }
+        
+                    
+                    else{
+        
+                        //si el producto es nuevo, guardamos los productos especificos de esa prenda
+                        carrito.push({
+                            id: producto.id,
+                            nombre: producto.nombre,
+                            precio: producto.valor,
+                            imagen: producto.imagen || (producto.listaImagenes && producto.listaImagenes[0]),
+                            talla: producto.tall,
+                            cantidad: 1
+                        });
+                    }
+        
+                    localStorage.setItem("carritoSastreria", JSON.stringify(carrito))
+        
+                    alert(`El producto ${producto.nombre} se agrego correctamente al carrito`);
+                })
+            }
         
     }
 
@@ -69,36 +104,4 @@ export async function CargarDetallesProd(id) {
         console.error("Error al cargar detalles: ", error)
     }
 
-    if (btnAgregarCarrito && producto){
-        
-        //asignamos el evento click al botont añadir al carrito
-        btnAgregarCarrito.addEventListener("click", (e) => {
-    
-            let carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
-
-            const productoActual = carrito.find(item => item.id === producto.id);
-
-            if(productoActual){
-                productoActual.cantidad +=1;
-            }
-
-            
-            else{
-
-                //si el producto es nuevo, guardamos los productos especificos de esa prenda
-                carrito.push({
-                    id: producto.id,
-                    nombre: producto.nombre,
-                    precio: producto.valor,
-                    imagen: producto.imagen || (producto.listaImagenes && producto.listaImagenes[0]),
-                    talla: producto.tall,
-                    cantidad: 1
-                });
-            }
-
-            localStorage.setItem("carritoSastreria", JSON.stringify(carrito))
-
-            alert(`El producto ${producto.nombre} se agrego correctamente al carrito`);
-        })
-    }
 } 

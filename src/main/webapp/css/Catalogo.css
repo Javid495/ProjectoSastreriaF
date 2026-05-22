@@ -96,27 +96,8 @@ body{
   cursor: pointer;
 }
 
-.filtrados__cart {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
 
-.cart__button {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  border: none;
-  background-color: var(--color-secundario);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
 
-.cart__icon {
-  width: 22px;
-}
 
 /* Apartado de categorias de prendas */
 .popular {

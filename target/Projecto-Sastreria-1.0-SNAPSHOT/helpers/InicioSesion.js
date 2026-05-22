@@ -27,6 +27,8 @@ formulario.addEventListener("submit", async (e) => {
     
     // Esperamos la respuesta de java
     const validacion = await respuesta.text();
+    console.log(validacion);
+    
 
     // Segun la respuesta que reciba valida si hay inicio de sesion
     if (validacion.trim() === 'Hecho'){

@@ -20,7 +20,7 @@ import dao.LoginDAO;
                 throws ServletException, IOException{
             
             try{
-            String UsuarioOrEmail = Solicitud.getParameter("txtUser");
+                String UsuarioOrEmail = Solicitud.getParameter("txtUser");
                 String Contrasena = Solicitud.getParameter("txtContra");
                 
                 System.out.println("Se obtuvieron los datos");

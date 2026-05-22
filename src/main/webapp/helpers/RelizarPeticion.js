@@ -11,9 +11,6 @@ export async function aparecerCont(ruta){
     const inicioSesion = document.querySelector(".header__login");
     const images = document.querySelectorAll(".icon__image");
 
-    console.log(inicioSesion);
-    
-
     // Verificar rutas de navegacion 
     links.forEach(link => {
         const hrefOriginal = link.getAttribute("href");
@@ -34,13 +31,19 @@ export async function aparecerCont(ruta){
 
     // Para verificar los logos
     const logo = document.querySelector("#logo");
+    const logoRuta = logo.getAttribute("src");
 
-        const logoRuta = logo.getAttribute("src");
+    const logoCarrito = document.querySelector(".cart__icon")
+    const rutaLogoCart = logoCarrito.getAttribute("src")
 
-        // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
-        if (logoRuta && logoRuta.startsWith("images/")) {
-            logo.setAttribute("src", ruta + logoRuta);
-        }
+    // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
+    if (logoRuta && logoRuta.startsWith("images/")) {
+        logo.setAttribute("src", ruta + logoRuta);
+    }
+
+    if (rutaLogoCart && rutaLogoCart.startsWith("images/")) {
+        logoCarrito.setAttribute("src", ruta + rutaLogoCart);
+    }
 
 }
 
