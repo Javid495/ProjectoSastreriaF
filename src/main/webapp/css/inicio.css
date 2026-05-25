@@ -62,14 +62,14 @@ body{
 }
 
 .button-left{
-  left: 13em;
-  top: 31em;
+  left: 9em;
+  top: 25em;
   background-color: var(--color-BotonesFlecha);
 }
 
 .button-rigth{
-  right: 13em;
-  top: 31em;
+  right: 9em;
+  top: 25em;
   background-color: var(--color-BotonesFlecha);
 }
 

@@ -6,6 +6,7 @@ export async function aparecerCont(ruta){
     
     await llamarComponente(".header", `${ruta}componentesWeb/header.html`);
     await llamarComponente(".footer", `${ruta}componentesWeb/footer.html`);
+    await llamarComponente("#btnCompra", `${ruta}componentesWeb/BotonCarrito.html`);
 
     const links = document.querySelectorAll(".header__item");
     const inicioSesion = document.querySelector(".header__login");

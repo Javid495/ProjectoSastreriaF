@@ -1,16 +1,14 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
+import { llamarComponente } from "../helpers/CompHtml.js";
 
 
 // Botones de accion
 const btnRealizarC = document.querySelector("#RealizarCompra");
-const btnCancelar = document.querySelector("#cancelarCompra");
-const btnConfirmarC = document.querySelector("#ConfirmarCompra");
-const btnPagoConfirmado = document.querySelector("#pagoConfirmado")
 
 // Manipulacion de ventanas
-const confirmarComprar = document.querySelector(".compra__carrito");
+const confirmarComprar = document.querySelector("#compraCarrito");
 const sombreado = document.querySelector(".sombreado");
-const pagoConfirm = document.querySelector(".confirmacion__pago");
+const pagoConfirm = document.querySelector("#confirmacionPago");
 
 const ContPrecio = document.querySelector(".precio__titulo");
 
@@ -103,40 +101,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-//asignamos eventos a los botones del apartado
-btnRealizarC.addEventListener("click", (e) => {
-    
-    e.preventDefault();
-
+// Asignamos eventos a los botones del apartado
+btnRealizarC.addEventListener("click", async (e) => {
     sombreado.classList.add("aparecerSombreado");
+    await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
+});
 
-    confirmarComprar.classList.add("mostarConfirmacion")
+// CORREGIDO: Delegación de eventos para Confirmar/Cancelar Compra
+confirmarComprar.addEventListener("click", async (e) => {
     
+    // Si presiona Cancelar
+    if (e.target.closest("#cancelarCompra")) {
+        sombreado.classList.remove("aparecerSombreado");
+        confirmarComprar.innerHTML = "";
+    }
+
+
+    if (e.target.closest("#ConfirmarCompra")) {
+        confirmarComprar.innerHTML = "";
+        await llamarComponente("#confirmacionPago", "../componentesWeb/VentanaComprobacion.html");
+    }
+});
+
+//Delegación de eventos para la ventana de Pago Confirmado
+pagoConfirm.addEventListener("click", (e) => {
+    
+ 
+    if (e.target.closest("#pagoConfirmado")) {
+        sombreado.classList.remove("aparecerSombreado");
+        pagoConfirm.innerHTML = "";
+    }
 })
 
-btnCancelar.addEventListener("click", (e) => {
 
-    e.preventDefault();
 
-    sombreado.classList.remove("aparecerSombreado");
-
-    confirmarComprar.classList.remove("mostarConfirmacion");
-})
-
-btnConfirmarC.addEventListener("click", (e) =>{
-
-    e.preventDefault();
-
-    confirmarComprar.classList.remove("mostarConfirmacion");
-
-    pagoConfirm.classList.add("mostarConfirmacion");
-})
-
-btnPagoConfirmado.addEventListener("click", (e) =>{
-
-    e.preventDefault();
-
-    sombreado.classList.remove("aparecerSombreado");
-
-    pagoConfirm.classList.remove("mostarConfirmacion");
-})
