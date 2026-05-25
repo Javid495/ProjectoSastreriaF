@@ -30,21 +30,44 @@ export async function aparecerCont(ruta){
         }
     });
 
-    // Para verificar los logos
+    
+    //Verificar Ruta del carrito
+    // const Carrito = document.querySelector(".filtrados__cart");
+    // const linkCarrito = Carrito.getAttribute("href");
+
+    // if (!linkCarrito.startsWith("/") && !linkCarrito.startsWith("http")) {
+    //     Carrito.href = `${ruta}${linkCarrito}`;
+    // }
+
+    // 1. Capturamos los elementos de la interfaz
     const logo = document.querySelector("#logo");
+    const logoCarrito = document.querySelector(".cart__icon");
+
+    // 2. Verificación del Logo Principal
+    // Solo si el logo EXISTE en la página actual, ejecutamos su lógica
+    if (logo) { 
     const logoRuta = logo.getAttribute("src");
-
-    const logoCarrito = document.querySelector(".cart__icon")
-    const rutaLogoCart = logoCarrito.getAttribute("src")
-
-    // Si no es una ruta absoluta, le ponemos el prefijo (./ o ../)
+    
     if (logoRuta && logoRuta.startsWith("images/")) {
         logo.setAttribute("src", ruta + logoRuta);
     }
+    } 
+    else {    
+        console.log("El elemento #logo no existe en esta vista, se ignora.");
+    }
 
+    // 3. Verificación del Logo del Carrito
+    // Descomentamos y protegemos igual: si no existe, JavaScript simplemente pasa de largo
+    if (logoCarrito) {  
+    const rutaLogoCart = logoCarrito.getAttribute("src");
+    
     if (rutaLogoCart && rutaLogoCart.startsWith("images/")) {
         logoCarrito.setAttribute("src", ruta + rutaLogoCart);
+    }} 
+    else {
+        console.log("El elemento .cart__icon no existe en esta vista, se ignora.");
     }
+
 
 }
 

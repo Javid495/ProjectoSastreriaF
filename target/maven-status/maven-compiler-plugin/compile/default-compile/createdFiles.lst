@@ -1,11 +1,15 @@
+dao\PedidosClienteDAO.class
 dao\ClaseConexion.class
 controlador\ServeltRegistro.class
 dao\LoginDAO.class
+controlador\ServeltCerrarSesion.class
 modelo\IniciarSesion.class
 controlador\ServeltObtenerDetallesProd.class
 controlador\ServeltPrendas.class
 controlador\ServeltInicioSesion.class
+controlador\ServeltObtenerPedidosUser.class
 dao\RegistroDAO.class
+modelo\Pedidos.class
 controlador\ServeltVerificarUser.class
 dao\PrendasDAO.class
 modelo\Registro.class

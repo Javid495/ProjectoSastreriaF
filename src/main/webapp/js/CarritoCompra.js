@@ -1,5 +1,6 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
 import { llamarComponente } from "../helpers/CompHtml.js";
+import { comprobarSesion } from "../helpers/ComprobarSesion.js";
 
 
 // Botones de accion
@@ -96,7 +97,9 @@ function eliminarProducto(id){
 
 document.addEventListener("DOMContentLoaded", async () => {
     await aparecerCont("../");
+    comprobarSesion("../");
     await rederizarCarrito();
+
 })
 
 

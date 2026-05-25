@@ -42,6 +42,7 @@ public class LoginDAO {
                   ver.setEmail(result.getString("Registro_Email"));
                   ver.setUsuario(result.getString("Registro_Usuario"));
                   ver.setRol(result.getString("Permisos_roles_id"));
+                  ver.setImagen(result.getString("Usuario_imagen"));
                   
                   //añadir la manipulacion de los elementos cuando el usuario este activo
                   return ver;

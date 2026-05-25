@@ -1,5 +1,6 @@
 import { crearCards } from "../helpers/Cards.js";
-import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
+import { aparecerCont } from "../helpers/RelizarPeticion.js";
+import { comprobarSesion } from "../helpers/ComprobarSesion.js"; 
 
 const contenedor = document.querySelector(".popular__cards");
 
@@ -21,7 +22,6 @@ async function cargarCatalogo(){
         prendas.forEach(prenda => {
             //Llamamos la funcion crearCards y vamos creando nuestras cards
             const nuevaCard = crearCards(prenda);
-            console.log(nuevaCard);
             
             contenedor.appendChild(nuevaCard);
         });
@@ -36,11 +36,12 @@ async function cargarCatalogo(){
     }
 }
 
-document.addEventListener("DOMContentLoaded", (e) =>{
+document.addEventListener("DOMContentLoaded", async (e) =>{
 
     e.preventDefault();
     
-    aparecerCont("../");
+    await aparecerCont("../");
+    comprobarSesion("../");
     cargarCatalogo();
 
 });

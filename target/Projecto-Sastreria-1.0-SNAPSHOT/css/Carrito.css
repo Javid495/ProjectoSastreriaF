@@ -125,24 +125,78 @@
   color: black;
 }
 
+
 /* Estilos de confirmacion de compra */
 
-.compra__carrito{
-  position: absolute;
+/* 1. EL SOMBREADO: Debe cubrir toda la pantalla de la Sastrería */
+.sombreado.aparecerSombreado {
+  background-color: rgba(0,0,0, 0.40);
+  position: fixed; /* Cambiado a fixed para bloquear todo el viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  transition: all 0.3s;
+}
+
+/* 2. FORMULARIO DE CONFIRMACIÓN DE PEDIDO */
+.compra__carrito {
+  /* La magia del centrado absoluto en pantalla */
+  position: fixed; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1100; /* Por encima del sombreado */
+  
+  /* TUS ESTILOS ORIGINALES INTACTOS */
   background-color: var(--color-FondoVentEmergetes);
   padding: 30px;
   border-radius: 20px;
-  width: 55%;
-  z-index: 2;
+  width: 55%; 
+  min-width: 350px; /* Previene que colapse en monitores muy pequeños */
   display: flex;
   flex-direction: column;
-  justify-self: center;
-  align-self: center;
   gap: 40px;
-  font-weight: solid;
-  display: none;
+  
+  /* Eliminados justify-self y align-self porque transform ya lo centra */
 }
 
+/* 3. TARJETA DE CONFIRMACIÓN DE ÉXITO */
+.confirmacion__pago {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1200;
+  
+  /* TUS ESTILOS ORIGINALES INTACTOS */
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Asegura que la imagen y el h2 se centren bien */
+  padding: 40px;
+  gap: 20px;
+  border-radius: 10px;
+  width: 40%;
+  min-width: 300px;
+}
+
+/* 4. EL BOTÓN QUE SOBRESALE ABAJO */
+.btn--confirmar {
+  position: absolute;
+  /* Cambiamos el porcentaje por píxeles para que la altura de la tarjeta no deforme su posición */
+  bottom: -20px; 
+  left: 50%;
+  transform: translateX(-50%); /* Lo centra horizontalmente respecto a su tarjeta */
+  width: 60%;
+  padding: 10px;
+  background-color: #FD9B9B;
+  border-style: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
 
 
 .carrito__formulario{
@@ -164,15 +218,6 @@
   border-style: var(--estilo-borde);
 }
 
-.aparecerSombreado{
-  background-color: rgba(0,0,0, 0.40);
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  transition: all 1s;
-}
 
 .carrito__subtotal{
   font-size: 30px;
@@ -217,37 +262,10 @@
   border-style: var(--estilo-borde)
 }
 
-/* Tarjeta de confirmacion de pago */
-
-.confirmacion__pago{
-  background-color: #ffffff;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  z-index: 2;
-  align-self: center;
-  justify-items: center;
-  justify-self: center;
-  padding: 40px;
-  gap: 10px;
-  border-radius: 10px;
-  display: none;
-}
 
 .img__confirmacion{
   width: 30%;
   height: 30%;
-  margin-left: 35%;
-}
-
-.btn--confirmar{
-  position: absolute;
-  bottom: -6%;
-  left: 30%;
-  width: 40%;
-  padding: 10px;
-  background-color: #FD9B9B;
-  border-style: none;
 }
 
 .mostarConfirmacion{

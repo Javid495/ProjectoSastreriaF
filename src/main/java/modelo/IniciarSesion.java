@@ -9,6 +9,7 @@ public class IniciarSesion {
     private String usuario;
     private String contrasena;
     private String rolUsuario;
+    private String imagen;
     
     
     public IniciarSesion() {}
@@ -29,4 +30,12 @@ public class IniciarSesion {
 
     public String getRol() {return rolUsuario;}
     public void setRol(String rolUsuario) {this.rolUsuario=rolUsuario; }   
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 }

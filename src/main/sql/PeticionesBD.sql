@@ -41,3 +41,25 @@ SELECT p.*, c.Categoria_nombre
              
 -- Consulta para buscar todas las imagenes
 select Imagenes_link from imagenes where Prenda_id = 1;
+
+-- Consultas de pedidos de usuario
+-- Primero solicitamos las columnas que vamos a imprimir
+SELECT p.Pedido_id, p.Pedido_FechaInicio, p.Pedido_TCompra, p.Pedido_Estado 
+			-- Establecemos el punto de partida en la tabla de pedidos
+            FROM Pedidos p 
+            -- Verifica que los pedidos hayan pasado por la tabla confirmarPago
+            JOIN ConfirmarPago cp ON p.ConfirmarPago_id = cp.ConfirmarPago_id
+            -- la vifurcacion de los pedidos si es del catalogo en caso de que alguna de las
+            -- vifurcaciones esten vacias establece un valor nulo
+            LEFT JOIN DetallesCarrito dc ON cp.DetallesCarrito_id = dc.DetallesCarrito_id 
+            LEFT JOIN Carrito c ON dc.Carrito_id = c.Carrito_id 
+            
+            -- O pedidos a medida
+            LEFT JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id
+            LEFT JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id 
+            
+            -- buscamos al usuario que tiene los pedidos
+            WHERE c.Usuarios_id = 8 OR dpm.Usuario_id = 8
+            
+            -- organizamos los pedidos segun la fecha de manera desendente
+            ORDER BY p.Pedido_FechaInicio DESC;

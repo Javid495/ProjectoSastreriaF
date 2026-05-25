@@ -1,5 +1,5 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
-import { comprobarSesion } from "../helpers/ComprobarSesion.js"
+import { comprobarSesion } from "../helpers/ComprobarSesion.js";
 
 document.addEventListener("DOMContentLoaded", async (e) =>{
 
@@ -7,6 +7,6 @@ document.addEventListener("DOMContentLoaded", async (e) =>{
 
     await aparecerCont("./");
 
-    comprobarSesion();
+    comprobarSesion("./");
 
 })

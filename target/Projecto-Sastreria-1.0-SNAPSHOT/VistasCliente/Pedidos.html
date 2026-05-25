@@ -15,6 +15,8 @@
 
     <!-- main del contenido principal -->
     <main class="cuerpo__pedidos">
+
+
         <div class="cuerpo__encabezado">
             <h1 class="cuerpo__tiulo">Pedidos Realizados</h1>
     
@@ -34,38 +36,20 @@
             </div>
         </div>
 
-        <div class="contenedor__pedidos">
-            <article class="card">
-                <h3 class="card__title">Camisa Talla X</h3>
-                <p class="card__medidas"> Medidas: XX XX XX</p>
-                <p class="card__estado">Estado: En progreso</p>
-                <p class="card__tipocompra">Tipo de Compra: Catalogo</p>
-                <button class="card__button">Ver detalles</button>
-            </article>
+        <div class="contenedor__pedidos" id="contenedorPedidos">
             
-            <article class="card">
-                <h3 class="card__title">Camisa Talla X</h3>
-                <p class="card__medidas"> Medidas: XX XX XX</p>
-                <p class="card__estado">Estado: En progreso</p>
-                <p class="card__tipocompra">Tipo de Compra: Catalogo</p>
-                <button class="card__button">Ver detalles</button>
-            </article> 
 
-            <article class="card">
-                <h3 class="card__title">Camisa Talla X</h3>
-                <p class="card__medidas"> Medidas: XX XX XX</p>
-                <p class="card__estado">Estado: En progreso</p>
-                <p class="card__tipocompra">Tipo de Compra: Catalogo</p>
-                <button class="card__button">Ver detalles</button>
-            </article> 
+        </div>
 
-            <article class="card">
-                <h3 class="card__title">Camisa Talla X</h3>
-                <p class="card__medidas"> Medidas: XX XX XX</p>
-                <p class="card__estado">Estado: En progreso</p>
-                <p class="card__tipocompra">Tipo de Compra: Catalogo</p>
-                <button class="card__button">Ver detalles</button>
-            </article> 
+        <div class="btn-RealizarPedido">        
+            <button class="cart__button">
+                <span class="cart__text" >Realizar Pedido</span>
+                <img src="../images/Pedidos/Vector (1).png" alt="Añadir" class="cart__icon" >
+            </button>
+        </div>
+
+        <div id="MostraPedido">
+            
         </div>
 
     </main>
@@ -74,6 +58,6 @@
     <footer class="footer">
     </footer>
 
-    <script src="../js/LlamarComp/RelizarPeticion.js" type="module"></script>
+    <script src="../js/Pedido.js" type="module"></script>
 </body>
 </html>

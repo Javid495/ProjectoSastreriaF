@@ -35,7 +35,6 @@ export function crearCards(datos){
             
         }
         imagenCat.alt = datos.nombre;
-        console.log(datos.imagen);
     }
     else{
         imagenCat.src = "../images/Rectangle 11.png" ;

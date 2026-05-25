@@ -1,4 +1,5 @@
 @import url(style.css);
+@import url(Componentes/FormularioPedidos.css);
 
 
 /* Estilos Encabezado de pagina */
@@ -61,7 +62,39 @@
   font-size: 15px;
 }
 
-
 .card__title {
   font-size: 25px;
+}
+
+/* Boton Realizar pedido */
+.btn-RealizarPedido{
+  width: 15%;
+  background-color: var(--color-FondoInputs);
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 8px 14px;
+  justify-self: end;
+  margin-bottom: 2em;
+  margin-right: 2em;
+}
+
+.cart__button {
+  width: 100%;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-RealizarPedido:hover{
+  filter: brightness(0.95);
+}
+
+.cart__text{
+  font-weight: bold;
+  color: var(--color-Tipografia);
+}
+
+.cart__icon {
+  width: 22px;
+  margin-left: 10px;
 }

@@ -1,5 +1,6 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
 import { CargarDetallesProd } from "../helpers/CargarDetallesProd.js"
+import { comprobarSesion } from "../helpers/ComprobarSesion.js";
 
 const btnComentarios = document.querySelector(".producto--comentarios");
 const btnCerrar = document.querySelector(".button__closed");
@@ -11,6 +12,7 @@ const sombreado = document.querySelector(".sombreado");
 document.addEventListener("DOMContentLoaded", async (e) =>{
 
     await aparecerCont("../");
+    comprobarSesion("../");
 
     //Guardamos la url de la busqueda
     const url = new URLSearchParams(window.location.search);
