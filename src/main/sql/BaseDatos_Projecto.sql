@@ -129,7 +129,7 @@ create table DetallesCarrito(
 create table ConfirmarPago(
 	ConfirmarPago_id int auto_increment primary key not null,
     CotizacionPedido_id int,
-    DetallesCarrito_id int not null,
+    DetallesCarrito_id int,
     ConfirmarPago_TipoPedido varchar(50) not null,
     ConfirmarPago_MetodoP varchar(50) not null,
     ConfirmarPago_Fecha date not null,
