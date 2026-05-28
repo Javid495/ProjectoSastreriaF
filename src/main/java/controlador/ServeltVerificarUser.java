@@ -32,10 +32,11 @@ public class ServeltVerificarUser extends HttpServlet {
             int idUsuario = usuarioLog.getId();
             String nombreUsuario = usuarioLog.getUsuario();
             String userImagen = usuarioLog.getImagen();
+            int rolUsuario = usuarioLog.getRolUsuario();
             
             //Se construye un respuesta en el json
             
-            out.print("{\"logeado\": true, \"id\": " + idUsuario + ", \"nombre\": \"" + nombreUsuario + "\", \"imagen\": \"" + userImagen + "\"}");
+            out.print("{\"logeado\": true, \"id\": " + idUsuario + ", \"nombre\": \"" + nombreUsuario + "\", \"imagen\": \"" + userImagen + "\", \"rol\": \"" + rolUsuario + "\"}");
         }
         
         else{
