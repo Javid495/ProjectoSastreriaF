@@ -49,7 +49,7 @@ export function crearCards(datos){
     article.dataset.talla = datos.talla;
     article.dataset.visitas = datos.visitas;
     article.dataset.estado = datos.estado;
-    article.dataset.id = datos.id
+    article.dataset.id = datos.id;
 
     article.appendChild(imagenCat);
     article.appendChild(nombreP);

@@ -13,6 +13,7 @@
     align-items: center;
     gap: 50px;
     max-width: 1000px;
+    justify-content: space-around;
 }
 
 .img-placeholder {
@@ -42,6 +43,7 @@
 .acciones-prenda {
     display: flex;
     flex-direction: column;
+    justify-items: flex-end;
     gap: 20px;
 }
 
