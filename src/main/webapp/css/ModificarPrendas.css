@@ -12,11 +12,17 @@
             min-height: 100vh;
         }
 
+        .admin-container .main-content{
+            justify-content: center;
+        }
+
         /* --- CONTENIDO DE MODIFICACIÓN --- */
         .main-content {
             flex: 1;
+            width: 100%;
             padding: 40px 60px;
             max-width: 1100px;
+            margin: 0 auto;
         }
 
         /* Títulos de los bloques usando Courgette */
@@ -39,10 +45,44 @@
             position: relative;
         }
 
-        .grid-imagenes {
+        /* Contenedor de la miniatura */
+        .img-miniatura-admin {
+            position: relative; /* Clave para que la X se acomode adentro */
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color, #ccc);
+        }
+
+        .img-miniatura-admin img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Evita que la foto se deforme */
+        }
+
+        /* El botón de eliminar (X) */
+        .btn-eliminar-foto {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 0, 0, 0.85); /* Rojo transparente */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Lo hace un círculo perfecto */
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .btn-eliminar-foto:hover {
+            background-color: rgb(200, 0, 0); /* Rojo sólido al pasar el mouse */
         }
 
         .img-miniatura {

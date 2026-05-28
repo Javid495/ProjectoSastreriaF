@@ -80,6 +80,7 @@
                     prenda.setNombre(rs.getString("Prenda_nombre"));
                     prenda.setDescripcion(rs.getString("Prenda_descripcion"));
                     prenda.setValor(rs.getDouble("Prenda_valor"));
+                    prenda.setCategoria(rs.getString("Categoria_nombre"));
                     prenda.setTalla(rs.getString("Prenda_talla"));
                     prenda.setEstado(rs.getString("Prenda_estado"));
                     
