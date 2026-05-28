@@ -12,10 +12,10 @@ values ("1","Camisa manga larga","formal","30000","S","Camisa manga larga ideal 
 ("3","Pijama completa","Hogareña","30000","M","Pijama para poder dormir aun mas commodamente y tener un sueño revitalizante","10","activa");
 
 -- Inserciones de categorias
-insert into Prendas(Categoria_id, Prenda_nombre, Prenda_tipo, Prenda_valor, Prenda_talla, Prenda_descripcion, Prenda_stock, Prenda_estado)
-values ("1","Camisa manga larga","formal","30000","S","Camisa manga larga ideal para cual ocacion otorgando una presentacion mas formal","10","activa"),
-("2","Pantalon jean","Casual","30000","16","Pantalon jean ideal para salidas casuales","10","activa"),
-("3","Pijama completa","Hogareña","30000","M","Pijama para poder dormir aun mas commodamente y tener un sueño revitalizante","10","activa");
+insert into Categoria(Categoria_nombre, Categoria_Descripcion)
+values ("Camisas","Camisas excelentes para salidas ocasionales"),
+("Pantalones","Patalones que se ajustan segun la necesidad del cliente"),
+("Pijamas","Pijamas comodas excelentes para dormir");
 
 -- Inserciones de prendas populares
 insert into Populares(Prenda_id, Populares_visitas)

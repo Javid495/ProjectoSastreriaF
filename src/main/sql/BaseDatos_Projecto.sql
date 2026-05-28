@@ -14,6 +14,7 @@ create table Registro(
     Registro_Telefono char(10) not null
 );
 
+select * from Registro;
 -- Tabla de permisos de usuarios : Administar y asignar los permisos segun el tipo de uusario
 create table Permisos_Roles(
 	Permisos_Roles_id int auto_increment primary key not null,
@@ -22,6 +23,8 @@ create table Permisos_Roles(
     Permisos_asignados text
 );
 
+select * from Permisos_Roles;
+
 -- Tablas general de usuarios registrados : Alamacena la informacion de todos los usuario registrado: Administrador, cliente 
 create table Usuarios (
 	Usuarios_id int primary key auto_increment,
@@ -29,12 +32,14 @@ create table Usuarios (
     Permisos_roles_id int,
     
     -- Datos Opcionales que los clientes podran completar una vez ingresen a su perfil
-    Usuario_imagen varchar(50) null,
+    Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png",
     Usuario_Medidas varchar(50) null,
     foreign key (Registro_id) references Registro(Registro_id),
     foreign key (Permisos_Roles_id) references Permisos_Roles(Permisos_Roles_id)
 );
 
+alter table Usuarios modify column Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png";
+drop table Usuarios;
 
 -- Tabla Prendas: almacena la informacion registrada de las prendas del catalogo
 create table Prendas (
@@ -61,14 +66,14 @@ create table Categoria(
 -- Tabla Populares : Alamcena las prendas mas vistas por los usuarios
 create table Populares (
 	Populares_id int primary key auto_increment,
-    Usuarios_id int not null,
     Prenda_id int not null,
     
     -- populares_visitas : LLevara la cuenta de cuantas personas han visto un producto
     Populares_visitas char(10) not null,
-    foreign key(Usuarios_id) references Usuarios(Usuarios_id),
     foreign key(Prenda_id) references Prendas(Prenda_id)
 );
+
+drop table Populares;
 
 -- Tabla imagenes : la tabla de imagenes almacena las rutas de cada imagen 
 create table imagenes (
@@ -91,6 +96,7 @@ create table Resenas(
     foreign key (Prenda_id) references Prendas(Prenda_id)
 );
 
+drop table Resenas;
 
 -- Tabla Historial_Recientes : La tabla historial tendra la informacion con respecto a las comprs de los usuarios
 create table Historial_Recientes(
@@ -103,6 +109,8 @@ create table Historial_Recientes(
     foreign key(Id_Usuarios) references Usuarios(Usuarios_id),
 	foreign key(Id_Prenda) references Prendas(Prenda_id)
 );
+
+drop table Historial_Recientes;
 
 -- La tabla carrito sera un "guardado" del carrito de compras del usuario
 create table Carrito(

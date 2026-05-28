@@ -8,7 +8,7 @@ public class IniciarSesion {
     private String email;
     private String usuario;
     private String contrasena;
-    private String rolUsuario;
+    private int rolUsuario;
     private String imagen;
     
     
@@ -28,8 +28,15 @@ public class IniciarSesion {
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email=email; }
 
-    public String getRol() {return rolUsuario;}
-    public void setRol(String rolUsuario) {this.rolUsuario=rolUsuario; }   
+    public int getRolUsuario() {
+        return rolUsuario;
+    }
+
+    public void setRolUsuario(int rolUsuario) {
+        this.rolUsuario = rolUsuario;
+    }
+
+      
 
     public String getImagen() {
         return imagen;
