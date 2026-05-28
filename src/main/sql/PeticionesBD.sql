@@ -1,6 +1,6 @@
 use ModaS;
 
--- para 
+-- para datos de usuario
 SELECT 
     r.Registro_Email AS Email, 
     r.Registro_Usuario AS Nombre, 
@@ -15,7 +15,7 @@ INNER JOIN Permisos_Roles p ON u.Permisos_roles_id = p.Permisos_Roles_id;
 SELECT r.*, u.Permisos_roles_id, u.Usuario_imagen  
 FROM Registro r 
 JOIN Usuarios u ON r.Registro_id = u.Registro_id
-WHERE (r.Registro_Usuario = '' OR r.Registro_Email = 'javid@gmail.com') AND r.Registro_Contraseña = 'hola2027';
+WHERE (r.Registro_Usuario = 'JavidAdmin' OR r.Registro_Email = '') AND r.Registro_Contraseña = 'Admin123';
 
 
 -- hacemos la siguiente peticion: solicitamos todos los datos de la tabla prendas, de categoria traemos el nombre

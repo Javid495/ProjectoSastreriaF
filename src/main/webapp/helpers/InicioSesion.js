@@ -33,7 +33,7 @@ formulario.addEventListener("submit", async (e) => {
     // Segun la respuesta que reciba valida si hay inicio de sesion
     if (validacion.trim() === 'Hecho'){
         alert("Ingreso  con exito");
-        window.location.href = 'index.html';
+        window.location.href = validacion.;
     }
 
     else{

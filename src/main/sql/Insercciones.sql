@@ -1,5 +1,13 @@
 use ModaS;
 
+-- Cracion de usuario Admin
+insert into Registro(Registro_Usuario, Registro_Contraseña, Registro_Email, Registro_Telefono)
+values ("JavidAdmin", "Admin123", "juandavidcaceres@gmail.com", "3155746387");
+
+-- Asignar permisos de admin
+insert into Usuarios (Registro_id, Permisos_roles_id, Usuario_imagen, Usuario_Medidas)
+values ("9","2","","");
+
 -- Inserciones de roles
 insert into Permisos_Roles(Permisos_Rol, Permisos_Descripcion, Permisos_asignados)
 values("Cliente","Permisos para acceder tanto a las funciones de perfil y carrito de compra","cliente"),
@@ -12,10 +20,10 @@ values ("1","Camisa manga larga","formal","30000","S","Camisa manga larga ideal 
 ("3","Pijama completa","Hogareña","30000","M","Pijama para poder dormir aun mas commodamente y tener un sueño revitalizante","10","activa");
 
 -- Inserciones de categorias
-insert into Prendas(Categoria_id, Prenda_nombre, Prenda_tipo, Prenda_valor, Prenda_talla, Prenda_descripcion, Prenda_stock, Prenda_estado)
-values ("1","Camisa manga larga","formal","30000","S","Camisa manga larga ideal para cual ocacion otorgando una presentacion mas formal","10","activa"),
-("2","Pantalon jean","Casual","30000","16","Pantalon jean ideal para salidas casuales","10","activa"),
-("3","Pijama completa","Hogareña","30000","M","Pijama para poder dormir aun mas commodamente y tener un sueño revitalizante","10","activa");
+insert into Categoria(Categoria_nombre, Categoria_Descripcion)
+values ("Camisas","Camisas excelentes para salidas ocasionales"),
+("Pantalones","Patalones que se ajustan segun la necesidad del cliente"),
+("Pijamas","Pijamas comodas excelentes para dormir");
 
 -- Inserciones de prendas populares
 insert into Populares(Prenda_id, Populares_visitas)
@@ -31,23 +39,23 @@ values ("1", "/images/Rectangle 38.png"),
 
 -- Flujo de pedidos a medida
 
--- 1. El usuario 8 registra sus solicitudes de diseño con sus especificaciones
+-- El usuario 8 registra sus solicitudes de diseño con sus especificaciones
 INSERT INTO DetallesPedidosMedida (Usuario_id, Detalles_medidas, Detalles_TPrenda, Detalles_Tela, Detalles_Descripcion, Detalles_Cotizacion, Detalles_ComentarioAdmin) VALUES 
 (8, 'Cuello: 40cm, Mangas: 65cm, Espalda: 48cm', 'Traje Formal', 'Paño', 'Traje de gala para grado académico', 450000.00, 'Aceptado, se inicia tras el pago'),
 (8, 'Cintura: 84cm, Largo: 102cm', 'Vestido Casual', 'Lino', 'Vestido veraniego suelto con botones', 180000.00, 'Diseño aprobado por el sastre');
 
--- 2. El administrador procesa y aprueba las cotizaciones
+-- El administrador procesa y aprueba las cotizaciones
 -- (Mapea a Detalles_PedidoMedida_id: 1 y 2)
 INSERT INTO CotizacionPedido (DetallesPedidosMedida_id, Solicitud_Pedido, Cotizacion_FechaLimite) VALUES 
 (1, 'Aprobada', '2026-05-18'),
 (2, 'Aprobada', '2026-05-24');
 
--- 3. El cliente confirma el pago de sus costuras a medida 
+-- El cliente confirma el pago de sus costuras a medida 
 INSERT INTO ConfirmarPago (CotizacionPedido_id, ConfirmarPago_TipoPedido, ConfirmarPago_MetodoP, ConfirmarPago_Fecha, ConfirmarTelefono) VALUES 
 (1, 'Medida', 'Nequi', '2026-05-14', '3151234567'),
 (2, 'Medida', 'Efectivo', '2026-05-24', '3151234567');
 
--- 4. ¡POR FIN! Insertamos los 2 Pedidos a Medida
+-- Insertamos los 2 Pedidos a Medida
 INSERT INTO Pedidos (ConfirmarPago_id, Pedido_FechaInicio, Pedido_Estado, Pedido_Direcccion, Pedido_TCompra) VALUES 
 (1, '2026-05-14', 'En Proceso', 'Calle 10 # 5-20 Centro', 'Medida'),
 (2, '2026-05-24', 'Pendiente', 'Carrera 15 # 24-32 Norte', 'Medida');
