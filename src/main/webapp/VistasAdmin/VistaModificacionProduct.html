@@ -20,9 +20,10 @@
                 <label class="seccion-label">Imagenes del Producto:</label>
                 <div class="imagenes-galeria-container">
                     
-                    <div id ="contenedorImgs"></div>
+                    <div class="imagenes__container" id ="contenedorImgs"></div>
 
                     <button type="button" class="btn-subir-imagenes">Agregar imagenes</button>
+                    <input type="file" id="inputArchivoOculto" accept="image/*" multiple style="display: none;">
                 </div>
                 
                 <div class="form-row-inline">
@@ -41,7 +42,9 @@
                     </div>
                     <div class="precio-group">
                         <label class="seccion-label">Categoria:</label>
-                        <input type="text" name="categoriaPrenda" class="input-precio" id="categoriaProducto" placeholder="Ejem: Pijama">
+                        <select name="categoriaPrenda" class="input-precio opciones" id="categoriaProducto">
+                            <option value="" disabled selected>Categorias...</option>
+                        </select>
                     </div>
                     <div class="precio-group">
                         <label class="seccion-label">Stock:</label>

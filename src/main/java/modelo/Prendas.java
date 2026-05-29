@@ -18,6 +18,7 @@ public class Prendas {
     private String estado;
     
     private String categoria;
+    private int categoriaId;
     private String imagen;
     private List<String> listaImagenes = new ArrayList();
     private int visitas;
@@ -117,6 +118,14 @@ public class Prendas {
 
     public void setListaImagenes(List<String> listaImagenes) {
         this.listaImagenes = listaImagenes;
+    }
+
+    public int getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(int categoriaId) {
+        this.categoriaId = categoriaId;
     }
     
 }
