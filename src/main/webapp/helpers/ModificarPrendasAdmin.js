@@ -21,9 +21,13 @@ export function ModificarPrendas(id) {
         const precio = parseFloat(Tprecio);
 
         // Validar que no hayan campos vacíos
-        if (!nombre || isNaN(precio) || !talla || !categoria || !stockInput || !descripcion) {
+        if (!nombre || !precio || !talla || !categoria || !stockInput || !descripcion) {
             alert("Durante la edición ninguno de los campos puede quedar vacío.");
             return; // Detiene el envío
+        }
+
+        if (NaNprecio){
+            alert("En el campo de valor no deben haber letras/ palabras")
         }
 
         const stock = parseInt(stockInput, 10);
@@ -75,27 +79,7 @@ export function ModificarPrendas(id) {
             }
         });
 
-        contenedoresFotos.forEach((contenedor, indice) => {
-    const imgElement = contenedor.querySelector("img");
-    
-    if (imgElement) {
-        console.log("Evaluando imagen en vista:", imgElement.getAttribute("src").substring(0, 30));
-        console.log("¿Tiene data-nuevo?:", imgElement.hasAttribute("data-nuevo"));
-        console.log("¿Tiene fileObject?:", imgElement.fileObject); // <--- SI SALE UNDEFINED AQUÍ ESTÁ EL ERROR
-
-        if (imgElement.hasAttribute("data-nuevo") && imgElement.fileObject) {
-            console.log("¡Éxito! Detectada como NUEVA imagen física. Adjuntando...");
-            formData.append("archivo_imagen_" + indice, imgElement.fileObject);
-        } else {
-            console.log("Detectada como imagen VIEJA del servidor.");
-            let rutaSrc = imgElement.getAttribute("src");
-            if (rutaSrc.startsWith("../")) {
-                rutaSrc = rutaSrc.substring(2); 
-            }
-            listaImagenesRestantes.push(rutaSrc);
-        }
-    }
-});
+        
 
         // Modificado a "imagenesViejas" para acoplarse con la lectura del Servlet
         formData.append("imagenesViejas", JSON.stringify(listaImagenesRestantes));
@@ -122,8 +106,5 @@ export function ModificarPrendas(id) {
             console.error("Error al enviar la actualización de la prenda:", error);
             alert("No se pudo conectar con el servidor para guardar las modificaciones.");
         }
-
-        
-
     });
 }

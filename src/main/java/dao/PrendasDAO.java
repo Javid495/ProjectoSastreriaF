@@ -179,7 +179,7 @@
         
         public void sincronizarImagenesPrenda(int idPrenda, java.util.List<String> listaRutas) {
             // 1. Sentencia para limpiar el historial de imágenes de esta prenda en específico
-            String sqlDelete = "DELETE FROM imagenes WHERE Prendas_id = ?;"; // Ajusta 'Prendas_id' al nombre exacto de tu FK
+            String sqlDelete = "DELETE FROM imagenes WHERE Prenda_id = ?;"; // Ajusta 'Prendas_id' al nombre exacto de tu FK
     
             // 2. Sentencia para insertar las imágenes que quedaron vigentes
             String sqlInsert = "INSERT INTO imagenes (Imagenes_link, Prenda_id) VALUES (?, ?);"; // Ajusta columnas si cambian

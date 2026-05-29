@@ -85,7 +85,7 @@ public class ServeltModificarProducto extends HttpServlet {
                         part.write(rutaDestinoServer + File.separator + nombreUnico);
                         
                         // Guarda la ruta relativa web limpia que solicita la base de datos
-                        rutasFinales.add("images/Prendas/" + nombreUnico);
+                        rutasFinales.add("/images/Prendas/" + nombreUnico);
                     }
                 }
                 
