@@ -4,7 +4,6 @@ create database ModaS;
 -- uso de la base de datos ModaS
 use ModaS;
 
-
 -- Creacion de tabla de registros usuarios : Solicitar la informacion de nuevos clientes 
 create table Registro(
 	Registro_id int auto_increment not null primary key,
@@ -14,7 +13,6 @@ create table Registro(
     Registro_Telefono char(10) not null
 );
 
-select * from Registro;
 -- Tabla de permisos de usuarios : Administar y asignar los permisos segun el tipo de uusario
 create table Permisos_Roles(
 	Permisos_Roles_id int auto_increment primary key not null,
@@ -22,8 +20,6 @@ create table Permisos_Roles(
     Permisos_Descripcion text null,
     Permisos_asignados text
 );
-
-select * from Permisos_Roles;
 
 -- Tablas general de usuarios registrados : Alamacena la informacion de todos los usuario registrado: Administrador, cliente 
 create table Usuarios (
@@ -39,7 +35,12 @@ create table Usuarios (
 );
 
 alter table Usuarios modify column Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png";
-drop table Usuarios;
+
+create table Categoria(
+	Categoria_id int auto_increment primary key not null,
+    Categoria_nombre varchar(50) not null,
+    Categoria_Descripcion text not null
+);
 
 -- Tabla Prendas: almacena la informacion registrada de las prendas del catalogo
 create table Prendas (
@@ -47,19 +48,12 @@ create table Prendas (
     Categoria_id int not null,
     Prenda_nombre varchar(50) not null,
     Prenda_tipo varchar(50) not null,
-    Prenda_valor varchar(50) not null,
+    Prenda_valor double not null,
     Prenda_talla char(10) not null,
     Prenda_descripcion text not null,
-    Prenda_stock char(10) not null default "0",
+    Prenda_stock int not null default "0",
     Prenda_estado varchar(50) not null,
     foreign key(Categoria_id) references Categoria(Categoria_id)
-);
-
-
-create table Categoria(
-	Categoria_id int auto_increment primary key not null,
-    Categoria_nombre varchar(50) not null,
-    Categoria_Descripcion text not null
 );
 
 
@@ -73,7 +67,6 @@ create table Populares (
     foreign key(Prenda_id) references Prendas(Prenda_id)
 );
 
-drop table Populares;
 
 -- Tabla imagenes : la tabla de imagenes almacena las rutas de cada imagen 
 create table imagenes (
@@ -84,6 +77,7 @@ create table imagenes (
     Imagenes_link text not null,
     foreign key(Prenda_id) references Prendas(Prenda_id)
 );
+
 
 -- Tabla Resenas o "Reseñas" : la tabla reseñas tendran alamacenadas la reseñas de los usuarios con respecto a un producto
 create table Resenas(
@@ -96,7 +90,6 @@ create table Resenas(
     foreign key (Prenda_id) references Prendas(Prenda_id)
 );
 
-drop table Resenas;
 
 -- Tabla Historial_Recientes : La tabla historial tendra la informacion con respecto a las comprs de los usuarios
 create table Historial_Recientes(
@@ -132,33 +125,6 @@ create table DetallesCarrito(
     foreign key(Carrito_id) references Carrito(Carrito_id)
 );
 
--- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido
--- Como de la direccion de entrega y de conctato del cliente
-create table ConfirmarPago(
-	ConfirmarPago_id int auto_increment primary key not null,
-    CotizacionPedido_id int,
-    DetallesCarrito_id int,
-    ConfirmarPago_TipoPedido varchar(50) not null,
-    ConfirmarPago_MetodoP varchar(50) not null,
-    ConfirmarPago_Fecha date not null,
-    ConfirmarTelefono char(10) not null,
-    foreign key (DetallesCarrito_id) references DetallesCarrito(DetallesCarrito_id),
-    foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
-);
-
-
--- La tabla pedidos es quien almacena todos los pedidos que se han realizado
--- como cada pedido tiene un usuario la idea es que cada usuario puedaver solo los pedidos que ha realizado
--- miesntra que el admin tenga libre acceso a ver cada pedido
-create table Pedidos(
-	Pedido_id int auto_increment primary key not null,
-    ConfirmarPago_id int not null,
-    Pedido_FechaInicio date not null,
-    Pedido_Estado varchar(50) not null,
-    Pedido_Direcccion varchar(50) not null,
-    Pedido_TCompra varchar(50) not null,
-    foreign key(ConfirmarPago_id) references ConfirmarPago(ConfirmarPago_id)
-);
 
 -- DetallesPedidosMedida es quien recibira los datos con respecto a pedidos que los clientes
 -- Quieren que se les realize desde cero
@@ -184,6 +150,33 @@ create table CotizacionPedido(
     foreign key(DetallesPedidosMedida_id) references DetallesPedidosMedida(Detalles_PedidoMedida_id)
 );
 
+-- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido
+-- Como de la direccion de entrega y de conctato del cliente
+create table ConfirmarPago(
+	ConfirmarPago_id int auto_increment primary key not null,
+    CotizacionPedido_id int,
+    DetallesCarrito_id int,
+    ConfirmarPago_TipoPedido varchar(50) not null,
+    ConfirmarPago_MetodoP varchar(50) not null,
+    ConfirmarPago_Fecha date not null,
+    ConfirmarTelefono char(10) not null,
+    foreign key (DetallesCarrito_id) references DetallesCarrito(DetallesCarrito_id),
+    foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
+);
+
+-- La tabla pedidos es quien almacena todos los pedidos que se han realizado
+-- como cada pedido tiene un usuario la idea es que cada usuario puedaver solo los pedidos que ha realizado
+-- miesntra que el admin tenga libre acceso a ver cada pedido
+create table Pedidos(
+	Pedido_id int auto_increment primary key not null,
+    ConfirmarPago_id int not null,
+    Pedido_FechaInicio date not null,
+    Pedido_Estado varchar(50) not null,
+    Pedido_Direcccion varchar(50) not null,
+    Pedido_TCompra varchar(50) not null,
+    foreign key(ConfirmarPago_id) references ConfirmarPago(ConfirmarPago_id)
+);
+
 -- HistorialPagos es quien tendra la informacion de todos los pedidos ya pagados
 -- para que el administrador pueda llevar un control de ganacias del negocio
 -- para que el administrador pueda llevar un control de ganacias del negocio
@@ -193,27 +186,3 @@ create table HistorialPagos(
     Historial_Fecha date not null,
     foreign key(ConfirmarPago_id) references ConfirmarPago(ConfirmarPago_id)
 );
-
--- Provicional de momento
-
--- --------Revision de Filtrados de busqueda----
-
--- Filtrado de usuarios REvisar mas adelante 
-create index Filtro_Presonajes on Usuarios(Permisos_roles_id);
-
--- Filtrado por talla en la tabla prendas
-create index Filtro_Talla on Prendas(Prenda_talla);
-
--- Verificacion filtrado de categoria 
-create index Filtro_Categoria on Prendas(Categoria_id);
-
--- Filtrado de pedidos por tipo de compra
-create index Filtro_Pedidos on Pedidos(Pedido_TCompra);
-
--- Filtrados de prendas por Estado
-create index Filtro_PedidosEst on Pedidos(Pedido_Estado);
-
--- Usuarios de la base de datos
-create user "cliente"@"localhost" identified by "Cliente123";
-create user "administrador"@"localhost" identified by "Admin123";
-
