@@ -10,22 +10,11 @@
 
     <div class="admin-container">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-circle">S</div>
-                <span class="brand-name">Suescun</span>
-            </div>
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="#" class="nav-link">Inicio</a></li>
-                    <li><a href="#" class="nav-link active">Catalogo</a></li>
-                    <li><a href="#" class="nav-link">Pedidos</a></li>
-                    <li><a href="#" class="nav-link">Historial de Pago</a></li>
-                </ul>
-            </nav>
+            
         </aside>
 
         <main class="main-content">
-            <button class="btn-back" onclick="window.history.back();">
+            <button class="btn-back" type="button" onclick="window.history.back();">
                 <svg viewBox="0 0 24 24">
                     <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -33,52 +22,63 @@
 
             <h1 class="titulo-formulario">Agregar Prendas</h1>
 
-            <form action="TuServletControlador" method="POST" enctype="multipart/form-data">
+            <form id="registrarProducto" enctype="multipart/form-data">
                 
                 <div class="form-group">
-                    <label>Nombre Del Producto:</label>
-                    <input type="text" name="nombreProducto" class="input-text">
+                    <label for="nombreProducto">Nombre Del Producto:</label>
+                    <input type="text" id="nombreProducto" name="nombreProducto" class="input-text" placeholder="Ej: Traje Ejecutivo Slim Fit">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group-inline">
-                        <label>Talla:</label>
-                        <input type="text" name="talla" class="input-inline">
+                        <label for="tallaProducto">Talla:</label>
+                        <input type="text" id="tallaProducto" name="talla" class="input-inline" placeholder="Ej: M, 32">
                     </div>
                     
                     <div class="form-group-inline">
-                        <label>Precio:</label>
-                        <input type="text" name="precio" class="input-inline">
+                        <label for="precioProducto">Precio:</label>
+                        <input type="text" id="precioProducto" name="precio" class="input-inline" placeholder="0.00">
                     </div>
 
                     <div class="form-group-inline">
-                        <label>Stock:</label>
-                        <input type="text" name="stock" class="input-inline">
+                        <label for="stockProducto">Stock:</label>
+                        <input type="text" id="stockProducto" name="stock" class="input-inline" placeholder="0">
+                    </div>
+
+                    <div class="form-group-inline">
+                        <label for="categoriaProducto">Categoría:</label>
+                        <select id="categoriaProducto" name="categoria" class="input-inline">
+                            <option value="">Seleccione...</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Imagenes del Producto:</label>
-                    <div class="image-upload-container">
-                        <button type="button" class="btn-add-image">
+                    <label>Imágenes del Producto:</label>
+                    <div class="image-upload-container" id="contenedorImgs">
+                        
+                        <input type="file" id="inputArchivoOculto" multiple accept="image/*" style="display: none;">
+                        
+                        <button type="button" class="btn-add-image btn-subir-imagenes">
                             <span>+</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Descripcion del Producto</label>
-                    <textarea name="descripcion" class="textarea-description"></textarea>
+                    <label for="descripcion">Descripción del Producto</label>
+                    <textarea id="descripcion" name="descripcion" class="textarea-description" placeholder="Detalles de la confección, tipo de tela, etc..."></textarea>
                 </div>
 
-            <div class="btn--edicion">
-                <button class="btn-blanco btn--eliminar">Cancelar</button>
-                <button class="btn-blanco btn--agregar">Agregar Prendas</button>
-            </div>
+                <div class="btn--edicion">
+                    <button type="button" class="btn-blanco btn--eliminar" onclick="window.history.back();">Cancelar</button>
+                    <button type="submit" class="btn-blanco btn--agregar">Agregar Prenda</button>
+                </div>
 
             </form>
         </main>
     </div>
 
+    <script src="../js/AgregarPrendasAdmin.js" type="module"></script>
 </body>
 </html>

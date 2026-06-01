@@ -21,6 +21,7 @@
     bottom: 5%;
     display: flex;
     gap: 90vh;
+    justify-self: center;
 }
 
 .btn--eliminar{

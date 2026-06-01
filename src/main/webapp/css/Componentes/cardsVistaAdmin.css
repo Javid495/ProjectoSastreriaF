@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
+    margin-left: 16%;
 }
 
 .card-inventario {
@@ -13,6 +14,7 @@
     align-items: center;
     gap: 50px;
     max-width: 1000px;
+    justify-content: space-around;
 }
 
 .img-placeholder {
@@ -42,6 +44,7 @@
 .acciones-prenda {
     display: flex;
     flex-direction: column;
+    justify-items: flex-end;
     gap: 20px;
 }
 

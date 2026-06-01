@@ -1,7 +1,7 @@
   /* --- SIDEBAR --- */
 .sidebar {
     width: 260px;
-    background-color: var(--color-FondoInputs);
+    background-color: var(--color-secundario);
     padding: 40px 25px;
     display: flex;
     flex-direction: column;
