@@ -47,7 +47,7 @@ create table Prendas (
     Prenda_id int auto_increment primary key not null,
     Categoria_id int not null,
     Prenda_nombre varchar(50) not null,
-    Prenda_tipo varchar(50) not null,
+    Prenda_tipo varchar(50) null default "Prenda",
     Prenda_valor double not null,
     Prenda_talla char(10) not null,
     Prenda_descripcion text not null,
@@ -103,7 +103,6 @@ create table Historial_Recientes(
 	foreign key(Id_Prenda) references Prendas(Prenda_id)
 );
 
-drop table Historial_Recientes;
 
 -- La tabla carrito sera un "guardado" del carrito de compras del usuario
 create table Carrito(

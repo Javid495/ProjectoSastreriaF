@@ -26,7 +26,7 @@ export function ModificarPrendas(id) {
             return; // Detiene el envío
         }
 
-        if (NaNprecio){
+        if (Tprecio){
             alert("En el campo de valor no deben haber letras/ palabras")
         }
 
