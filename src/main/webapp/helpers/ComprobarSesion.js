@@ -61,7 +61,14 @@ export function comprobarSesion(ruta){
 
         else{
             console.log("Usuario general"); 
-            ContSession.innerHTML = `<a href="inicioSecion.html" class="header__item"><button class="header__login" id="BtnHeader">Inicio de sesión</button></a>`;
+            console.log(window.location.href);
+            
+            if (window.location.href == "http://localhost:8080/Projecto-Sastreria/"){
+                ContSession.innerHTML = `<a href="inicioSecion.html" class="header__item"><button class="header__login" id="BtnHeader">Inicio de sesión</button></a>`;
+            }
+            else{
+                ContSession.innerHTML = `<a href="../inicioSecion.html" class="header__item"><button class="header__login" id="BtnHeader">Inicio de sesión</button></a>`;
+            }
         }
     })
     .catch(error => console.error("hubo algun error al verificar la sesion" + error));

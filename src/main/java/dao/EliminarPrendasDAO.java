@@ -106,11 +106,15 @@ public class EliminarPrendasDAO {
             if (con != null) con.rollback();
             return false;
 
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             try { if (con != null) con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             System.out.println("DAO Error en eliminación masiva: " + e.getMessage());
             return false;
-        } finally {
+        } 
+        
+        finally {
             if (con != null) { 
                 try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
             }

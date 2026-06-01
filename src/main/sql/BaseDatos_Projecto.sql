@@ -118,7 +118,6 @@ create table DetallesCarrito(
 	DetallesCarrito_Id int auto_increment primary key not null,
     Prendas_id int not null,
     Carrito_id int not null,
-    DetallesC_Cantidad char(10) not null,
     Detalles_total decimal(10,2) not null,
     foreign key(Prendas_id) references Prendas(Prenda_id),
     foreign key(Carrito_id) references Carrito(Carrito_id)

@@ -61,7 +61,7 @@ public class ServeltAgregarprendas extends HttpServlet {
                         part.write(carpeta.getAbsolutePath() + File.separator + nombreUnico);
                         
                         // Guardar la ruta web relativa
-                        rutasImagenes.add("/images/" + nombreUnico);
+                        rutasImagenes.add("/images/Prendas/" + nombreUnico);
                     }
                 }
             }

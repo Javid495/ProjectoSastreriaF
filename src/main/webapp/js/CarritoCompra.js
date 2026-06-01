@@ -1,44 +1,30 @@
 import { aparecerCont } from "../helpers/RelizarPeticion.js"; 
 import { llamarComponente } from "../helpers/CompHtml.js";
 import { comprobarSesion } from "../helpers/ComprobarSesion.js";
+import { RealizarCompra } from "../helpers/ProcesoCompra.js";
 
-
-// Botones de accion
 const btnRealizarC = document.querySelector("#RealizarCompra");
-
-// Manipulacion de ventanas
 const confirmarComprar = document.querySelector("#compraCarrito");
 const sombreado = document.querySelector(".sombreado");
 const pagoConfirm = document.querySelector("#confirmacionPago");
-
 const ContPrecio = document.querySelector(".precio__titulo");
 
-// Funcion para la renderizacion del carrito
 function rederizarCarrito(){
-
-    // Hacemos referencia al contenedor principal
     const contenedor = document.querySelector("#mostrarCompra");
-
-    // obtenemos los elementos de localstorage
     const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
 
-    // En caso de que no haya ningun producto en el carrito 
     if (carrito.length === 0){
-        contenedor.innerHTML = "<p>Tu carrito actualmente se encuentra vacio</p>"
-        return
+        contenedor.innerHTML = "<p>Tu carrito actualmente se encuentra vacío</p>";
+        return;
     }
 
-    // variable que almacena el total de la compra de los productos
     let totalCompra = 0;
-
-    //se limpia el contenedor principal
     contenedor.innerHTML = "";
+    ContPrecio.innerHTML = ""; // Limpiamos subtotales previos para evitar duplicados
 
     carrito.forEach(producto => {
-        
-        //Primero solucionamos la ruta de la imagen 
-        const rutaImg = (producto.imagen.startsWith("http")) || producto.imagen.startsWith("data:") ? producto.imagen
-        : ".." + producto.imagen;
+        const rutaImg = (producto.imagen.startsWith("http")) || producto.imagen.startsWith("data:") 
+            ? producto.imagen : ".." + producto.imagen;
 
         const subtotal = producto.precio * producto.cantidad;
         totalCompra += subtotal;
@@ -47,94 +33,80 @@ function rederizarCarrito(){
         divItem.classList.add("popular__cards");
         divItem.innerHTML = `
             <article class="card">
-                <img src="${rutaImg}" alt="Prenda A" class="card__image">
+                <img src="${rutaImg}" alt="Prenda" class="card__image">
                 <h3 class="card__title">${producto.nombre}</h3>
-                <p class="card__price">${producto.precio.toLocaleString()}</p>
-                <p class = "card__price">Cantidad: ${producto.cantidad}</p>
+                <p class="card__price">$${producto.precio.toLocaleString()}</p>
+                <p class="card__price">Cantidad: ${producto.cantidad}</p>
                 <button class="button__closed" data-id="${producto.id}">X</button>
             </article>
+        `;
 
-        `
-        const btnCerrar = divItem.querySelector(".button__closed");
-
-        console.log(btnCerrar);
-
-        btnCerrar.addEventListener("click", (e) =>{
+        divItem.querySelector(".button__closed").addEventListener("click", (e) =>{
             const ProductoEliminar = parseInt(e.target.dataset.id);
-            console.log(ProductoEliminar);
             eliminarProducto(ProductoEliminar);
-        })
+        });
 
+        // CORREGIDO: Se calcula la multiplicación ANTES de convertir a string local
         const precio = document.createElement("p");
         precio.classList.add("precio__prenda");
         precio.id = `id${producto.id}`;
-        precio.innerText = `$${producto.precio.toLocaleString()}`
+        precio.innerText = `$${(producto.precio * producto.cantidad).toLocaleString()}`;
 
         ContPrecio.append(precio);
-
         contenedor.appendChild(divItem);
     });
 
-
-
-    document.querySelector("#precio__total").textContent = `$${totalCompra}`
+    document.querySelector("#precio__total").textContent = `$${totalCompra.toLocaleString()}`;
 }
 
-// Funcion pricinpal de eliminar carrito
 function eliminarProducto(id){
-
     const precioDelet = document.getElementById(`id${id}`);
+    if(precioDelet) precioDelet.remove();   
 
-    precioDelet.remove();   
     let carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
     carrito = carrito.filter(item => item.id !== id);
     localStorage.setItem("carritoSastreria", JSON.stringify(carrito));
     
-    document.querySelector("#precio__total").textContent = ``;
     rederizarCarrito();
 }
 
-
 document.addEventListener("DOMContentLoaded", async () => {
     await aparecerCont("../");
-    comprobarSesion("../");
+    await comprobarSesion("../");
     await rederizarCarrito();
-
-})
-
-
-
-// Asignamos eventos a los botones del apartado
-btnRealizarC.addEventListener("click", async (e) => {
-    sombreado.classList.add("aparecerSombreado");
-    await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
 });
 
-// CORREGIDO: Delegación de eventos para Confirmar/Cancelar Compra
-confirmarComprar.addEventListener("click", async (e) => {
+// Desplegar Formulario de Compra
+btnRealizarC.addEventListener("click", async (e) => {
+    const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
+    if(carrito.length === 0) {
+        alert("Agrega productos antes de proceder al pago.");
+        return;
+    }
+    sombreado.classList.add("aparecerSombreado");
+    await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
     
-    // Si presiona Cancelar
+    // Ejecuta las funciones internas del formulario inmediatamente
+    await RealizarCompra();
+});
+
+// Delegación de eventos EXCLUSIVAMENTE para Cancelar Compra
+confirmarComprar.addEventListener("click", (e) => {
     if (e.target.closest("#cancelarCompra")) {
         sombreado.classList.remove("aparecerSombreado");
         confirmarComprar.innerHTML = "";
     }
-
-
-    if (e.target.closest("#ConfirmarCompra")) {
-        confirmarComprar.innerHTML = "";
-        await llamarComponente("#confirmacionPago", "../componentesWeb/VentanaComprobacion.html");
-    }
+    
 });
 
-//Delegación de eventos para la ventana de Pago Confirmado
+// Cerrar ventana de Pago Confirmado
 pagoConfirm.addEventListener("click", (e) => {
-    
- 
     if (e.target.closest("#pagoConfirmado")) {
         sombreado.classList.remove("aparecerSombreado");
         pagoConfirm.innerHTML = "";
+        rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
     }
-})
+});
 
 
 

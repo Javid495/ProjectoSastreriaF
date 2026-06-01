@@ -31,13 +31,16 @@ export async function aparecerCont(ruta){
     });
 
     
+    const Carrito = document.querySelector(".filtrados__cart");
     //Verificar Ruta del carrito
-    // const Carrito = document.querySelector(".filtrados__cart");
-    // const linkCarrito = Carrito.getAttribute("href");
+    if(Carrito){
+        const linkCarrito = Carrito.getAttribute("href");
 
-    // if (!linkCarrito.startsWith("/") && !linkCarrito.startsWith("http")) {
-    //     Carrito.href = `${ruta}${linkCarrito}`;
-    // }
+        if (!linkCarrito.startsWith("/") && !linkCarrito.startsWith("http")) {
+            Carrito.href = `${ruta}${linkCarrito}`;
+        }
+    }
+
 
     // 1. Capturamos los elementos de la interfaz
     const logo = document.querySelector("#logo");

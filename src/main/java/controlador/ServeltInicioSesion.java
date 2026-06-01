@@ -67,7 +67,7 @@ import dao.LoginDAO;
                 }
             }
             catch(Exception a){
-                System.out.println("Hey hay algun error al momento de enviar lo datos al servelt");
+                System.out.println("Hey hay algun error al momento de enviar lo datos al servelt" + a);
             }
                
         }
