@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificación de Productos - Suescun</title>
+    <link rel="stylesheet" href="../css/ModificarPrendas.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+        </aside>
+
+        <main class="main-content">
+            <form action="../ModificarPrendaServlet" id ="actualizarProducto" method="POST">
+                
+                <input type="hidden" name="idPrenda" id="idPrenda">
+                
+                <label class="seccion-label">Imagenes del Producto:</label>
+                <div class="imagenes-galeria-container">
+                    
+                    <div class="imagenes__container" id ="contenedorImgs"></div>
+
+                    <button type="button" class="btn-subir-imagenes">Agregar imagenes</button>
+                    <input type="file" id="inputArchivoOculto" accept="image/*" multiple style="display: none;">
+                </div>
+                
+                <div class="form-row-inline">
+                    <label class="seccion-label">Nombre del Producto :</label>
+                    <input type="text" name="nombreProducto" class="input-largo" id="nombreProducto" value="">
+                </div>
+
+                <div class="precios-row">
+                    <div class="precio-group">
+                        <label class="seccion-label">Precio:</label>
+                        <input type="text" name="precioPrenda" class="input-precio" id="precioProducto">
+                    </div>
+                    <div class="precio-group">
+                        <label class="seccion-label">Talla:</label>
+                        <input type="text" name="tallaPrenda" class="input-precio" id="tallaProducto" placeholder="Ejem: S">
+                    </div>
+                    <div class="precio-group">
+                        <label class="seccion-label">Categoria:</label>
+                        <select name="categoriaPrenda" class="input-precio opciones" id="categoriaProducto">
+                            <option value="" disabled selected>Categorias...</option>
+                        </select>
+                    </div>
+                    <div class="precio-group">
+                        <label class="seccion-label">Stock:</label>
+                        <input type="text" name="stockPrenda" class="input-precio" id="stockProducto" placeholder="Ejem: 10">
+                    </div>
+                </div>
+
+                <div class="form-block">
+                    <label class="seccion-label">Descripcion del producto:</label>
+                    <textarea name="descripcionPrenda" class="textarea-modificar" id="descripcion"></textarea>
+                </div>
+
+                <div class="btn--edicion">
+                    <button type="button" class="btn-blanco btn--eliminar" id="CancelarCambios">Cancelar</button>
+                    <button type="submit" class="btn-blanco btn--agregar" id="aceptarCambios">Aplicar Cambios</button>
+                </div>
+
+            </form>
+        </main>
+    </div>
+    <script src="../js/DetallesPrendaAdmin.js" type="module"></script>
+</body>
+</html>

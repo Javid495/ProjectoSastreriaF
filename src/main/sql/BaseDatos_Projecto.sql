@@ -78,6 +78,7 @@ create table imagenes (
     foreign key(Prenda_id) references Prendas(Prenda_id)
 );
 
+
 -- Tabla Resenas o "Reseñas" : la tabla reseñas tendran alamacenadas la reseñas de los usuarios con respecto a un producto
 create table Resenas(
 	Resena_id int auto_increment primary key not null,

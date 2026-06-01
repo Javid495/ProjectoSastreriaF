@@ -1,0 +1,49 @@
+@import url(style.css);
+@import url(Componentes/sidebar.css);
+@import url(Componentes/cardsVistaAdmin.css);
+@import url(Componentes/BotonesAdmin.css);
+
+body{
+    padding-bottom:0 ;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+        /* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    padding: 50px 60px;
+}
+
+.titulo-seccion {
+    font-family: var(--tipo-letra);
+    font-size: 38px;
+    font-style: italic;
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+/* --- TARJETAS DE RESUMEN (SUPERIORES) --- */
+.resumen-container {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 70px;
+}
+
+.card-resumen {
+    background-color: var(--color-FondoInputs);
+    border-radius: var(--radio-card);
+    width: 380px;
+    height: 220px;
+    padding: 30px;
+}
+
+.card-resumen h3 {
+    font-size: 26px;
+    font-weight: 400;
+}
+
+        

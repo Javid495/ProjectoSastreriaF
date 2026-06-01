@@ -1,0 +1,273 @@
+@import url(style.css);
+
+/* Grid principal del cuerpo de la pagina */
+.main{
+    position: relative;
+    display: grid;
+    grid-template: 
+    "Compras Precio";
+    grid-template-columns: 3fr 1fr; 
+    padding: 3vh;
+}
+
+.main__producto{
+    grid-area: Compras;
+}
+
+.main__precio{    
+    grid-area: Precio;
+    border-left: 3px solid black;
+}
+
+.main__titulo{
+    margin: 30px ;
+}
+
+/* Tarjetas de productos */
+
+.popular__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4vh;
+  justify-items: center;
+}
+
+/* Diseño de tarjetas de productox */
+.card {
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 45%;
+  gap: 10px;
+  position: relative;
+}
+
+.card__image {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card__title {
+  font-size: 0.95rem;
+}
+
+.card__price {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.button__closed{
+  background-color: red;
+  border: 1px ;
+  padding: 10px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: -4%;
+  right: -5%;
+  color: #ffffff;
+  font-weight: solid;
+  cursor: pointer;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+}
+
+/* Sidebar de la compra */
+
+.main__calculo{
+  padding: 20px;
+}
+
+.precio__titulo{
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.precio__prenda{
+  margin-top: 15px;
+  text-align: center;
+}
+
+.precio__total{
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 2px solid black;
+}
+
+.cont__checkbox{
+  width: 70%;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.btn__inicio{
+  background-color: var(--color-BotonesFlecha);
+  color: white;
+  font-size: 15px;
+  padding: 10px 15px;
+  width: 50%;
+  margin-top: 20px;
+  margin-left: 10vh;
+  cursor: pointer;
+}
+
+.btn__inicio:hover{
+  background-color: var(--color-secundario);
+  color: black;
+}
+
+
+/* Estilos de confirmacion de compra */
+
+/* 1. EL SOMBREADO: Debe cubrir toda la pantalla de la Sastrería */
+.sombreado.aparecerSombreado {
+  background-color: rgba(0,0,0, 0.40);
+  position: fixed; /* Cambiado a fixed para bloquear todo el viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  transition: all 0.3s;
+}
+
+/* 2. FORMULARIO DE CONFIRMACIÓN DE PEDIDO */
+.compra__carrito {
+  /* La magia del centrado absoluto en pantalla */
+  position: fixed; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1100; /* Por encima del sombreado */
+  
+  /* TUS ESTILOS ORIGINALES INTACTOS */
+  background-color: var(--color-FondoVentEmergetes);
+  padding: 30px;
+  border-radius: 20px;
+  width: 55%; 
+  min-width: 350px; /* Previene que colapse en monitores muy pequeños */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  
+  /* Eliminados justify-self y align-self porque transform ya lo centra */
+}
+
+/* 3. TARJETA DE CONFIRMACIÓN DE ÉXITO */
+.confirmacion__pago {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1200;
+  
+  /* TUS ESTILOS ORIGINALES INTACTOS */
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Asegura que la imagen y el h2 se centren bien */
+  padding: 40px;
+  gap: 20px;
+  border-radius: 10px;
+  width: 40%;
+  min-width: 300px;
+}
+
+/* 4. EL BOTÓN QUE SOBRESALE ABAJO */
+.btn--confirmar {
+  position: absolute;
+  /* Cambiamos el porcentaje por píxeles para que la altura de la tarjeta no deforme su posición */
+  bottom: -20px; 
+  left: 50%;
+  transform: translateX(-50%); /* Lo centra horizontalmente respecto a su tarjeta */
+  width: 60%;
+  padding: 10px;
+  background-color: #FD9B9B;
+  border-style: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+
+.carrito__formulario{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.direccion__input{
+  border-radius: 10px;
+  padding: 6px;
+  background-color: var(--color-FondoInputs);
+  border-style: none;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.direccion__input:focus{
+  border-style: var(--estilo-borde);
+}
+
+
+.carrito__subtotal{
+  font-size: 30px;
+  font-family: var(--tipo-letra);
+  margin-left:5%;
+}
+
+.sub--titulo{
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.metodos__p{
+  background-color: var(--color-FondoInputs);
+  display: flex;
+  justify-content: space-around;
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 20px;
+}
+
+.btn__metodop{
+  cursor: pointer;
+  border-style: none;
+  width: 50%;
+  background-color: transparent;
+}
+
+.contenedor--botones{
+  display: flex;
+  justify-content: space-around;
+}
+
+.boton--compra{
+  cursor: pointer;
+  width: 30%;
+  font-size: 20px;
+  background-color: #FD9B9B;
+}
+
+.boton--compra:hover{
+  border-style: var(--estilo-borde)
+}
+
+
+.img__confirmacion{
+  width: 30%;
+  height: 30%;
+}
+
+.mostarConfirmacion{
+  display:block;
+}

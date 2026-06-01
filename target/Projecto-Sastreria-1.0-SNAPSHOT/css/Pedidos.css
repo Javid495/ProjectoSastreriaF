@@ -1,0 +1,100 @@
+@import url(style.css);
+@import url(Componentes/FormularioPedidos.css);
+
+
+/* Estilos Encabezado de pagina */
+
+.cuerpo__encabezado{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* Estilos de Filtrado */
+.filtrados{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8vh;
+}
+
+.filtrados__filter {
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.filter__label {
+  font-weight: 500;
+}
+
+.filter__select {
+  padding: 0.4rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--color-secundario);
+  cursor: pointer;
+}
+
+.filtrados__cart {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.contenedor__pedidos{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    margin-bottom: 20px;
+    gap: 30px;
+}
+
+/* Estilos de contenedores */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: var(--color-secundario);
+  padding: 1rem;
+  font-family: "Courgette", cursive;
+  border-radius: var(--radio-card);
+  text-align: center;
+  width: 50%;
+  font-size: 15px;
+}
+
+.card__title {
+  font-size: 25px;
+}
+
+/* Boton Realizar pedido */
+.btn-RealizarPedido{
+  width: 15%;
+  background-color: var(--color-FondoInputs);
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 8px 14px;
+  justify-self: end;
+  margin-bottom: 2em;
+  margin-right: 2em;
+}
+
+.cart__button {
+  width: 100%;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-RealizarPedido:hover{
+  filter: brightness(0.95);
+}
+
+.cart__text{
+  font-weight: bold;
+  color: var(--color-Tipografia);
+}
+
+.cart__icon {
+  width: 22px;
+  margin-left: 10px;
+}
