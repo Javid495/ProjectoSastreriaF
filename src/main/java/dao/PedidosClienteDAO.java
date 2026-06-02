@@ -58,4 +58,49 @@ public class PedidosClienteDAO {
     
     }
     
+    public List<String[]> obtenerProductosPorPedido(int idPedido) {
+    List<String[]> lista = new ArrayList<>();
+    String sql = "SELECT p.Prenda_nombre, p.Prenda_valor, dc.Detalles_total, " +
+                 "ROUND(dc.Detalles_total / p.Prenda_valor) AS Cantidad, " +
+                 "MIN(img.Imagenes_link) AS Imagen_link " +
+                 "FROM Pedidos pe " +
+                 "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
+                 "JOIN DetallesCarrito dc_ref ON cp.DetallesCarrito_id = dc_ref.DetallesCarrito_Id " +
+                 "JOIN DetallesCarrito dc ON dc_ref.Carrito_id = dc.Carrito_id " +
+                 "JOIN Prendas p ON dc.Prendas_id = p.Prenda_id " +
+                 "LEFT JOIN imagenes img ON p.Prenda_id = img.Prenda_id " +
+                 "WHERE pe.Pedido_id = ? " +
+                 "GROUP BY p.Prenda_id, p.Prenda_nombre, p.Prenda_valor, dc.Detalles_total";
+                 
+    // Nota: Revisa si en tu base de datos tu llave primaria de pedidos se llama Pedido_id o idPedido.
+
+    try (Connection con = ClaseConexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, idPedido);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String[] registro = new String[5];
+                registro[0] = rs.getString("Prenda_nombre");
+                registro[1] = rs.getString("Prenda_valor");
+                registro[2] = rs.getString("Detalles_total");
+                registro[3] = String.valueOf(rs.getInt("Cantidad"));
+                
+                // Salvaguarda para las rutas de imágenes con contrabarras (\)
+                String rutaImg = rs.getString("Imagen_link");
+                if (rutaImg != null) {
+                    rutaImg = rutaImg.replace("\\", "\\\\"); // Evita que rompa el JSON
+                }
+                registro[4] = rutaImg;
+                
+                lista.add(registro);
+            }
+        }
+    } 
+    catch (Exception e) {
+        System.out.println("Error consultando desglose del pedido: " + e.getMessage());
+    }
+        return lista;
+    }
+    
 }

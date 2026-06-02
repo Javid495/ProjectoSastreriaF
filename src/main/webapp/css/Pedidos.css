@@ -1,5 +1,6 @@
 @import url(style.css);
 @import url(Componentes/FormularioPedidos.css);
+@import url(Componentes/CardMostrarDetallesProduct.css);
 
 
 /* Estilos Encabezado de pagina */
@@ -98,3 +99,6 @@
   width: 22px;
   margin-left: 10px;
 }
+
+
+

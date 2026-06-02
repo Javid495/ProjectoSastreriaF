@@ -2,7 +2,10 @@ use ModaS;
 
 -- Cracion de usuario Admin
 insert into Registro(Registro_Usuario, Registro_Contraseña, Registro_Email, Registro_Telefono)
-values ("JavidAdmin", "Admin123", "juandavidcaceres@gmail.com", "3155746387");
+values ("JavidAdmin", "Admin123", "juandavidcaceres@gmail.com", "3155746387"),
+("JavidUser", "Hola123", "juandavid@gmail.com", "3155746387");
+
+select * from Registro;
 
 -- Inserciones de roles
 insert into Permisos_Roles(Permisos_Rol, Permisos_Descripcion, Permisos_asignados)
@@ -13,7 +16,8 @@ select * from Permisos_Roles;
 
 -- Asignar permisos de admin
 insert into Usuarios (Registro_id, Permisos_roles_id, Usuario_imagen, Usuario_Medidas)
-values ("1","2","","");
+values ("1","2","",""),
+("2","1","","");
 
 -- Inserciones de categorias
 insert into Categoria(Categoria_nombre, Categoria_Descripcion)

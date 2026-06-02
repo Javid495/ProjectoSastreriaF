@@ -46,5 +46,4 @@ public class ServeltVerificarUser extends HttpServlet {
         
         out.flush();
     }
-    
 }
