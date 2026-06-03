@@ -2,6 +2,7 @@ import { crearCards } from "../helpers/Cards.js";
 import { aparecerCont } from "../helpers/RelizarPeticion.js";
 import { comprobarSesion } from "../helpers/ComprobarSesion.js"; 
 
+
 const contenedor = document.querySelector(".popular__cards");
 
 async function cargarCatalogo(){

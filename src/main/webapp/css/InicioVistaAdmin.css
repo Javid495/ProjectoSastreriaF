@@ -46,4 +46,50 @@ body{
     font-weight: 400;
 }
 
-        
+/* Ajustes para estilizar el contenido de las tarjetas de resumen */
+.card-resumen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px; /* Le da una altura consistente */
+    padding: 20px;
+    background-color: #e0e0e0; /* Gris base que ya manejas */
+    border-radius: 8px;
+}
+
+/* El número grande e imponente */
+.numero-contador {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+/* Variación interactiva para resaltar la tarjeta cliqueable */
+.card-resumen--interactiva {
+    background-color: #eaeaea;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-resumen--interactiva:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilo del botón interno de acción */
+.btn-resumen-accion {
+    display: inline-block;
+    align-self: flex-start;
+    background-color: #5d2b90; /* Tu morado característico */
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-resumen-accion:hover {
+    background-color: #4a2074;
+}        

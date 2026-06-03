@@ -2,6 +2,7 @@
 import { MostrarSide } from "../helpers/RelizarPeticion.js"
 import { CardPrendasAdmin } from "../helpers/CardsAdmin.js"
 import { procesarEliminacionMasiva } from "../helpers/EliminarVarios.js"
+import { cerrarSesionServidor } from "../helpers/CerrarSesion.js"
 
 const btnEliminar = document.querySelector("#Eliminar");
 const btnAgregarC = document.querySelector("#AgregarP"); // Tu botón dinámico
@@ -63,10 +64,18 @@ btnEliminar.addEventListener("click" , (e) => {
 });
 
 
-document.addEventListener("DOMContentLoaded", (e) => {
-    MostrarSide();
-    CargarCatalogoAdmin();
+document.addEventListener("DOMContentLoaded", async (e) => {
+    await MostrarSide();
+    await CargarCatalogoAdmin();
+    
+    //Metodo para cerrar sesion desde admin
+    const btnCerrar = document.querySelector("#cerrarSesion");
+    
+    btnCerrar.addEventListener("click", (e) =>{
+        cerrarSesionServidor();
+    })
 });
+
 
 // === NUEVA LÓGICA: Control del botón Agregar / Confirmar ===
 if (btnAgregarC) {

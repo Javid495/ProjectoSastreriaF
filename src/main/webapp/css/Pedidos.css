@@ -100,5 +100,124 @@
   margin-left: 10px;
 }
 
+/* Control de las pestañas superiores */
+.pestanas__tipo-pedido {
+    display: flex;
+    gap: 10px;
+    background-color: var(--color-FondoInputs);
+    padding: 6px;
+    border-radius: 12px;
+}
+
+.tab-tipo {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-tipo.active {
+    background-color: var(--color-primario);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-weight: 600;
+}
+
+/* Modificación de la Card tradicional para diseños personalizados */
+.card--cotizacion {
+    width: 100%; /* Para que use eficientemente el 1fr del grid general */
+    max-width: 340px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Tag superior de aviso de estado */
+.card__status-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 0;
+    margin-top: -1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: 10px;
+}
+
+.status--cotizado {
+    background-color: #5d2b90; /* Morado del Admin para consistencia */
+    color: white;
+}
+
+.card__meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #444;
+}
+
+/* Caja de desglose del valor asignado */
+.card__propuesta-economica {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.cotizacion__precio {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    display: block;
+}
+
+.cotizacion__nota {
+    font-size: 12px;
+    color: #555;
+    font-style: italic;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* Contenedor de botones de interacción */
+.card__cotizacion-acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: auto; /* Empuja los botones abajo si hay mucho texto */
+}
+
+.btn-cotizacion {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.2s;
+}
+
+.btn-cotizacion:hover {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+}
+
+.btn-cotizacion--rechazar {
+    background-color: var(--color-salmon);
+    color: #000;
+}
+
+.btn-cotizacion--aceptar {
+    background-color: var(--color-verde-pedido);
+    color: #000;
+}
+
 
 

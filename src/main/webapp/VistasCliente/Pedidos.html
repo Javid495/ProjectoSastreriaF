@@ -3,60 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mis Pedidos - Suescun</title>
     <link rel="stylesheet" href="../css/Pedidos.css">
 </head>
 <body>
-    <!-- Header principal -->
-    <header class="header">
+    <header class="header"></header>
 
-    </header>
-
-
-    <!-- main del contenido principal -->
     <main class="cuerpo__pedidos">
 
-
         <div class="cuerpo__encabezado">
-            <h1 class="cuerpo__tiulo">Pedidos Realizados</h1>
+            <h1 class="cuerpo__tiulo">Mis Pedidos</h1>
+            
+            <div class="pestanas__tipo-pedido">
+                <button class="tab-tipo active" onclick="cambiarTipoPedido('catalogo', this)">Pedido Pendientes</button>
+                <button class="tab-tipo" onclick="cambiarTipoPedido('medida', this)">Pedidos Cotizados</button>
+            </div>
     
-            <div class="filtrados__filter">
-      
-                  <!-- Etiqueta del filtro -->
-                  <label for="size" class="filter__label">Estado:</label>
-      
-                  <!-- Selector de talla -->
-                  <select id="size" class="filter__select">
-                      <option value="">Seleccionar</option>
-                      <option value="pendientes">Pendientes</option>
-                      <option value="elaboracion">Elaboracion</option>
-                      <option value="por entregar">Por Entregar</option>
-                      <option value="entregados">Entregados</option>
-                  </select>
+            <div class="filtrados__filter" id="filtro-estado-container">
+                <label for="size" class="filter__label">Estado:</label>
+                <select id="size" class="filter__select">
+                    <option value="">Seleccionar</option>
+                    <option value="pendientes">Pendientes</option>
+                    <option value="elaboracion">Elaboracion</option>
+                    <option value="por entregar">Por Entregar</option>
+                    <option value="entregados">Entregados</option>
+                </select>
             </div>
         </div>
 
         <div class="contenedor__pedidos" id="contenedorPedidos">
             
+            <article class="card card--cotizacion">
+                <div class="card__status-tag status--cotizado">¡Cotizado por el Sastre!</div>
+                <h2 class="card__title">Traje a Medida</h2>
+                <p class="card__meta">Prenda: Chaqueta / Tela: Paño Inglés</p>
+                
+                <div class="card__propuesta-economica">
+                    <span class="cotizacion__precio">$320.000</span>
+                    <p class="cotizacion__nota">"El valor incluye los botones dorados de bronce y refuerzo en hombreras."</p>
+                </div>
+
+                <div class="card__cotizacion-acciones">
+                    <button class="btn-cotizacion btn-cotizacion--rechazar">Rechazar</button>
+                    <button class="btn-cotizacion btn-cotizacion--aceptar">Aceptar y Pagar</button>
+                </div>
+            </article>
 
         </div>
 
         <div class="btn-RealizarPedido">        
             <button class="cart__button">
-                <span class="cart__text" >Realizar Pedido</span>
-                <img src="../images/Pedidos/Vector (1).png" alt="Añadir" class="cart__icon" >
+                <span class="cart__text">Realizar Pedido</span>
+                <img src="../images/Pedidos/Vector (1).png" alt="Añadir" class="cart__icon">
             </button>
         </div>
 
-        <div id="MostraPedido">
-            
-        </div>
+        <div id="MostraPedido"></div>
 
     </main>
 
-    <!-- Footer principal de la pagina -->
-    <footer class="footer">
-    </footer>
+    <footer class="footer"></footer>
 
     <script src="../js/Pedido.js" type="module"></script>
 </body>

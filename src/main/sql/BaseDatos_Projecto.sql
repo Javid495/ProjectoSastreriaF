@@ -131,10 +131,9 @@ create table DetallesPedidosMedida(
     Usuario_id int not null,
     Detalles_medidas varchar(255) not null,
     Detalles_TPrenda varchar(50) not null,
+    Detalles_ImagenReferencia varchar(255) not null,
     Detalles_Tela varchar(50) not null,
     Detalles_Descripcion text not null,
-    Detalles_Cotizacion decimal(10,2) null,
-    Detalles_ComentarioAdmin text null,
     foreign key(Usuario_id) references Usuarios(Usuarios_id)
 );
 
@@ -143,7 +142,8 @@ create table DetallesPedidosMedida(
 create table CotizacionPedido(
 	CotizacionPedido_Id int auto_increment primary key not null,
     DetallesPedidosMedida_id int not null,
-    Solicitud_Pedido varchar(50) not null,
+    Cotizacion_Valor decimal(10,2) null,
+    ComentarioAdmin text null,
     Cotizacion_FechaLimite date not null,
     foreign key(DetallesPedidosMedida_id) references DetallesPedidosMedida(Detalles_PedidoMedida_id)
 );
