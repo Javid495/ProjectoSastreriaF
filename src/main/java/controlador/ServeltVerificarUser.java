@@ -35,8 +35,16 @@ public class ServeltVerificarUser extends HttpServlet {
             int rolUsuario = usuarioLog.getRolUsuario();
             
             //Se construye un respuesta en el json
+            if (userImagen != null) {
+                // Reemplaza las barras invertidas de Windows (\) por barras normales web (/)
+                userImagen = userImagen.replace("\\", "/");
+            } else {
+                // Ruta de respaldo por si el usuario no tiene ninguna imagen registrada
+                userImagen = "images/Perfil/Ellipse 14.png";
+            }
             
-            out.print("{\"logeado\": true, \"id\": " + idUsuario + ", \"nombre\": \"" + nombreUsuario + "\", \"imagen\": \"" + userImagen + "\", \"rol\": \"" + rolUsuario + "\"}");
+            // Se construye la respuesta en el JSON con la ruta ya limpia
+            out.print("{\"logeado\": true, \"id\": " + idUsuario + ", \"nombre\": \"" + nombreUsuario + "\", \"imagen\": \"" + userImagen + "\", \"rol\": " + rolUsuario + "}");    
         }
         
         else{

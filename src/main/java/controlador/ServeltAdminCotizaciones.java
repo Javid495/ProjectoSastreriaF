@@ -11,31 +11,49 @@ import java.util.List;
 import dao.AdminCotizacionesDAO;
 import modelo.Prendas; // ¡No olvides importar tu modelo!
 
-@WebServlet("/AdminCotizaciones")
+@WebServlet("/AdminCotizaciones")//Se define la url publica para que javascrip pueda ubicarlo a travez del fetch
 public class ServeltAdminCotizaciones extends HttpServlet {
 
+    //Usamos el meto doGet para atrapar las peticiones que se hacen por medio del enlace:
     @Override
     protected void doGet(HttpServletRequest solicitud, HttpServletResponse respuesta)
             throws ServletException, IOException {
         
+        //Dejamos clara la respuesta al 
+        //Usuario o al cliete
         respuesta.setContentType("application/json");
         respuesta.setCharacterEncoding("UTF-8");
+        
+        //Es quien me construye la respues para el backend
         PrintWriter out = respuesta.getWriter();
         
+        //Captura la variable que estamos mandando por el enlace
+        //En este caso la accion
         String accion = solicitud.getParameter("accion");
+        
+        //Intanciamos la variable que se comunicara con el dao o quien se comunica con la base de datos
         AdminCotizacionesDAO dao = new AdminCotizacionesDAO();
 
+        //Si el frotend o el clietne pregunta cuantos pedidos nuevos hay 
+        //Sea para cotizar o que sean nuevos
         if ("contar".equals(accion)) {
+            //Llamos a los dao que cumplen ccon la peticion
             int cotizar = dao.contarPendientesPorCotizar();
             int nuevos = dao.contarNuevosPedidos();
             
             // Retornamos un único objeto JSON con ambas propiedades
             out.print("{\"pedidosCotizar\":" + cotizar + ", \"nuevosPedidos\":" + nuevos + "}");
+          
+          //En caso de que sea listar
+        } else if ("listar".equals(accion)) {
             
-        } else if ("listar".equals(accion)) { // Se eliminó la doble llave { { errónea
+            //Se solicita al dato la lista de pedidos que estna pendientes
             List<String[]> pendientes = dao.listarPedidosPorCotizar();
+            
+            //Iniciamos un construtor para poder retornar una respuesta al cliente
             StringBuilder json = new StringBuilder("[");
             
+            //recorre cada registro que devuelve la base de datos
             for (int i = 0; i < pendientes.size(); i++) {
                 String[] item = pendientes.get(i);
                 json.append("{");
@@ -49,10 +67,15 @@ public class ServeltAdminCotizaciones extends HttpServlet {
                 json.append("}");
                 if (i < pendientes.size() - 1) json.append(",");
             }
+            //Cierra o envuelve cada registro
             json.append("]");
+            
+            //Envia la lista construida la frontend
             out.print(json.toString());
             
-        } else if ("bajoStock".equals(accion)) {
+        } 
+        
+        else if ("bajoStock".equals(accion)) {
             // ARREGLADO: Ahora mapea correctamente a List<Prendas> y enviamos el límite de unidades (5)
             List<Prendas> bajoStock = dao.listarPrendasBajasStock(5);
             StringBuilder json = new StringBuilder("[");

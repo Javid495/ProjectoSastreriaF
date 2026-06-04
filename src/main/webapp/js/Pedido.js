@@ -183,7 +183,11 @@ contFormulario.addEventListener("click", (evento) => {
     }
 
     if (evento.target.closest("#btn-Cancelar")){
-        cuerpoPagina.classList.remove("overlay");
+        const capaSombreado = document.querySelector(".sombreado");
+        console.log(capaSombreado);
+        
+
+        capaSombreado.classList.remove("aparecerSombreado");
         contFormulario.innerHTML = "";
     }
 });
@@ -239,7 +243,8 @@ contPedidos.addEventListener("click", async (evento) => {
                 if (contenedorLista) contenedorLista.innerHTML = "<p>Ocurrió un error al cargar los datos.</p>";
             });
             
-        cuerpoPagina.classList.add("overlay");
+        const capaSombreado = document.querySelector(".sombreado");
+        if (capaSombreado) capaSombreado.classList.add("aparecerSombreado");
     }
 });
 

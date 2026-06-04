@@ -1,11 +1,10 @@
-package dao; // 🚨 Ajusta este paquete según la estructura de tu proyecto
+package dao; 
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-// Ajusta el import de tu clase de conexión si se llama diferente o está en otro paquete
 
 public class EliminarPrendasDAO {
 
