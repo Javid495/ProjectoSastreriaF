@@ -29,8 +29,9 @@ public class SeverltObtenerCategorias extends HttpServlet {
             for (int i = 0; i < listaCategorias.size(); i++) {
                 Map<String, String> cat = listaCategorias.get(i);
                 json.append("{");
+                String nombreSeguro = cat.get("nombre").replace("\"", "\\\"");
                 json.append("\"id\":\"").append(cat.get("id")).append("\",");
-                json.append("\"nombre\":\"").append(cat.get("nombre")).append("\"");
+                json.append("\"nombre\":\"").append(nombreSeguro).append("\"");
                 json.append("}");
                 
                 if (i < listaCategorias.size() - 1) {

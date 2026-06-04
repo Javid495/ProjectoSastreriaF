@@ -11,8 +11,7 @@ public class DetallesPedidoMedida {
     private String tela;
     private String descripcion;
     private String imagenReferencia;
-    private double cotizacion;
-    private String comentarioAdmin;
+    
 
     public int getIdPedidoMedida() {
         return idPedidoMedida;
@@ -69,24 +68,4 @@ public class DetallesPedidoMedida {
     public void setImagenReferencia(String imagenReferencia) {
         this.imagenReferencia = imagenReferencia;
     }
-
-    public double getCotizacion() {
-        return cotizacion;
-    }
-
-    public void setCotizacion(double cotizacion) {
-        this.cotizacion = cotizacion;
-    }
-
-    public String getComentarioAdmin() {
-        return comentarioAdmin;
-    }
-
-    public void setComentarioAdmin(String comentarioAdmin) {
-        this.comentarioAdmin = comentarioAdmin;
-    }
-    
-    
-    
-    
 }

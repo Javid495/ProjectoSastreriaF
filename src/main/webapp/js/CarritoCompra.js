@@ -100,13 +100,13 @@ confirmarComprar.addEventListener("click", (e) => {
 });
 
 // Cerrar ventana de Pago Confirmado
-pagoConfirm.addEventListener("click", (e) => {
-    if (e.target.closest("#pagoConfirmado")) {
-        sombreado.classList.remove("aparecerSombreado");
-        pagoConfirm.innerHTML = "";
-        rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
-    }
-});
+// pagoConfirm.addEventListener("click", (e) => {
+//     if (e.target.closest("#pagoConfirmado")) {
+//         sombreado.classList.remove("aparecerSombreado");
+//         pagoConfirm.innerHTML = "";
+//         rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
+//     }
+// });
 
 
 

@@ -65,7 +65,7 @@ export function comprobarSesion(ruta){
             console.log("Usuario general"); 
             console.log(window.location.href);
             
-            if (window.location.href == "http://localhost:8080/Projecto-Sastreria/index.html"){
+            if (window.location.href == "http://localhost:8080/Projecto-Sastreria/" || window.location.href == "http://localhost:8080/Projecto-Sastreria/index.html"){
                 ContSession.innerHTML = `<a href="inicioSecion.html" class="header__item"><button class="header__login" id="BtnHeader">Inicio de sesión</button></a>`;
             }
             else{

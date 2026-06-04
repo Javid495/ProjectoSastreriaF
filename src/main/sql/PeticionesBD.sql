@@ -11,7 +11,7 @@ INNER JOIN Registro r ON u.Registro_id = r.Registro_id
 INNER JOIN Permisos_Roles p ON u.Permisos_roles_id = p.Permisos_Roles_id;
 
 
-
+-- Para verificar el correo o nombre de usuario y la contraseña de un usuario
 SELECT r.*, u.Permisos_roles_id, u.Usuario_imagen  
 FROM Registro r 
 JOIN Usuarios u ON r.Registro_id = u.Registro_id
@@ -63,3 +63,30 @@ SELECT p.Pedido_id, p.Pedido_FechaInicio, p.Pedido_TCompra, p.Pedido_Estado
             
             -- organizamos los pedidos segun la fecha de manera desendente
             ORDER BY p.Pedido_FechaInicio DESC;
+
+-- Peticiones para revisar los datos de compra:
+SELECT 
+    IFNULL(SUM(CASE WHEN hp.Historial_Fecha = CURDATE() THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS ganancia_diaria,
+    IFNULL(SUM(CASE WHEN YEARWEEK(hp.Historial_Fecha, 1) = YEARWEEK(CURDATE(), 1) THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS ganancia_semanal,
+    IFNULL(SUM(CASE WHEN MONTH(hp.Historial_Fecha) = MONTH(CURDATE()) AND YEAR(hp.Historial_Fecha) = YEAR(CURDATE()) THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS ganancia_mensual
+FROM HistorialPagos hp
+JOIN ConfirmarPago cf ON hp.ConfirmarPago_id = cf.ConfirmarPago_id
+LEFT JOIN DetallesCarrito dc ON cf.DetallesCarrito_id = dc.DetallesCarrito_Id
+LEFT JOIN CotizacionPedido cp ON cf.CotizacionPedido_id = cp.CotizacionPedido_Id;
+
+SELECT 
+    hp.HistorialPagos_id AS idPago,
+    r.Registro_Usuario AS usuario,
+    COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) AS total,
+    cf.ConfirmarPago_MetodoP AS metodoPago,
+    hp.Historial_Fecha AS fecha,
+    cf.ConfirmarPago_TipoPedido AS tipoCompra
+FROM HistorialPagos hp
+JOIN ConfirmarPago cf ON hp.ConfirmarPago_id = cf.ConfirmarPago_id
+LEFT JOIN DetallesCarrito dc ON cf.DetallesCarrito_id = dc.DetallesCarrito_Id
+LEFT JOIN Carrito c ON dc.Carrito_id = c.Carrito_id
+LEFT JOIN CotizacionPedido cp ON cf.CotizacionPedido_id = cp.CotizacionPedido_Id
+LEFT JOIN DetallesPedidosMedida dpm ON cp.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id
+JOIN Usuarios u ON u.Usuarios_id = COALESCE(c.Usuarios_id, dpm.Usuario_id)
+JOIN Registro r ON u.Registro_id = r.Registro_id
+ORDER BY hp.Historial_Fecha DESC;

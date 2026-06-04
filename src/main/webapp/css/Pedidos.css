@@ -107,6 +107,7 @@
     background-color: var(--color-FondoInputs);
     padding: 6px;
     border-radius: 12px;
+    margin-top: 20px;
 }
 
 .tab-tipo {
@@ -217,6 +218,119 @@
 .btn-cotizacion--aceptar {
     background-color: var(--color-verde-pedido);
     color: #000;
+}
+/* 1. EL SOMBREADO: Bloquea y oscurece el fondo de la pantalla de Pedidos */
+.sombreado.aparecerSombreado {
+    background-color: rgba(0,0,0, 0.40);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+/* 2. VENTANA FLOTANTE DEL FORMULARIO DE COMPRA */
+.compra__carrito {
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    background-color: var(--color-FondoVentEmergetes, #f4f4f4); /* Asegura un fallback si la variable no carga */
+    padding: 30px;
+    border-radius: 20px;
+    width: 55%; 
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* 3. TARJETA DE CONFIRMACIÓN DE ÉXITO */
+.confirmacion__pago {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1200;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    gap: 20px;
+    border-radius: 10px;
+    width: 40%;
+    min-width: 300px;
+}
+
+.btn--confirmar {
+    position: absolute;
+    bottom: -20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    padding: 10px;
+    background-color: #FD9B9B;
+    border-style: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.carrito__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.direccion__input {
+    border-radius: 10px;
+    padding: 6px;
+    background-color: var(--color-FondoInputs, #e0e0e0);
+    border-style: none;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.carrito__subtotal {
+    font-size: 30px;
+    margin-left: 5%;
+}
+
+.sub--titulo {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.metodos__p {
+    background-color: var(--color-FondoInputs, #e0e0e0);
+    display: flex;
+    justify-content: space-around;
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 20px;
+}
+
+.btn__metodop {
+    cursor: pointer;
+    border-style: none;
+    width: 50%;
+    background-color: transparent;
+}
+
+.contenedor--botones {
+    display: flex;
+    justify-content: space-around;
+}
+
+.boton--compra {
+    cursor: pointer;
+    width: 30%;
+    font-size: 20px;
+    background-color: #FD9B9B;
 }
 
 

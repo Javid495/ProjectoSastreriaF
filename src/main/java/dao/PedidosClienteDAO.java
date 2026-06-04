@@ -103,4 +103,39 @@ public class PedidosClienteDAO {
         return lista;
     }
     
+    public String[] obtenerDetallesPedidoMedida(int idPedido) {
+        String[] detalles = null;
+    
+        // 🔍 CONSULTA CORREGIDA: Trae los datos de la solicitud y de la cotización usando los nombres reales de la BD
+        String sql = "SELECT dpm.Detalles_TPrenda, dpm.Detalles_Tela, cot.Cotizacion_Valor, cot.ComentarioAdmin " +
+                    "FROM Pedidos pe " +
+                    "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
+                    "JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id " +
+                    "JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
+                    "WHERE pe.Pedido_id = ?;";
+
+        try (Connection con = ClaseConexion.getConexion();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+        
+            ps.setInt(1, idPedido);
+        
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    detalles = new String[4];
+                    // 🎯 MAPEO SEGURO: Usamos exactamente los mismos nombres que pusimos en el SELECT de arriba
+                    detalles[0] = rs.getString("Detalles_TPrenda");    // Nombre/Tipo de la prenda (Ej: Chaqueta)
+                    detalles[1] = rs.getString("Detalles_Tela");       // Tipo de tela (Ej: Lino)
+                    detalles[2] = rs.getString("Cotizacion_Valor");    // Valor final acordado (Decimal convertido a String)
+                    detalles[3] = rs.getString("ComentarioAdmin");     // Observaciones o notas del sastre
+                }
+            }
+        } 
+        catch (Exception e) {
+            System.out.println("❌ Error consultando detalles del pedido a medida: " + e.getMessage());
+            e.printStackTrace();
+        }
+    
+    return detalles; // Devuelve null si no encuentra el pedido o si hubo un error
+}
+    
 }

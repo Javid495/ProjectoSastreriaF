@@ -1,6 +1,7 @@
 @import url(style.css);
 @import url(Componentes/sidebar.css);
 @import url(Componentes/CardssPedidos.css);
+@import url(Componentes/FormularioPedidos.css);
 
 body{
     padding-bottom: 0;
@@ -81,7 +82,7 @@ body{
 .cotizaciones-bar.tiene-pendientes {
     border: 2px solid #5d2b90;
     background: linear-gradient(90deg, #f3ebfc, #ffffff);
-    box-shadow: 0 4px 12px rgba(93, 43, 144, 0.15);
+    box-shadow: 0 4px 4px rgba(93, 43, 144, 0.15);
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -94,6 +95,8 @@ body{
 /* Animación de pulso para el botón play/indicador */
 .cotizaciones-bar.tiene-pendientes .btn-play {
     background-color: #5d2b90;
+    border-top-right-radius: 200px;
+    border-bottom-right-radius: 200px;
     animation: pulsoGlow 2s infinite;
 }
 
@@ -126,4 +129,52 @@ body{
 .modal-admin-box {
     background: white; padding: 25px; border-radius: 12px;
     width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto;
+}
+
+/* Estilos base de la ventana Modal Superpuesta */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-container {
+    background-color: var(--color-FondoVentEmergetes);
+    border-radius: var(--radio-card);
+    padding: var(--padding-seccion);
+    width: 90%;
+    max-width: 650px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 🚀 Contenedor y Efecto de Zoom de la Imagen */
+.zoom-container {
+    overflow: hidden; /* Recorta los bordes sobrantes al agrandarse */
+    border-radius: var(--radio-card);
+    display: inline-block;
+}
+
+.img-zoom-efecto {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+    max-height: 150px;
+    object-fit: contain;
+}
+
+/* Al pasar el puntero se amplía de manera suave */
+.zoom-container:hover .img-zoom-efecto {
+    transform: scale(1.25);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

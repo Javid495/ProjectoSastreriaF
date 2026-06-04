@@ -1,6 +1,5 @@
 @import url(style.css);
 
-
 /* Estilos de lo botones */
 button {
   border: none;
@@ -59,17 +58,6 @@ body{
   border: none;
 }
 
-.button-left{
-  left: 19vh;
-  top: 20vh;
-  background-color: var(--color-BotonesFlecha);
-}
-
-.button-rigth{
-  right: 19vh;
-  top: 20vh;
-  background-color: var(--color-BotonesFlecha);
-}
 
 .filtrados{
     display: flex;

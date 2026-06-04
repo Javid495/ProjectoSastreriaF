@@ -1,22 +1,139 @@
-import { MostrarSide } from "../helpers/RelizarPeticion.js"
+import { MostrarSide } from "../helpers/RelizarPeticion.js";
 import { cerrarSesionServidor } from "../helpers/CerrarSesion.js";
 
 let urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+let pedidosLocales = []; // Almacén en memoria para filtrar sin sobrecargar la red
+let estadoActivo = "elaboracion"; // Estado por defecto coincidiendo con tu HTML
 
-// Comprueba el estado actual en la base de datos
+// 📦 Carga los datos desde el servidor y dispara el primer renderizado
+function cargarTableroPedidos() {
+    fetch(`${urlBase}/AdminPedidosController`)
+        .then(res => res.json())
+        .then(data => {
+            pedidosLocales = data;
+            renderizarPedidos();
+        })
+        .catch(err => console.error("Error al devengar pedidos de la BD:", err));
+}
+
+
+// Dibuja las Cards dentro de '#tablero-pedidos' aplicando el filtro seleccionado
+function renderizarPedidos() {
+    const tablero = document.querySelector("#tablero-pedidos");
+    if (!tablero) return;
+
+    tablero.innerHTML = ""; // Limpiamos las tarjetas estáticas
+
+    // 🔥 FILTRADO ROBUSTO: Evita fallos por diferencias de texto o plurales
+    const pedidosFiltrados = pedidosLocales.filter(p => {
+        const est = p.estado.toLowerCase().trim();
+        
+        if (estadoActivo === "pendientes" || estadoActivo === "pendiente") {
+            return est.includes("pendiente");
+        }
+        if (estadoActivo === "elaboracion") {
+            return est.includes("elaboracion");
+        }
+        if (estadoActivo === "entregar") {
+            return est.includes("entregar") || est.includes("entrega");
+        }
+        return est === estadoActivo;
+    });
+
+    if (pedidosFiltrados.length === 0) {
+        tablero.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                                No hay pedidos en estado "${estadoActivo}" en este momento.
+                             </p>`;
+        return;
+    }
+
+    pedidosFiltrados.forEach(p => {
+        const article = document.createElement("article");
+        article.className = "card-pedido";
+
+        const metaInfo = p.tipo === "A Medida" 
+            ? `Medidas: ${p.medidas}` 
+            : `Fecha Pago: ${p.fecha}`;
+
+        // Verificamos contención para marcar el 'selected' correcto del combo
+        const esPendiente = p.estado.includes("pendiente") ? "selected" : "";
+        const esElaboracion = p.estado.includes("elaboracion") ? "selected" : "";
+        const esEntregar = (p.estado.includes("entregar") || p.estado.includes("entrega")) ? "selected" : "";
+
+        article.innerHTML = `
+            <h2 class="pedido-cliente">Pedido #${p.id}</h2>
+            <p class="pedido-meta">${metaInfo}</p>
+            <p class="pedido-meta"><strong>Tipo - P :</strong> ${p.tipo}</p>
+            
+            <div class="pedido-estado-container">
+                <label>Estado:</label>
+                <select class="select-estado-pedido" data-id="${p.id}">
+                    <option value="pendiente" ${esPendiente}>Pendiente</option>
+                    <option value="elaboracion" ${esElaboracion}>En elaboracion</option>
+                    <option value="entregar" ${esEntregar}>Por entregar</option>
+                </select>
+            </div>
+            
+            <button type="button" class="btn-detalles-pedido" data-id="${p.id}">Ver Detalles</button>
+        `;
+
+        tablero.appendChild(article);
+    });
+}
+
+// 🔀 Intercambiador de pestañas expuesto a 'window' para que tu HTML lo encuentre sin problemas
+window.cambiarFiltroEstado = function(estado, botonElemento) {
+    estadoActivo = estado.toLowerCase();
+    
+    // Cambiar clases visuales de los botones
+    document.querySelectorAll(".tab-estado").forEach(btn => btn.classList.remove("active"));
+    botonElemento.classList.add("active");
+    
+    // Repintar con el nuevo filtro aplicado
+    renderizarPedidos();
+};
+
+// 🔄 Modificar el estado directamente en la base de datos al cambiar el combo select
+document.addEventListener("change", (e) => {
+    if (e.target.matches(".select-estado-pedido")) {
+        const idPedido = e.target.dataset.id;
+        const nuevoEstado = e.target.value;
+
+        const params = new URLSearchParams();
+        params.append("idPedido", idPedido);
+        params.append("estado", nuevoEstado);
+
+        fetch(`${urlBase}/AdminPedidosController`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                alert(`¡Pedido #${idPedido} movido a "${nuevoEstado}" con éxito!`);
+                cargarTableroPedidos(); // Recargamos para que desaparezca de la pestaña actual
+            } else {
+                alert("No se pudo actualizar el estado en el servidor.");
+            }
+        })
+        .catch(err => console.error("Error actualizando estado:", err));
+    }
+});
+
+// 📊 Comprueba el estado actual en la base de datos y actualiza el contador
 function verificarPedidosPorCotizar() {
     fetch(`${urlBase}/AdminCotizaciones?accion=contar`)
         .then(res => res.json())
         .then(data => {
             const barra = document.querySelector(".cotizaciones-bar");
-            // Eliminamos elementos previos si existen
+            if (!barra) return;
+
             const badgePrevio = barra.querySelector(".badge-contador");
             if(badgePrevio) badgePrevio.remove();
 
             if (data.cantidad > 0) {
                 barra.classList.add("tiene-pendientes");
-                
-                // Inyectamos el indicador numérico llamativo
                 const badge = document.createElement("span");
                 badge.className = "badge-contador";
                 badge.innerText = `${data.cantidad} NUEVOS`;
@@ -24,15 +141,15 @@ function verificarPedidosPorCotizar() {
             } else {
                 barra.classList.remove("tiene-pendientes");
             }
-        });
+        })
+        .catch(err => console.error("Error verificando conteo:", err));
 }
 
-// Crea y despliega la card emergente (Modal) sobre la vista general
+// 🪟 Despliega el modal emergente de cotizaciones pendientes
 function abrirModalCotizaciones() {
     fetch(`${urlBase}/AdminCotizaciones?accion=listar`)
         .then(res => res.json())
         .then(pedidos => {
-            // Creamos el contenedor del modal superpuesto
             const overlay = document.createElement("div");
             overlay.className = "modal-admin-overlay";
             overlay.id = "modal-cotizar-emergente";
@@ -46,18 +163,15 @@ function abrirModalCotizaciones() {
                         <p><strong>Prenda:</strong> ${p.tipo} | <strong>Tela sugerida:</strong> ${p.tela}</p>
                         <p><strong>Medidas:</strong> ${p.medidas}</p>
                         <p><strong>Detalles:</strong> ${p.descripcion}</p>
-                        
                         <p><br>Sugerencia Estampado:</p>
                         ${p.imagen ? `<img src="${foto}" style="width:80px; height:80px; object-fit:cover; margin: 8px 0; border-radius:4px;">` : ''}
                         
                         <form class="form-enviar-cotizacion" data-id="${p.id}" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <input type="number" placeholder="Precio Cotizado ($)" required style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1;" class="input-precio">
-                            <label style = "font-size:10px;">Fecha Aproximada de entrega:</label>
-                            <input type="date" required 
-                                style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;" 
-                                class="input-fecha">
-                            <input type="text" placeholder="Comentario o validez de fecha" required style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 2;" class="input-comentario">
-                            <button type="submit" style="background: #5d2b90; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Enviar</button>
+                            <input type="number" placeholder="Precio Cotizado ($)" required class="input-precio" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+                            <label style="font-size:10px; display: flex; align-items: center;">Fecha Aproximada de entrega:</label>
+                            <input type="date" required class="input-fecha" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;">
+                            <input type="text" placeholder="Comentario o validez de fecha" required class="input-comentario" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 2;">
+                            <button type="submit" style="background: #5d2b90; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Enviar</button>
                         </form>
                     </div>
                 `;
@@ -69,34 +183,200 @@ function abrirModalCotizaciones() {
                         <h3 style="margin:0; color:#333;">Pedidos en Espera de Cotización</h3>
                         <button onclick="document.querySelector('#modal-cotizar-emergente').remove()" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
                     </div>
-                    <div class="lista-por-cotizar">
-                        ${tarjetasHTML || '<p style="text-align:center;">No hay elementos que procesar.</p>'}
-                    </div>
+                    <div class="lista-por-cotizar">${tarjetasHTML || '<p style="text-align:center; padding: 20px;">No hay elementos que procesar.</p>'}</div>
                 </div>
             `;
-
             document.body.appendChild(overlay);
         });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    MostrarSide();
-    verificarPedidosPorCotizar();
+// ⏳ Inicialización del ciclo de vida del documento
+document.addEventListener("DOMContentLoaded", async () => {
+    await MostrarSide();
+    await verificarPedidosPorCotizar();
+    cargarTableroPedidos(); // 🚀 Inyección inicial de datos reales en el tablero
     
-    // Escuchamos el clic en la barra superior de cotizaciones
-    const barraCotizar = document.querySelector(".cotizaciones-bar");
-    barraCotizar.addEventListener("click", () => {
-        if (barraCotizar.classList.contains("tiene-pendientes")) {
-            abrirModalCotizaciones();
+    document.addEventListener("click", (e) => {
+        if (e.target.matches("#cerrarSesion")) {
+            cerrarSesionServidor();
         }
     });
 
-    //Metodo para cerrar sesion desde admin
-        const btnCerrar = document.querySelector("#cerrarSesion");
-        
-        btnCerrar.addEventListener("click", (e) =>{
-            cerrarSesionServidor();
-        })
+    const barraCotizar = document.querySelector(".cotizaciones-bar");
+    if (barraCotizar) {
+        barraCotizar.addEventListener("click", () => {
+            if (barraCotizar.classList.contains("tiene-pendientes")) {
+                abrirModalCotizaciones();
+            }
+        });
+    }
 });
 
+// Escucha global para el envío de formularios de cotización
+document.addEventListener("submit", (evento) => {
+    if (evento.target.matches(".form-enviar-cotizacion")) {
+        evento.preventDefault();
+        const formulario = evento.target;
+        
+        const idPedidoMedida = formulario.dataset.id;
+        const precio = formulario.querySelector(".input-precio").value;
+        const fechaLimite = formulario.querySelector(".input-fecha").value;
+        const comentario = formulario.querySelector(".input-comentario").value;
 
+        const datosCuerpo = new URLSearchParams();
+        datosCuerpo.append("idPedidoMedida", idPedidoMedida);
+        datosCuerpo.append("precio", precio);
+        datosCuerpo.append("fechaLimite", fechaLimite);
+        datosCuerpo.append("comentario", comentario);
+
+        fetch(`${urlBase}/GuardarCotizacion`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: datosCuerpo
+        })
+        .then(respuesta => respuesta.json())
+        .then(resultado => {
+            if (resultado.success) {
+                alert("¡Cotización guardada exitosamente!");
+                const tarjetaContenedora = formulario.closest("div");
+                const listaContenedora = tarjetaContenedora.parentElement;
+                tarjetaContenedora.remove();
+
+                if (listaContenedora.children.length === 0) {
+                    listaContenedora.innerHTML = '<p style="text-align:center; padding: 20px;">No hay elementos que procesar.</p>';
+                }
+                verificarPedidosPorCotizar();
+                cargarTableroPedidos(); // Refrescamos el tablero de pedidos general por si acaso
+            } else {
+                alert("Error al guardar: " + resultado.mensaje);
+            }
+        })
+        .catch(error => console.error("Error procesando cotización:", error));
+    }
+});
+
+// 👁️ Escucha el botón "Ver Detalles" para desplegar modales personalizados
+document.addEventListener("click", (e) => {
+    if (e.target.matches(".btn-detalles-pedido")) {
+        const idPedido = e.target.dataset.id;
+
+        fetch(`${urlBase}/AdminPedidosDetalles?idPedido=${idPedido}`)
+            .then(res => res.json())
+            .then(data => {
+                abrirModalDetalleEspecifico(data, idPedido);
+            })
+            .catch(err => console.error("Error cargando detalles:", err));
+    }
+});
+
+function abrirModalDetalleEspecifico(data, idPedido) {
+    // Eliminar modal previo si existe
+    const modalExistente = document.querySelector(".modal-overlay");
+    if (modalExistente) modalExistente.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.id = "modal-detalle-pedido";
+
+    let contenidoInterno = "";
+
+    if (data.tipo === "A Medida") {
+        // Procesamos las medidas separadas por guiones (ej: "90-60-90" -> [90, 60, 90])
+        // 🔍 CORRECCIÓN: Separar por coma (,) o por guion (-), y limpiar espacios
+        const arrayMedidas = data.medidas ? data.medidas.split(/[,\-]/) : ["0","0","0"];
+
+        // Tomamos cada valor y le quitamos espacios fantasmas con .trim()
+        const m1 = arrayMedidas[0] ? arrayMedidas[0].trim() : 0;
+        const m2 = arrayMedidas[1] ? arrayMedidas[1].trim() : 0;
+        const m3 = arrayMedidas[2] ? arrayMedidas[2].trim() : 0;
+        
+        const fotoPrenda = data.imagen ? `${urlBase}/${data.imagen}` : `${urlBase}/images/Perfil/Ellipse 14.png`;
+
+        // Renderizado usando tu estructura Web Component de Formulario Deshabilitado
+        contenidoInterno = `
+            <div class="modal-container">
+                <div class="modal-header">
+                    <button type="button" class="btn-back" onclick="document.querySelector('#modal-detalle-pedido').remove()">
+                        <img src="../images/DetallesProducto/Vector.png" alt="Volver">
+                    </button>
+                    <h2>Descripción del pedido hecho a Medida #${idPedido}</h2>
+                </div>
+                <form id="form-solicitud-personalizada" onsubmit="event.preventDefault();">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tipo de prenda:</label>
+                            <input type="text" value="${data.prenda}" class="input-grey" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Sugerencia de telas / Elegida:</label>
+                            <input type="text" value="${data.tela}" class="input-grey" readonly>
+                        </div>
+                    </div>
+                    <div class="inline-row">
+                        <div class="form-group form-group--row">
+                            <label>Cliente:</label>
+                            <input type="text" value="${data.email}" class="input-grey" style="width:180px;" readonly>
+                        </div>
+                        <div class="form-group form-group--row medidas-inputs">
+                            <label>Medidas:</label>
+                            <input type="number" value="${m1}" class="input-dark" readonly>
+                            <input type="number" value="${m2}" class="input-dark" readonly>
+                            <input type="number" value="${m3}" class="input-dark" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del pedido:</label>
+                        <textarea class="textarea-full" readonly>${data.descripcion}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen de referencia asignada (Pasa el mouse para ampliar):</label>
+                        <div class="upload-zone zoom-container">
+                            <img src="${fotoPrenda}" class="img-zoom-efecto" alt="Prenda referencia">
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+                        <h3 style="font-family: var(--tipo-letra); font-size: 24px;">Precio Final Cotizado: $${data.total}</h3>
+                        <button type="button" class="btn-footer btn-cancelar" onclick="document.querySelector('#modal-detalle-pedido').remove()">Cerrar</button>
+                    </div>
+                </form>
+            </div>`;
+    } else {
+        // Renderizado del flujo del Catálogo en Cuadrícula (Múltiples prendas)
+        let tarjetasPrendasHTML = "";
+        data.prendas.forEach(p => {
+            const pathImg = p.imagen.startsWith("http") || p.imagen.startsWith("images") ? `${urlBase}/${p.imagen}` : `${urlBase}/${p.imagen}`;
+            tarjetasPrendasHTML += `
+                <div class="card-prenda-detalle" style="background: var(--color-FondoInputs); border-radius: var(--radio-card); padding: 15px; display: flex; gap: 15px; align-items: center;">
+                    <div class="zoom-container" style="width: 80px; height: 80px; overflow:hidden; border-radius: 8px;">
+                        <img src="${pathImg}" class="img-zoom-efecto" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h4 style="margin:0; color: var(--color-Tipografia);">${p.nombre}</h4>
+                        <p style="margin: 4px 0; font-size: 14px; color: var(--color-gris-oscuro);">Talla: <strong>${p.talla}</strong></p>
+                        <p style="margin:0; font-weight: bold; color: var(--color-letra);">$${p.precio}</p>
+                    </div>
+                </div>`;
+        });
+
+        contenidoInterno = `
+            <div class="modal-container" style="max-width: 750px;">
+                <div class="modal-header">
+                    <button type="button" class="btn-back" onclick="document.querySelector('#modal-detalle-pedido').remove()">
+                        <img src="../images/DetallesProducto/Vector.png" alt="Volver">
+                    </button>
+                    <h2>Información del pedido de Catálogo #${idPedido}</h2>
+                </div>
+                <p style="padding: 0 2rem; margin-bottom: 10px;"><strong>Comprador:</strong> ${data.email} | <strong>Fecha Compra:</strong> ${data.fecha}</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: var(--padding-seccion); max-height: 380px; overflow-y: auto;">
+                    ${tarjetasPrendasHTML}
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-gris-claro); padding-top: 15px;">
+                    <h2 style="font-family: var(--tipo-letra); margin-left: 2rem;">Total Compra: $${data.total}</h2>
+                    <button type="button" class="btn-footer btn-confirmar" onclick="document.querySelector('#modal-detalle-pedido').remove()" style="background: var(--color-gris-oscuro);">Hecho</button>
+                </div>
+            </div>`;
+    }
+
+    overlay.innerHTML = contenidoInterno;
+    document.body.appendChild(overlay);
+}

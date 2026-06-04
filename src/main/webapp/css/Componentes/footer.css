@@ -4,8 +4,8 @@
   padding: 2rem 1.5rem;
   position: absolute;
   width: 100% ;
-  bottom: 0px;
   z-index: 100;
+  bottom: 0;
 }
 
 .footer__content {
