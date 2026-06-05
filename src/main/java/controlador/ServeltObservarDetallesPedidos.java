@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import dao.PedidosClienteDAO;
 
+
+//Servelt encargado de mostrar los detalles de los pedidos Sean del catalogo o sean
+//de pedidos a medida
 @WebServlet("/ObtenerDetallePedido")
 public class ServeltObservarDetallesPedidos extends HttpServlet {
 
@@ -37,7 +40,7 @@ public class ServeltObservarDetallesPedidos extends HttpServlet {
             if ("A Medida".equalsIgnoreCase(tipoPedido)) {
                 
                 // =================================================================
-                // 🧵 FLUJO NUEVO: PROCESAR DESGLOSE DE PRENDA A MEDIDA
+                // FLUJO NUEVO: PROCESAR DESGLOSE DE PRENDA A MEDIDA
                 // =================================================================
                 String[] itemMedida = dao.obtenerDetallesPedidoMedida(idPedido);
 

@@ -7,9 +7,9 @@ const btnRealizarC = document.querySelector("#RealizarCompra");
 const confirmarComprar = document.querySelector("#compraCarrito");
 const sombreado = document.querySelector(".sombreado");
 const pagoConfirm = document.querySelector("#confirmacionPago");
-const ContPrecio = document.querySelector(".precio__titulo");
+const ContPrecio = document.querySelector(".precio__prenda");
 
-function rederizarCarrito(){
+export function rederizarCarrito(){
     const contenedor = document.querySelector("#mostrarCompra");
     const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
 
@@ -47,6 +47,10 @@ function rederizarCarrito(){
         });
 
         // CORREGIDO: Se calcula la multiplicación ANTES de convertir a string local
+        const Titulo = document.createElement("h3");
+        Titulo.classList.add("precio__titulo");
+        Titulo.innerText = "Total de Compra:";
+
         const precio = document.createElement("p");
         precio.classList.add("precio__prenda");
         precio.id = `id${producto.id}`;

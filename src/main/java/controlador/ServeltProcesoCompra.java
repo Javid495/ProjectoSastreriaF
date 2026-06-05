@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//Servelt quien procesa el pago sea del catlogo 
+//O pedidos admin
+
 @WebServlet("/ProcesarCompraServlet")
 public class ServeltProcesoCompra extends HttpServlet {
 
@@ -88,18 +91,42 @@ public class ServeltProcesoCompra extends HttpServlet {
                     if (mCant.find()) cantidad = Integer.parseInt(mCant.group(1));
                     
                     // Extraer Precio o Total de Línea
-                    double totalLinea = 0;
-                    Pattern pPrecio = Pattern.compile("\"(?:precio|totalLinea)\"\\s*:\\s*\"?(\\d+(?:\\.\\d+)?)\"?");
+                    // Guardar el total de compra del usuario
+                    double totalLinea;
+
+                    // 1. Expresiones regulares individuales y robustas (soportan números con o sin comillas, y con decimales)
+                    Pattern pPrecio = Pattern.compile("\"precio\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
+                    Pattern pTotalLinea = Pattern.compile("\"totalLinea\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
+
                     Matcher mPrecio = pPrecio.matcher(bloqueObjeto);
+                    Matcher mTotalLinea = pTotalLinea.matcher(bloqueObjeto);
+
+                    double precioUnitario = -1;
+                    double totalLineaJson = -1;
+
+                    // 2. Extraemos el precio unitario si existe
                     if (mPrecio.find()) {
-                        double valorNumerico = Double.parseDouble(mPrecio.group(1));
-                        // Si el JSON traía "precio" unitario, lo multiplicamos por la cantidad
-                        if (bloqueObjeto.contains("\"precio\"") && !bloqueObjeto.contains("\"totalLinea\"")) {
-                            totalLinea = valorNumerico * cantidad;
-                        } else {
-                            totalLinea = valorNumerico;
-                        }
+                        precioUnitario = Double.parseDouble(mPrecio.group(1));
                     }
+
+                    // 3. Extraemos el totalLinea si existe
+                    if (mTotalLinea.find()) {
+                        totalLineaJson = Double.parseDouble(mTotalLinea.group(1));
+                    }
+
+                    // 4. Lógica de asignación inteligente y segura
+                    if (totalLineaJson != -1) {
+                        // Si el JSON ya calcula el total de la línea de forma nativa, usamos ese
+                    totalLinea = totalLineaJson;
+                    } else if (precioUnitario != -1) {
+                        // Si solo venía el precio unitario, lo multiplicamos por la cantidad de prendas
+                        totalLinea = precioUnitario * cantidad;
+                    } else {
+                        // Caso de respaldo por si no encontró ninguna de las dos propiedades
+                        totalLinea = 0; 
+                    }
+
+                    System.out.println("Total Línea Calculado: " + totalLinea);
                     
                     // Solo si encontramos datos válidos, lo agregamos a la lista
                     if (idPrenda > 0 && cantidad > 0) {

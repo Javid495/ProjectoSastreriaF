@@ -1,6 +1,23 @@
 use ModaS;
 
--- para datos de usuario
+-- Tablas Generales
+SELECT * FROM Registro;
+SELECT * FROM Permisos_Roles;
+SELECT * FROM Usuarios;
+SELECT * FROM Categoria;
+SELECT * FROM Prendas;
+SELECT * FROM Populares;
+SELECT * FROM imagenes;
+SELECT * FROM Carrito; 
+SELECT * FROM DetallesCarrito;
+SELECT * FROM DetallesPedidosMedida;
+SELECT * FROM CotizacionPedido;
+SELECT * FROM ConfirmarPago;
+SELECT * FROM Pedidos;
+SELECT * FROM HistorialPagos;
+
+
+-- para verificar los datos de registro de usuario
 SELECT 
     r.Registro_Email AS Email, 
     r.Registro_Usuario AS Nombre, 
@@ -9,6 +26,48 @@ SELECT
 FROM Usuarios u
 INNER JOIN Registro r ON u.Registro_id = r.Registro_id
 INNER JOIN Permisos_Roles p ON u.Permisos_roles_id = p.Permisos_Roles_id;
+
+-- Ver datos de productos en el catalogo (id, Producto, Categoria, Precio, Stock, Imagen(Geneera Problemas))
+SELECT 
+    p.Prenda_id AS 'ID',
+    p.Prenda_nombre AS 'Producto',
+    c.Categoria_nombre AS 'Categoría',
+    p.Prenda_valor AS 'Precio',
+    p.Prenda_stock AS 'Stock Actual',
+    img.Imagenes_link AS 'URL Imagen'
+FROM Prendas p
+INNER JOIN Categoria c ON p.Categoria_id = c.Categoria_id
+LEFT JOIN imagenes img ON p.Prenda_id = img.Prenda_id;
+
+-- Para Ver los pedidos a media con los datos de (Id, Usuario, Tipo de prenda, Tela, Medidas que mando, Una Descripcion, Estado)
+SELECT 
+    dpm.Detalles_PedidoMedida_id AS 'ID Solicitud',
+    reg.Registro_Usuario AS 'Cliente',
+    dpm.Detalles_TPrenda AS 'Tipo de Prenda',
+    dpm.Detalles_Tela AS 'Tela',
+    dpm.Detalles_medidas AS 'Medidas Enviadas',
+    dpm.Detalles_Descripcion AS 'Descripción del Diseño',
+    cp.Cotizacion_Valor AS 'Precio Cotizado ($)',
+    cp.ComentarioAdmin AS 'Estado/Comentario Sastre'
+FROM DetallesPedidosMedida dpm
+INNER JOIN Usuarios u ON dpm.Usuario_id = u.Usuarios_id
+INNER JOIN Registro reg ON u.Registro_id = reg.Registro_id
+LEFT JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id;
+
+-- Para ver datos de los pedidos Genral (id, Tipo De Pedido, Estado, FEcha de inicio, Metodo de pago, Direccion, total cancelado)
+SELECT 
+    p.Pedido_id AS 'ID Trabajo',
+    p.Pedido_TCompra AS 'Tipo Flujo',
+    p.Pedido_Estado AS 'Fase Actual (Card)',
+    p.Pedido_FechaInicio AS 'Fecha Inicio',
+    cp.ConfirmarPago_MetodoP AS 'Método Pago',
+    p.Pedido_Direcccion AS 'Dirección de Entrega',
+    -- Si es a medida trae el costo de la cotización, si es catálogo el del detalle del carrito
+    COALESCE(cot.Cotizacion_Valor, dc.Detalles_total) AS 'Total Pagado'
+FROM Pedidos p
+INNER JOIN ConfirmarPago cp ON p.ConfirmarPago_id = cp.ConfirmarPago_id
+LEFT JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_Id
+LEFT JOIN DetallesCarrito dc ON cp.DetallesCarrito_id = dc.DetallesCarrito_Id;
 
 
 -- Para verificar el correo o nombre de usuario y la contraseña de un usuario

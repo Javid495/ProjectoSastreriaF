@@ -16,7 +16,8 @@ public class AdminCotizacionesDAO {
         String sql = "SELECT COUNT(*) FROM DetallesPedidosMedida dpm " +
                      "LEFT JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
                      "WHERE cp.CotizacionPedido_Id IS NULL";
-                     
+        
+        //Es quien abre la tuberia con la base de datos
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

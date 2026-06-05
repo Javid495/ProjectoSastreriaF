@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import modelo.IniciarSesion;
 
+//Servelt quien me verifica el usuario que tiene abierta la sesion
+
 @WebServlet("/VerificarSesion")
 public class ServeltVerificarUser extends HttpServlet {
  

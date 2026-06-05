@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import dao.AdminCotizacionesDAO;
 
+
+//Servelt Encargado de guardar la cotizacion del admin
 @WebServlet("/GuardarCotizacion")
 public class ServeltGuardarCotizaciones extends HttpServlet {
 
@@ -22,13 +24,13 @@ public class ServeltGuardarCotizaciones extends HttpServlet {
         PrintWriter out = respuesta.getWriter();
 
         try {
-            // 1. Extraemos los parámetros enviados mediante URLSearchParams por el Frontend
+            // Extraemos los parámetros enviados mediante URLSearchParams por el Frontend
             String idStr = solicitud.getParameter("idPedidoMedida");
             String precioStr = solicitud.getParameter("precio");
             String fechaLimite = solicitud.getParameter("fechaLimite"); // Captura el "YYYY-MM-DD"
             String comentario = solicitud.getParameter("comentario");
 
-            // 2. Validación básica de nulidad para evitar fallos de procesamiento
+            //Validación básica de nulidad para evitar fallos de procesamiento
             if (idStr == null || precioStr == null || fechaLimite == null) {
                 out.print("{\"success\": false, \"mensaje\": \"Faltan parámetros obligatorios en la solicitud.\"}");
                 return;
@@ -38,11 +40,11 @@ public class ServeltGuardarCotizaciones extends HttpServlet {
             int idPedidoMedida = Integer.parseInt(idStr);
             double precio = Double.parseDouble(precioStr);
 
-            // 3. Instanciamos el DAO y ejecutamos el guardado
+            // Instanciamos el DAO y ejecutamos el guardado
             AdminCotizacionesDAO dao = new AdminCotizacionesDAO();
             boolean guardadoExitoso = dao.guardarCotizacion(idPedidoMedida, precio, fechaLimite, comentario);
 
-            // 4. Retornamos la respuesta al cliente
+            // Retornamos la respuesta al cliente
             if (guardadoExitoso) {
                 out.print("{\"success\": true}");
             } else {

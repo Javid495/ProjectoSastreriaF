@@ -12,6 +12,7 @@ import java.util.List;
 import dao.PedidosMedidaDao;
 import modelo.IniciarSesion;
 
+//Servelt encargado de mostrar las cotizaciones por usuario
 @WebServlet("/MisCotizaciones")
 public class ServeltMostrarCotizaciones extends HttpServlet {
 

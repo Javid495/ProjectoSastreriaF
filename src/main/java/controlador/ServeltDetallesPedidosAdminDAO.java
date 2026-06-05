@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+//Servelt encargado de mostrar los detalles de los pedidos del administrador
+
 @WebServlet("/AdminPedidosDetalles")
 public class ServeltDetallesPedidosAdminDAO extends HttpServlet {
 
@@ -74,7 +76,7 @@ public class ServeltDetallesPedidosAdminDAO extends HttpServlet {
             return;
         }
 
-        // ... (Tu código de listado general se mantiene intacto debajo) ...
+        // código de listado general
         List<String[]> pedidos = dao.listarPedidosParaAdmin();
         StringBuilder jsonList = new StringBuilder("[");
         for (int i = 0; i < pedidos.size(); i++) {
@@ -95,11 +97,13 @@ public class ServeltDetallesPedidosAdminDAO extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Tu doPost actual se queda exactamente igual
+       
         response.setContentType("application/json");
+       
         int idPedido = Integer.parseInt(request.getParameter("idPedido"));
         String nuevoEstado = request.getParameter("estado");
         MostrarPedidosAdminDAO dao = new MostrarPedidosAdminDAO();
+        
         boolean exito = dao.actualizarEstadoPedido(idPedido, nuevoEstado);
         response.getWriter().write("{\"success\": " + exito + "}");
     }

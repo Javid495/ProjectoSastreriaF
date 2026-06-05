@@ -11,7 +11,8 @@ public class IniciarSesion {
     private int rolUsuario;
     private String imagen;
     
-    
+    // Geters y setters que haran de cables para almacenar y guardar los 
+    //dato de la base de datos
     public IniciarSesion() {}
     
     //Establecer nuestros getters y setters

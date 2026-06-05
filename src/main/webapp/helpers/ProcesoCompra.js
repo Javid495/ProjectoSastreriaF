@@ -1,4 +1,5 @@
 import { llamarComponente } from "../helpers/CompHtml.js";
+import { rederizarCarrito } from "../js/CarritoCompra.js";
 
 /**
  * Procesa la confirmación de pago tanto para productos del catálogo como para cotizaciones personalizadas.
@@ -16,6 +17,8 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
     const btnNequi = document.querySelector("#btnNequi");
     const btnDaviplata = document.querySelector("#btnDaviplata");
     const btnConfirmar = document.querySelector("#ConfirmarCompra");
+
+    const sombreado = document.querySelector(".sombreado");
 
     let metodoPagoSeleccionado = "";
 
@@ -99,7 +102,7 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                 // 🎯 COLUMNA ESPEJO: Forzamos a que viaje con el nombre exacto de la base de datos
                 // Usamos || por si acaso el objeto original trae el ID en minúscula o en mayúscula
                 datosCompra.CotizacionPedido_Id = datosCotizacion.CotizacionPedido_Id || datosCotizacion.idCotizacion;
-                datosCompra.total = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
+                datosCompra.totalLinea = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
             } else {
                 const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
                 if (carrito.length === 0) return alert("El carrito está vacío.");
@@ -107,7 +110,7 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                 datosCompra.productos = carrito.map(item => ({
                     idPrenda: item.id,
                     cantidad: item.cantidad || 1,
-                    totalLineal: item.precio * (item.cantidad || 1)
+                    totalLinea: item.precio * (item.cantidad || 1)
                 }));
             }
 
@@ -140,12 +143,16 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         });
     }
 
-    // Cerrar ventana de Pago Confirmado
-    // pagoConfirm.addEventListener("click", (e) => {
-    // if (e.target.closest("#pagoConfirmado")) {
-    //     sombreado.classList.remove("aparecerSombreado");
-    //     pagoConfirm.innerHTML = "";
-    //     rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
-    // }
-    // });
+    document.addEventListener("click", (e) => {
+    if (e.target.closest("#pagoConfirmado")) {
+        sombreado.classList.remove("aparecerSombreado");
+
+        const pagoConfirm = document.querySelector(".confirmacion__pago");
+        console.log(pagoConfirm);
+        
+
+        pagoConfirm.innerHTML = "";
+        rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
+    }
+    });
 }

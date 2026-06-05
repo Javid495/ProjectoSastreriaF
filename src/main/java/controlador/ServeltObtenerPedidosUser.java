@@ -14,6 +14,8 @@ import dao.PedidosClienteDAO;
 import modelo.IniciarSesion;
 import modelo.Pedidos;
 
+//Servelt para mostrar los pedidos por usuario (Cliente)
+
 //Creamos nuestra referencia al js
 @WebServlet("/ObtenerPedidos")
 public class ServeltObtenerPedidosUser extends HttpServlet {

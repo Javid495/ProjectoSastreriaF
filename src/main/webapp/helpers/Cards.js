@@ -6,11 +6,13 @@ export function crearCards(datos){
     const imagenCat = document.createElement("img");
     const nombreP = document.createElement("h3");
     const precio = document.createElement("p");
+    const Stock = document.createElement("p");
     const boton = document.createElement("button");
 
     article.classList.add("card");
     imagenCat.classList.add("card__image");
     nombreP.classList.add("card__title");
+    Stock.classList.add("card__price")
     precio.classList.add("card__price");
     boton.classList.add("card__button");
 
@@ -42,7 +44,8 @@ export function crearCards(datos){
 
     nombreP.textContent = datos.nombre;
     precio.textContent = `Precio: $${datos.valor.toFixed(2)}`;
-    boton.innerText= "Detalles";
+    Stock.textContent = `En Stock: ${datos.stock}`
+    boton.innerText= " Ver Detalles";
 
     //Asignamos datos tecnicos para los filtrados
     article.dataset.categoria = datos.categoria;
@@ -54,6 +57,7 @@ export function crearCards(datos){
     article.appendChild(imagenCat);
     article.appendChild(nombreP);
     article.appendChild(precio);
+    article.appendChild(Stock);
     article.appendChild(boton);
 
     return article;

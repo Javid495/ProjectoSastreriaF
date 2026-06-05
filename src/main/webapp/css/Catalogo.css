@@ -91,11 +91,14 @@ body{
 .popular {
   padding: var(--padding-seccion);
   position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .popular__category{
-  display: flex;
-  gap: 10px;
+  gap: 10em;
 }
 
 .popular__title {

@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//Servelt encargado de eliminar las prendas uno a uno 
+//En el catalogo Admin
+
 @WebServlet("/EliminarPrendaServlet")
 public class ServeltEliminarIndividual extends HttpServlet {
 

@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 
+//Servelt Encargado de CerrarSesion o destruir la sesion activa
+
 @WebServlet("/CerrarSesion")
 public class ServeltCerrarSesion extends HttpServlet {
     

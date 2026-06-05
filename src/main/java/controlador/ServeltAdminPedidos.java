@@ -10,11 +10,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+//Servelt encargado de listar y cambiar el estado de los pedidos
+
+
 @WebServlet("/AdminPedidosController")
 public class ServeltAdminPedidos extends HttpServlet {
 
     // GET: Devuelve la lista completa de pedidos en formato JSON
     @Override
+    
+    //Peparamos uun metodo get de la respues
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         response.setContentType("application/json");
@@ -39,7 +44,7 @@ public class ServeltAdminPedidos extends HttpServlet {
         response.getWriter().write(json.toString());
     }
 
-    // POST: Cambia el estado de un pedido desde el selector de la Card
+    //Cambia el estado de un pedido desde el selector de la Card
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

@@ -15,6 +15,8 @@ import dao.PedidosMedidaDao;
 import modelo.IniciarSesion;
 import modelo.DetallesPedidoMedida;
 
+//Servelt quien registra nuevos pedidos a medida
+
 //Creamos uestra relacion con el frontend
 @WebServlet("/RegistrarPedidoMedida")
 

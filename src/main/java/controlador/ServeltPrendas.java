@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+//Servelt quien obtiene las prendas del catalogo y las imprime
+//Al cliente
+
 //Realizamos o creamo nuestra referencia a js
 @WebServlet("/ObtenerPrendas")
 

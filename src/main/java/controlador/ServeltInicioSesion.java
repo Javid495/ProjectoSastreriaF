@@ -11,7 +11,7 @@ import java.io.IOException;
 import modelo.IniciarSesion;
 import dao.LoginDAO;
 
-    
+    //Servelt Encargado de abrir la sesion
     @WebServlet("/Login")
     
     public class ServeltInicioSesion extends HttpServlet{

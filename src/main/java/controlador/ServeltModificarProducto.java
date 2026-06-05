@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/ModificarPrendaServlet")
+
 // Asegura la capacidad de recibir archivos grandes del explorador de la sastreria
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
@@ -21,6 +22,7 @@ import java.util.List;
     maxRequestSize = 1024 * 1024 * 50     // 50MB en total de la petición
 )
 
+// Servelt Encargado De actualizar la prendas modificadas en el apartado de administrador
 public class ServeltModificarProducto extends HttpServlet {
 
     @Override
@@ -46,7 +48,7 @@ public class ServeltModificarProducto extends HttpServlet {
 
             PrendasDAO dao = new PrendasDAO();
             
-            // 2. Ejecutar la actualización de los datos principales en la tabla 'Prendas'
+            // Ejecutar la actualización de los datos principales en la tabla 'Prendas'
             boolean prendaActualizada = dao.actualizarPrenda(idPrenda, nombre, precio, talla, idCategoria, stock, estado, descripcion);
             
             if (prendaActualizada) {

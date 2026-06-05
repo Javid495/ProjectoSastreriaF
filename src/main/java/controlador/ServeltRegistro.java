@@ -9,6 +9,8 @@ import java.io.IOException;
 import modelo.Registro;
 import dao.RegistroDAO;
 
+//Servelt quien registra nuevos usuarios
+
 //Establece la conecion con el fetch de js para solicitar los datos del formulario
 @WebServlet (urlPatterns = {"/Registro"}, loadOnStartup = 1)
 public class ServeltRegistro extends HttpServlet{

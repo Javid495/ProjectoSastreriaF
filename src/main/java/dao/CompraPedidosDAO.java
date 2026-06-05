@@ -36,14 +36,14 @@ public class CompraPedidosDAO {
                 idCarritoGenerado = rs.getInt(1); 
             }
 
-            String sqlDetalle = "INSERT INTO DetallesCarrito (Prendas_id, Carrito_id, Detalles_total) VALUES (?, ?, ?)";
+            String sqlDetalle = "INSERT INTO DetallesCarrito (Prendas_id, Carrito_id, Detalles_stock, Detalles_total) VALUES (?, ?, ?, ?)";
             psDetalle = con.prepareStatement(sqlDetalle, Statement.RETURN_GENERATED_KEYS);
 
             String sqlStock = "UPDATE Prendas SET Prenda_stock = Prenda_stock - ? WHERE Prenda_id = ?";
             psStock = con.prepareStatement(sqlStock);
 
             int idDetalleGenerado = 0;
-
+            
             for (int[] prod : listaProductos) {
                 int idPrenda = prod[0];
                 int cantidad = prod[1];      
@@ -51,7 +51,8 @@ public class CompraPedidosDAO {
 
                 psDetalle.setInt(1, idPrenda);
                 psDetalle.setInt(2, idCarritoGenerado);
-                psDetalle.setDouble(3, totalLinea);
+                psDetalle.setInt(3, cantidad);
+                psDetalle.setDouble(4, totalLinea);
                 psDetalle.executeUpdate();
 
                 ResultSet rsDet = psDetalle.getGeneratedKeys();

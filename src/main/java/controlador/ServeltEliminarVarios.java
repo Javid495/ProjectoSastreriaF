@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+//Servelt Encargado de Eliminar Varias Prendas/Productos del catalogo
 @WebServlet("/EliminarVariasPrendas")
 public class ServeltEliminarVarios extends HttpServlet {
 

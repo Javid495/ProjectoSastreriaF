@@ -75,12 +75,18 @@ public class ServeltAdminCotizaciones extends HttpServlet {
             
         } 
         
+        //En caso de que la respuesta sea bajo en stock 
         else if ("bajoStock".equals(accion)) {
-            // ARREGLADO: Ahora mapea correctamente a List<Prendas> y enviamos el límite de unidades (5)
+            
+            //Revisa en la tabla prenda toda insetcion que sea menor a 5
             List<Prendas> bajoStock = dao.listarPrendasBajasStock(5);
+            
+            
             StringBuilder json = new StringBuilder("[");
             
             for (int i = 0; i < bajoStock.size(); i++) {
+                
+                //Usamos el modelo de prendas para revisar quienes estna bajo de stock
                 Prendas item = bajoStock.get(i);
                 json.append("{");
                 json.append("\"id\":").append(item.getId()).append(",");

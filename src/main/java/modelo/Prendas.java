@@ -1,4 +1,5 @@
 
+//getter y setter que hacen referencia a la tabla o campos de prenda
 package modelo;
 
 import java.util.ArrayList;

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+//Servelt encargado de de agregar nuevas prendas del catalogo
+
 @WebServlet("/RegistrarPrendaServlet")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
