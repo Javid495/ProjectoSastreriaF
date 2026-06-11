@@ -16,13 +16,25 @@
 
             List<Prendas> listaProductos = new ArrayList<>();
 
-            String sql = "SELECT p.*, c.Categoria_nombre, max(i.Imagenes_link) as Imagenes_link, IFNULL(pop.Populares_visitas, 0) as visitas " +
-                     "FROM Prendas p " +  
-                     "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " + 
-                     "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id " +
-                     "LEFT JOIN Populares pop ON p.Prenda_id = pop.Prenda_id " +
-                     "GROUP BY p.Prenda_id, c.Categoria_nombre, pop.Populares_visitas " +
-                     "ORDER BY visitas DESC";
+            String sql = "SELECT " +
+                 "  MIN(p.Prenda_id) as Prenda_id, " + 
+                 "  p.Prenda_nombre, " +
+                 "  p.Prenda_tipo, " +
+                 "  MIN(p.Prenda_valor) as Prenda_valor, " + // <<-- CORREGIDO: Enuelto en MIN() para evitar el error de sintaxis
+                 "  p.Prenda_descripcion, " +
+                 "  SUM(p.Prenda_stock) as Prenda_stock, " + 
+                 "  p.Prenda_estado, " +
+                 "  c.Categoria_nombre, " +
+                 "  MAX(i.Imagenes_link) as Imagenes_link, " + 
+                 "  SUM(IFNULL(pop.Populares_visitas, 0)) as visitas, " + 
+                 "  GROUP_CONCAT(DISTINCT p.Prenda_talla ORDER BY p.Prenda_talla SEPARATOR ', ') as Prenda_talla " + 
+                 "FROM Prendas p " +
+                 "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
+                 "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id " +
+                 "LEFT JOIN Populares pop ON p.Prenda_id = pop.Prenda_id " +
+                 "WHERE p.Prenda_stock > 0 AND p.Prenda_estado = 'activa' " +
+                 "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_descripcion, p.Prenda_estado, c.Categoria_nombre " +
+                 "ORDER BY visitas DESC";
 
             try (Connection con = ClaseConexion.getConexion();
                  PreparedStatement ps = con.prepareStatement(sql);
@@ -56,69 +68,6 @@
             }
 
             return listaProductos;
-        }
-
-        public Prendas obtenerPorId(int id){
-
-            Prendas prenda = null;
-
-            String sql = "SELECT p.*, c.Categoria_nombre " +
-                 "FROM Prendas p " +
-                 "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
-                 "WHERE p.Prenda_id = ?";
-
-            try (Connection con = ClaseConexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    prenda = new Prendas();
-                    // 3. Mapeo exhaustivo (todos los campos de tu clase)
-                    prenda.setId(rs.getInt("Prenda_id"));
-                    prenda.setNombre(rs.getString("Prenda_nombre"));
-                    prenda.setDescripcion(rs.getString("Prenda_descripcion"));
-                    prenda.setValor(rs.getDouble("Prenda_valor"));
-                    prenda.setCategoria(rs.getString("Categoria_nombre"));
-                    prenda.setTalla(rs.getString("Prenda_talla"));
-                    prenda.setEstado(rs.getString("Prenda_estado"));
-                    
-                    //Consulta para traerme todas las imagenes asociadas a un producto
-                    String sqlImgs = "select Imagenes_link from imagenes where Prenda_id = ?";
-                    
-                    try (PreparedStatement psImgs = con.prepareStatement(sqlImgs)){
-                        
-                        psImgs.setInt(1, id);
-                        
-                        try (ResultSet rsImgs = psImgs.executeQuery()){
-                            //Creo mi array de imagenes
-                            List<String> imgs = new ArrayList<>();
-                            
-                            //vOy almacenando cada imagen de la prenda
-                            while (rsImgs.next()){
-                                imgs.add(rsImgs.getString("Imagenes_link"));
-                            }
-                            
-                            if (!imgs.isEmpty()) {
-                                prenda.setImagen(imgs.get(0));
-                            }
-                            
-                            //y guardo el array con las imagenes
-                            prenda.setListaImagenes(imgs);
-                        }
-                    }
-                    System.out.println(prenda);
-                    System.out.println("mapeo realizado con exito");
-
-                }
-            }
-
-            } catch (SQLException e) {
-                System.err.println("Error al obtener prenda por ID: " + e.getMessage());
-             }
-
-            return prenda;
         }
         
         // Se crea un nuevo metodo para obtener las categorias sin repetirlas
@@ -322,4 +271,64 @@
             }
         }
       }
+       
+    // Modificacion a la consulta de obtener de talles de prenda, por tallaje
+    public Map<String, Object> obtenerDetallesPrendaConVariantes(int idReferencia) {
+    Map<String, Object> resultado = new java.util.LinkedHashMap<>();
+    java.util.Set<String> listaImagenes = new java.util.LinkedHashSet<>();
+    java.util.Map<Integer, Map<String, Object>> variantesMap = new java.util.LinkedHashMap<>();
+    
+    // Consulta inteligente: p1 busca la prenda por ID, p2 trae todas las prendas con ese mismo nombre
+    String sql = "SELECT p2.Prenda_id, p2.Prenda_nombre, p2.Prenda_descripcion, " +
+                 "       p2.Prenda_talla, p2.Prenda_stock, p2.Prenda_valor, i.Imagenes_link " +
+                 "FROM Prendas p1 " +
+                 "JOIN Prendas p2 ON p1.Prenda_nombre = p2.Prenda_nombre " +
+                 "LEFT JOIN imagenes i ON p2.Prenda_id = i.Prenda_id " +
+                 "WHERE p1.Prenda_id = ? AND p2.Prenda_estado = 'activa' AND p2.Prenda_stock > 0";
+
+    try (Connection con = ClaseConexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, idReferencia);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                // Almacenamos los datos globales de la prenda (solo la primera vez)
+                if (!resultado.containsKey("nombre")) {
+                    resultado.put("nombre", rs.getString("Prenda_nombre"));
+                    resultado.put("descripcion", rs.getString("Prenda_descripcion"));
+                }
+                
+                // Recolectamos los links de imágenes evitando duplicados usando un Set
+                String imgLink = rs.getString("Imagenes_link");
+                if (imgLink != null && !imgLink.isEmpty()) {
+                    listaImagenes.add(imgLink);
+                }
+                
+                // Recolectamos las variantes de tallas evitando duplicados por ID de prenda
+                int varianteId = rs.getInt("Prenda_id");
+                if (!variantesMap.containsKey(varianteId)) {
+                    Map<String, Object> variante = new java.util.LinkedHashMap<>();
+                    variante.put("id", varianteId);
+                    variante.put("talla", rs.getString("Prenda_talla"));
+                    variante.put("stock", rs.getInt("Prenda_stock"));
+                    variante.put("valor", rs.getDouble("Prenda_valor"));
+                    variantesMap.put(varianteId, variante);
+                }
+            }
+        }
+        
+        // Empaquetamos todo en el mapa final
+        if (!resultado.isEmpty()) {
+            resultado.put("listaImagenes", new java.util.ArrayList<>(listaImagenes));
+            resultado.put("variantes", new java.util.ArrayList<>(variantesMap.values()));
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Error en obtenerDetallesPrendaConVariantes: " + e.getMessage());
     }
+    
+        return resultado.isEmpty() ? null : resultado;
+    }
+        
+        
+}

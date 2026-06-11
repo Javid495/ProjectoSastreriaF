@@ -74,8 +74,8 @@ function aplicarFiltros(e) {
 
         // PRIORIDAD 2: Filtrado estricto por Talla
         if (tallaSeleccionada) {
-            const tallaPrenda = normalizarTexto(prenda.talla);
-            return tallaPrenda === tallaSeleccionada;
+            const tallaPrenda = normalizarTexto(prenda.talla); // Contiene ej: "s, m, l"
+            return tallaPrenda.includes(tallaSeleccionada);    // 🌟 CORREGIDO: Cambiado de === a .includes()
         }
 
         // PRIORIDAD 3: Filtrado por Tipo de Prenda (Categoría)

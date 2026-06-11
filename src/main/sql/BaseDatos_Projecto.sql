@@ -160,7 +160,7 @@ create table Pedidos(
     Pedido_Direccion varchar(255) not null,
     Pedido_Estado varchar(50) not null,
     Pedido_TotalCompra double(10,2) not null,
-    foreign key(Usuarios_id) references Usuarios(Usuarios_id)
+    foreign key(Usuario_id) references Usuarios(Usuarios_id)
 );
 
 -- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido

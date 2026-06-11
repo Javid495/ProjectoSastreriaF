@@ -44,7 +44,7 @@ export function crearCards(datos){
 
     nombreP.textContent = datos.nombre;
     precio.textContent = `Precio: $${datos.valor.toFixed(2)}`;
-    Stock.textContent = `En Stock: ${datos.stock}`
+    Stock.textContent = `Stock Disponible: ${datos.stock}`
     boton.innerText= " Ver Detalles";
 
     //Asignamos datos tecnicos para los filtrados

@@ -73,9 +73,16 @@
 
             <!-- Información del producto -->
             <div class="product__info">
-            <h2 class="product__title">Nombre del Producto</h2>
-            <p class="product__price">Precio: $XX.XXX</p>
-            <p class="product__size">Talla: S</p>
+                <input type="hidden" id="prendaIdSeleccionada" value="">
+
+                <h2 class="product__title" id="detalleNombre">Nombre del Producto</h2>
+                <p class="product__price" id="detallePrecio">Precio: $XX.XXX</p>
+    
+                <div class="product__size-container">
+                    <label for="selectTalla" class="product__size">Talla:</label>
+                    <select id="selectTalla" class="product__button">
+                    </select>
+                </div>
             </div>
 
         </section>

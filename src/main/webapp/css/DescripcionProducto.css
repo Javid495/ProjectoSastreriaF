@@ -321,7 +321,28 @@ body{
   align-items: center;
 }
 
+/* Lista desplegable para selector de tallas */
+.product__button{
+  padding: 0.5em 5em;
+  margin-left: 10px; 
+  border-radius: 10px;
+  margin-top: 10px;
+} 
 
+.product__size-container {
+    display: flex;
+    align-items: center;
+    font-family: var(--tipo-letra);
+}
+
+#selectTalla {
+  background-color: var(--color-secundario);
+  color: var(--color-letra);
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+}
+
+/* Media querys de la vista de detalles */
 @media (max-width: 992px) {
 
   .icon--logoheader{
