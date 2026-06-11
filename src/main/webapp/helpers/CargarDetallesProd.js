@@ -4,6 +4,8 @@ export async function CargarDetallesProd(id) {
     const selectTalla = document.querySelector("#selectTalla");
     const hiddenIdInput = document.querySelector("#prendaIdSeleccionada");
     const txtPrecio = document.querySelector("#detallePrecio");
+    // AGREGADO: Capturamos el nuevo input de cantidad
+    const inputCantidad = document.querySelector("#inputCantidad"); 
 
     try {
         const respuesta = await fetch(`../ObtenerProductosDetalle?id=${id}`);
@@ -15,7 +17,7 @@ export async function CargarDetallesProd(id) {
         document.querySelector("#detalleNombre").textContent = producto.nombre;
         document.querySelector(".product__text").textContent = producto.descripcion;
         
-        // 1. Mostrar UNA imagen en concreto (la primera como principal)
+        // 1. Mostrar UNA imagen en concreto
         const imgPrincipal = document.querySelector(".product__image img");
         if (imgPrincipal && producto.listaImagenes && producto.listaImagenes.length > 0) {
             const primeraImagen = producto.listaImagenes[0];
@@ -27,7 +29,7 @@ export async function CargarDetallesProd(id) {
             imgPrincipal.alt = producto.nombre;
         }
         
-        // 2. Mostrar TODAS las imágenes en los indicadores (Tu lógica original intacta)
+        // 2. Mostrar TODAS las imágenes en los indicadores
         const contenedorDots = document.querySelector(".product__dots");
         contenedorDots.innerHTML = ""; 
         if (producto.listaImagenes) {
@@ -50,29 +52,39 @@ export async function CargarDetallesProd(id) {
 
         // 3. Control y renderizado dinámico del Selector de Tallas
         if (selectTalla && producto.variantes && producto.variantes.length > 0) {
-            selectTalla.innerHTML = ""; // Limpiamos opciones estáticas
+            selectTalla.innerHTML = ""; 
 
             producto.variantes.forEach(variante => {
                 const option = document.createElement("option");
-                option.value = variante.id; // Guardamos el ID real de esta variante específica
+                option.value = variante.id; 
                 option.textContent = `${variante.talla} (Stock: ${variante.stock})`;
                 selectTalla.appendChild(option);
             });
 
-            // Inicializamos la interfaz con los datos de la primera variante de la lista
+            // Inicializamos la interfaz con los datos de la primera variante
             const primeraVariante = producto.variantes[0];
             hiddenIdInput.value = primeraVariante.id;
             txtPrecio.textContent = `Precio: $${primeraVariante.valor.toFixed(2)}`;
+            
+            // Ajustamos el valor máximo inicial del input según el stock de la primera variante
+            if (inputCantidad) inputCantidad.max = primeraVariante.stock;
 
             // Evento para cuando el cliente cambie de talla en el select
             selectTalla.addEventListener("change", (e) => {
                 const idSeleccionado = parseInt(e.target.value);
-                // Buscamos la variante correspondiente en los datos locales
                 const varianteSeleccionada = producto.variantes.find(v => v.id === idSeleccionado);
                 
                 if (varianteSeleccionada) {
                     hiddenIdInput.value = varianteSeleccionada.id;
                     txtPrecio.textContent = `Precio: $${varianteSeleccionada.valor.toFixed(2)}`;
+                    
+                    // CORREGIDO: Si cambia de talla, el máximo permitido del input cambia dinámicamente
+                    if (inputCantidad) {
+                        inputCantidad.max = varianteSeleccionada.stock;
+                        if (parseInt(inputCantidad.value) > varianteSeleccionada.stock) {
+                            inputCantidad.value = varianteSeleccionada.stock; // Ajusta si el usuario tenía un número alto
+                        }
+                    }
                 }
             });
         }
@@ -81,7 +93,6 @@ export async function CargarDetallesProd(id) {
         if (btnAgregarCarrito && producto.variantes) {
             btnAgregarCarrito.addEventListener("click", (e) => {
                 
-                // Obtenemos el ID de la variante que está actualmente seleccionada
                 const idVarianteActual = parseInt(hiddenIdInput.value);
                 const varianteSeleccionada = producto.variantes.find(v => v.id === idVarianteActual);
 
@@ -90,32 +101,47 @@ export async function CargarDetallesProd(id) {
                     return;
                 }
 
+                // CORREGIDO: Leemos cuántas unidades quiere llevar el usuario realmente
+                const cantidadAAgregar = inputCantidad ? parseInt(inputCantidad.value) : 1;
+
+                if (cantidadAAgregar <= 0) {
+                    alert("Por favor, ingresa una cantidad válida mayor a 0.");
+                    return;
+                }
+
                 let carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
-                // Buscamos en el carrito si ya existe esta prenda en esta talla específica
                 const productoActual = carrito.find(item => item.id === idVarianteActual);
     
                 if (productoActual) {
-                    // Validamos que el cliente no intente pedir más del stock real en base de datos
-                    if (productoActual.cantidad < varianteSeleccionada.stock) {
-                        productoActual.cantidad += 1;
+                    // VALIDACIÓN MULTI-UNIDAD: Sumamos lo que ya tiene en el carrito + lo que quiere agregar ahora
+                    const cantidadTotalProyectada = productoActual.cantidad + cantidadAAgregar;
+
+                    if (cantidadTotalProyectada <= varianteSeleccionada.stock) {
+                        productoActual.cantidad = cantidadTotalProyectada;
                     } else {
-                        alert(`Lo sentimos, no puedes agregar más unidades. Stock máximo para talla ${varianteSeleccionada.talla}: ${varianteSeleccionada.stock}`);
+                        const disponibles = varianteSeleccionada.stock - productoActual.cantidad;
+                        alert(`No puedes agregar esa cantidad. Ya tienes ${productoActual.cantidad} en el carrito. Stock máximo disponible restante: ${disponibles}`);
                         return;
                     }
                 } else {
-                    // Si el producto/talla es nuevo en el carrito, lo registramos
-                    carrito.push({
-                        id: varianteSeleccionada.id, // El ID de la variante específica
-                        nombre: producto.nombre,
-                        precio: varianteSeleccionada.valor,
-                        imagen: (producto.listaImagenes && producto.listaImagenes[0]) || "../images/Rectangle 11.png",
-                        talla: varianteSeleccionada.talla, // Corregido el typo "producto.tall"
-                        cantidad: 1
-                    });
+                    // VALIDACIÓN NUEVA: Validamos que la cantidad inicial pedida no supere el stock
+                    if (cantidadAAgregar <= varianteSeleccionada.stock) {
+                        carrito.push({
+                            id: varianteSeleccionada.id, 
+                            nombre: producto.nombre,
+                            precio: varianteSeleccionada.valor,
+                            imagen: (producto.listaImagenes && producto.listaImagenes[0]) || "../images/Rectangle 11.png",
+                            talla: varianteSeleccionada.talla, 
+                            cantidad: cantidadAAgregar // Guardamos la cantidad seleccionada
+                        });
+                    } else {
+                        alert(`Lo sentimos, no hay suficiente stock. Máximo disponible: ${varianteSeleccionada.stock}`);
+                        return;
+                    }
                 }
     
                 localStorage.setItem("carritoSastreria", JSON.stringify(carrito));
-                alert(`El producto ${producto.nombre} (${varianteSeleccionada.talla}) se agregó correctamente al carrito.`);
+                alert(`Se agregaron ${cantidadAAgregar} unidad(es) de ${producto.nombre} (${varianteSeleccionada.talla}) al carrito.`);
             });
         }
     } catch (error) {

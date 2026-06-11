@@ -342,6 +342,16 @@ body{
   cursor: pointer;
 }
 
+/* Estilos del contenedor de stock */
+.form-control{
+  text-align: center;
+  font-family: var(--tipo-letra);
+  padding: 8px;
+  border-radius: 10px;
+  background-color: var(--color-secundario);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
 /* Media querys de la vista de detalles */
 @media (max-width: 992px) {
 

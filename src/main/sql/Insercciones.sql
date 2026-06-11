@@ -27,6 +27,9 @@ INSERT INTO Prendas(Categoria_id, Prenda_nombre, Prenda_valor, Prenda_talla, Pre
 (2, "Pantalon jean largo", 30000.00, "16", "Pantalon jean ideal para salidas casuales", 10, "activa"),
 (3, "Pijama completa para  dormir", 30000.00, "M", "Pijama para poder dormir aun mas comodamente", 3, "activa");
 
+INSERT INTO Prendas(Categoria_id, Prenda_nombre, Prenda_valor, Prenda_talla, Prenda_descripcion, Prenda_stock, Prenda_estado)
+values (2, "Pantalon jean", 30000.00, "M", "Pantalon jean ideal para salidas casuales", 5, "activa");
+
 INSERT INTO Populares(Prenda_id, Populares_visitas) VALUES 
 (1, 30), (2, 20), (3, 25), (4, 20), (5, 25); -- 🔥 Corregido: Valores numéricos reales sin comillas
 
