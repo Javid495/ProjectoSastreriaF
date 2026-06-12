@@ -10,14 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-//Servelt quien procesa el pago sea del catlogo 
-//O pedidos admin
 
 @WebServlet("/ProcesarCompraServlet")
 public class ServeltProcesoCompra extends HttpServlet {
@@ -47,104 +43,62 @@ public class ServeltProcesoCompra extends HttpServlet {
             }
             String jsonRaw = buffer.toString();
 
-            // 1. Extraemos los campos comunes a ambos flujos
-            String direccion = extraerValorJson(jsonRaw, "direccion");
-            String telefono = extraerValorJson(jsonRaw, "telefono");
-            String metodoPago = extraerValorJson(jsonRaw, "metodoPago");
-            String tipoPedido = extraerValorJson(jsonRaw, "tipoPedido");
+            // 🎯 EXTRAER ACCIÓN: Saber si es inserción temporal (B1) o pedido definitivo (B2)
+            String accion = extraerValorJson(jsonRaw, "accion");
 
             CompraPedidosDAO dao = new CompraPedidosDAO();
             boolean exito = false;
 
-            // 🔀 BIFURCACIÓN DE FLUJOS: Evaluamos el tipo de pedido enviado por JS
-            if ("A Medida".equalsIgnoreCase(tipoPedido)) {
+            // =================================================================
+            // 🛒 CASO 1: REGISTRO TEMPORAL (Al hacer clic en "Realizar Compra")
+            // =================================================================
+            if ("temporal".equalsIgnoreCase(accion)) {
                 
-                // =================================================================
-                // 🧵 NUEVO FLUJO: PEDIDOS A MEDIDA (COTIZACIONES)
-                // =================================================================
-                int idCotizacion = extraerIntJson(jsonRaw, "CotizacionPedido_Id");
-                
-                // Llamamos a un nuevo método especializado en tu DAO para no tocar el anterior
-                exito = dao.registrarFlujoCompletoCompraAMedida(idUsuario, direccion, telefono, metodoPago, tipoPedido, idCotizacion);
-                
-            } else {
-                
-                List<int[]> listaProductos = new ArrayList<>();
-                
-                // 1. Encontramos cada objeto individual {...} dentro del array JSON
-                Pattern objetoPattern = Pattern.compile("\\{[^\\}]+\\}");
-                Matcher objetoMatcher = objetoPattern.matcher(jsonRaw);
+                List<int[]> listaProductos = parsearProductosDesdeJson(jsonRaw);
 
-                while (objetoMatcher.find()) {
-                    String bloqueObjeto = objetoMatcher.group();
-                    
-                    // Extraer ID (Soporta que desde el JS venga como "id" o como "idPrenda")
-                    int idPrenda = 0;
-                    Pattern pId = Pattern.compile("\"(?:id|idPrenda)\"\\s*:\\s*\"?(\\d+)\"?");
-                    Matcher mId = pId.matcher(bloqueObjeto);
-                    if (mId.find()) idPrenda = Integer.parseInt(mId.group(1));
-                    
-                    // Extraer Cantidad
-                    int cantidad = 0;
-                    Pattern pCant = Pattern.compile("\"cantidad\"\\s*:\\s*\"?(\\d+)\"?");
-                    Matcher mCant = pCant.matcher(bloqueObjeto);
-                    if (mCant.find()) cantidad = Integer.parseInt(mCant.group(1));
-                    
-                    // Extraer Precio o Total de Línea
-                    // Guardar el total de compra del usuario
-                    double totalLinea;
-
-                    // 1. Expresiones regulares individuales y robustas (soportan números con o sin comillas, y con decimales)
-                    Pattern pPrecio = Pattern.compile("\"precio\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
-                    Pattern pTotalLinea = Pattern.compile("\"totalLinea\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
-
-                    Matcher mPrecio = pPrecio.matcher(bloqueObjeto);
-                    Matcher mTotalLinea = pTotalLinea.matcher(bloqueObjeto);
-
-                    double precioUnitario = -1;
-                    double totalLineaJson = -1;
-
-                    // 2. Extraemos el precio unitario si existe
-                    if (mPrecio.find()) {
-                        precioUnitario = Double.parseDouble(mPrecio.group(1));
-                    }
-
-                    // 3. Extraemos el totalLinea si existe
-                    if (mTotalLinea.find()) {
-                        totalLineaJson = Double.parseDouble(mTotalLinea.group(1));
-                    }
-
-                    // 4. Lógica de asignación inteligente y segura
-                    if (totalLineaJson != -1) {
-                        // Si el JSON ya calcula el total de la línea de forma nativa, usamos ese
-                    totalLinea = totalLineaJson;
-                    } else if (precioUnitario != -1) {
-                        // Si solo venía el precio unitario, lo multiplicamos por la cantidad de prendas
-                        totalLinea = precioUnitario * cantidad;
-                    } else {
-                        // Caso de respaldo por si no encontró ninguna de las dos propiedades
-                        totalLinea = 0; 
-                    }
-
-                    System.out.println("Total Línea Calculado: " + totalLinea);
-                    
-                    // Solo si encontramos datos válidos, lo agregamos a la lista
-                    if (idPrenda > 0 && cantidad > 0) {
-                        listaProductos.add(new int[]{idPrenda, cantidad, (int) totalLinea});
-                    }
-                }
-
-                // Alerta preventiva por si el array sigue vacío por culpa del envío en el JS
                 if (listaProductos.isEmpty()) {
-                    System.out.println("⚠️ ALERTA: No se pudo extraer ningún producto del JSON recibido: " + jsonRaw);
-                    response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El carrito enviado no tiene un formato válido.\"}");
+                    System.out.println("⚠️ ALERTA: No se encontraron productos para el carrito temporal.");
+                    response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El carrito no contiene productos válidos.\"}");
                     return;
                 }
 
-                exito = dao.registrarFlujoCompletoCompra(idUsuario, direccion, telefono, metodoPago, tipoPedido, listaProductos);
+                // Invoca al método temporal que limpia registros previos e inserta en Carrito y DetallesCarrito
+                exito = dao.registrarCarritoTemporal(idUsuario, listaProductos);
+
+            // =================================================================
+            // 🚀 CASO 2: PROCESAR COMPRA DEFINITIVA (Al enviar el Formulario)
+            // =================================================================
+            } else {
+                
+                // Extraemos los campos comunes del formulario final
+                String direccion = extraerValorJson(jsonRaw, "direccion");
+                String telefono = extraerValorJson(jsonRaw, "telefono");
+                String metodoPago = extraerValorJson(jsonRaw, "metodoPago");
+                String tipoPedido = extraerValorJson(jsonRaw, "tipoPedido");
+
+                // 🔀 BIFURCACIÓN DE COMPRA DEFINITIVA
+                if ("A Medida".equalsIgnoreCase(tipoPedido)) {
+                    
+                    // 🧵 Flujo definitivo para pedidos personalizados
+                    int idCotizacion = extraerIntJson(jsonRaw, "CotizacionPedido_Id");
+                    exito = dao.confirmarPedidoAMedidaDefinitivo(idUsuario, direccion, telefono, metodoPago, tipoPedido, idCotizacion);
+                    
+                } else {
+                    
+                    // 🛍️ Flujo definitivo para catálogo regular
+                    List<int[]> listaProductos = parsearProductosDesdeJson(jsonRaw);
+
+                    if (listaProductos.isEmpty()) {
+                        response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El pedido no tiene productos válidos.\"}");
+                        return;
+                    }
+
+                    // Guarda Pedido, DetallesPedido, descuenta stock y destruye el carrito temporal
+                    exito = dao.confirmarPedidoDefinitivo(idUsuario, direccion, telefono, metodoPago, tipoPedido, listaProductos);
+                }
             }
 
-            // Respuesta unificada para el JavaScript
+            // Respuesta unificada para tu fetch de JavaScript
             if (exito) {
                 response.getWriter().write("{\"status\": \"Exito\"}");
             } else {
@@ -171,16 +125,62 @@ public class ServeltProcesoCompra extends HttpServlet {
         }
     }
 
-    // Tu método original para extraer Strings entre comillas ("llave":"valor")
+    // 🛠️ HELPER MODULAR: Aísla la lógica de conversión de productos para no duplicar código
+    private List<int[]> parsearProductosDesdeJson(String jsonRaw) {
+        List<int[]> listaProductos = new ArrayList<>();
+        
+        Pattern objetoPattern = Pattern.compile("\\{[^\\}]+\\}");
+        Matcher objetoMatcher = objetoPattern.matcher(jsonRaw);
+
+        while (objetoMatcher.find()) {
+            String bloqueObjeto = objetoMatcher.group();
+            
+            int idPrenda = 0;
+            Pattern pId = Pattern.compile("\"(?:id|idPrenda)\"\\s*:\\s*\"?(\\d+)\"?");
+            Matcher mId = pId.matcher(bloqueObjeto);
+            if (mId.find()) idPrenda = Integer.parseInt(mId.group(1));
+            
+            int cantidad = 0;
+            Pattern pCant = Pattern.compile("\"cantidad\"\\s*:\\s*\"?(\\d+)\"?");
+            Matcher mCant = pCant.matcher(bloqueObjeto);
+            if (mCant.find()) cantidad = Integer.parseInt(mCant.group(1));
+            
+            double totalLinea;
+            Pattern pPrecio = Pattern.compile("\"precio\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
+            Pattern pTotalLinea = Pattern.compile("\"totalLinea\"\\s*:\\s*\"?([0-9]+(?:\\.[0-9]+)?)\"?");
+
+            Matcher mPrecio = pPrecio.matcher(bloqueObjeto);
+            Matcher mTotalLinea = pTotalLinea.matcher(bloqueObjeto);
+
+            double precioUnitario = -1;
+            double totalLineaJson = -1;
+
+            if (mPrecio.find()) precioUnitario = Double.parseDouble(mPrecio.group(1));
+            if (mTotalLinea.find()) totalLineaJson = Double.parseDouble(mTotalLinea.group(1));
+
+            if (totalLineaJson != -1) {
+                totalLinea = totalLineaJson;
+            } else if (precioUnitario != -1) {
+                totalLinea = precioUnitario * cantidad;
+            } else {
+                totalLinea = 0; 
+            }
+            
+            if (idPrenda > 0 && cantidad > 0) {
+                listaProductos.add(new int[]{idPrenda, cantidad, (int) totalLinea});
+            }
+        }
+        return listaProductos;
+    }
+
+    // Métodos utilitarios de análisis de cadenas JSON
     private String extraerValorJson(String json, String llave) {
-        Pattern p = Pattern.compile("\"" + llave + "\":\"([^\"]+)\"");
+        Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"([^\"]+)\"");
         Matcher m = p.matcher(json);
         return m.find() ? m.group(1) : "";
     }
 
-    // 🎯 NUEVO HELPER: Extrae números enteros sin comillas del JSON ("idCotizacion":4)
     private int extraerIntJson(String json, String llave) {
-    // El \"? le dice al motor de regex: "puede o no haber una comilla aquí"
         Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"?(\\d+)\"?");
         Matcher m = p.matcher(json);
         return m.find() ? Integer.parseInt(m.group(1)) : 0;

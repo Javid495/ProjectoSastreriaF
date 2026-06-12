@@ -32,8 +32,42 @@ function renderizarPrendas(lista) {
         return;
     }
 
-    lista.forEach(prenda => {
-        const nuevaCard = crearCards(prenda);
+    // 1. Leer el carrito actual una sola vez
+    const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
+
+    lista.forEach(prendaOriginal => {
+        // 2. Clonamos la prenda para no dañar los datos originales en memoria
+        let prendaModificada = { ...prendaOriginal };
+
+        // 3. Sumamos cuántas unidades de ESTA prenda en específico ya tiene el usuario en su carrito
+        const unidadesEnCarrito = carrito.reduce((sum, item) => {
+            // Buscamos coincidencia por idPrenda, o por nombre como plan de respaldo seguro
+            const esMismaPrenda = item.idPrenda === prendaOriginal.id || item.nombre === prendaOriginal.nombre;
+            return esMismaPrenda ? sum + item.cantidad : sum;
+        }, 0);
+
+        // 4. Restamos del stock original que vino de la Base de Datos
+        const stockDisponibleReal = prendaOriginal.stock - unidadesEnCarrito;
+        prendaModificada.stock = stockDisponibleReal < 0 ? 0 : stockDisponibleReal;
+
+        // 5. Se lo enviamos a tu función modular original. 
+        // Ella leerá 'prendaModificada.stock' y pintará el número ya restado automáticamente.
+        const nuevaCard = crearCards(prendaModificada);
+
+        // 6. Si el stock total disponible para el usuario es 0, deshabilitamos la tarjeta que nos devolvió el módulo
+        if (stockDisponibleReal <= 0) {
+            nuevaCard.classList.add("producto--agotado"); // Por si quieres aplicar opacidad con CSS
+            
+            // Buscamos el botón usando la clase exacta que le asignas en tu módulo (.card__button)
+            const botonCard = nuevaCard.querySelector(".card__button");
+            if (botonCard) {
+                botonCard.innerText = "Sin existencias";
+                botonCard.style.pointerEvents = "none"; // Bloquea el evento click de redirección
+                botonCard.style.background = "#ccc";    // Estilo visual de deshabilitado
+                botonCard.style.color = "#777";
+            }
+        }
+
         contenedor.appendChild(nuevaCard);
     });
 }
@@ -43,20 +77,10 @@ function renderizarPrendas(lista) {
  * (O busca por nombre, O filtra por Talla, O filtra por Tipo de prenda)
  */
 function aplicarFiltros(e) {
-    // Si el usuario escribe en la barra de búsqueda, limpiamos los selects visualmente
+    // [Tus limpiadores de inputs visuales se quedan exactamente igual...]
     if (e && e.target === inputBusqueda && inputBusqueda.value.trim() !== "") {
         selectTalla.value = "";
         selectTipo.value = "";
-    }
-    // Si selecciona una talla, limpiamos la barra de búsqueda y el tipo de prenda
-    if (e && e.target === selectTalla && selectTalla.value !== "") {
-        inputBusqueda.value = "";
-        selectTipo.value = "";
-    }
-    // Si selecciona un tipo de prenda, limpiamos la barra de búsqueda y la talla
-    if (e && e.target === selectTipo && selectTipo.value !== "") {
-        inputBusqueda.value = "";
-        selectTalla.value = "";
     }
 
     const textoBusqueda = normalizarTexto(inputBusqueda.value);
@@ -66,6 +90,11 @@ function aplicarFiltros(e) {
     // Filtrado con bifurcación lógica exclusiva
     const prendasFiltradas = todasLasPrendas.filter(prenda => {
         
+        // 🛑 FILTRO FILTRADO FANTASMA: Si la prenda está inactiva en la DB, se descarta de inmediato
+        if (prenda.estado === "inactiva") {
+            return false; 
+        }
+
         // PRIORIDAD 1: Búsqueda por coincidencia de texto en el nombre
         if (textoBusqueda) {
             const nombrePrenda = normalizarTexto(prenda.nombre);
@@ -74,18 +103,16 @@ function aplicarFiltros(e) {
 
         // PRIORIDAD 2: Filtrado estricto por Talla
         if (tallaSeleccionada) {
-            const tallaPrenda = normalizarTexto(prenda.talla); // Contiene ej: "s, m, l"
-            return tallaPrenda.includes(tallaSeleccionada);    // 🌟 CORREGIDO: Cambiado de === a .includes()
+            const tallaPrenda = normalizarTexto(prenda.talla);
+            return tallaPrenda.includes(tallaSeleccionada); 
         }
 
         // PRIORIDAD 3: Filtrado por Tipo de Prenda (Categoría)
         if (tipoSeleccionado) {
-            // Evaluamos tanto prenda.categoria como prenda.tipo por seguridad en tu mapeo de objetos
             const categoriaPrenda = normalizarTexto(prenda.categoria || prenda.tipo);
             return categoriaPrenda === tipoSeleccionado;
         }
 
-        // Si todos los filtros están vacíos, retorna la lista completa
         return true;
     });
 

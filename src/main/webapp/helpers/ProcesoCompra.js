@@ -22,32 +22,26 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
 
     let metodoPagoSeleccionado = "";
 
-    // 💰 Cargar el total dinámicamente dependiendo del flujo
+    // Cargar el total dinámicamente dependiendo del flujo
     const cargarTotalCompra = () => {
         if (tipoPedido === "A Medida" && datosCotizacion) {
-            // 🌟 Intentamos leer 'precio' o la columna de la BD 'Cotizacion_Precio' por si acaso
             let precioRaw = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
 
             if (precioRaw !== undefined && precioRaw !== null) {
-                // Si viene como String con "$" o puntos (ej: "$30.000"), dejamos SOLO los números
                 if (typeof precioRaw === "string") {
                     precioRaw = precioRaw.replace(/[^0-9]/g, ""); 
                 }
-                
                 const precioNumerico = parseFloat(precioRaw);
 
                 if (!isNaN(precioNumerico)) {
                     txtTotal.textContent = `$ ${precioNumerico.toLocaleString('es-CO', { minimumFractionDigits: 0 })}`;
-                    return; // Éxito, salimos de la función
+                    return;
                 }
             }
-            
-            // Salvaguarda visual si algo sigue fallando con el objeto enviado
             txtTotal.textContent = "$ 0 (Error precio)";
             console.warn("datosCotizacion no contiene un precio válido:", datosCotizacion);
 
         } else {
-            // Flujo tradicional: Leer del carrito en LocalStorage
             const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
             const granTotal = carrito.reduce((acumulado, item) => {
                 return acumulado + (parseFloat(item.precio) * parseInt(item.cantidad || 1));
@@ -74,7 +68,6 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
 
     // Procesar el Submit del formulario de pago
     if (btnConfirmar) {
-        // Clonamos el botón o removemos listeners antiguos para evitar ejecuciones duplicadas
         const nuevoBtnConfirmar = btnConfirmar.cloneNode(true);
         btnConfirmar.parentNode.replaceChild(nuevoBtnConfirmar, btnConfirmar);
 
@@ -84,23 +77,20 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
             const direccion = inputDireccion.value.trim();
             const telefono = inputTelefono.value.trim();
 
-            // Validaciones comunes de interfaz
             if (!direccion) return alert("Por favor, ingresa tu dirección de entrega.");
             if (!metodoPagoSeleccionado) return alert("Debes seleccionar un método de pago antes de continuar.");
             if (!telefono || telefono.length < 7) return alert("Por favor, ingresa un número de teléfono válido.");
 
-
-            // Construcción del Payload JSON adaptable
+            // 🌟 CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE CON ACCIÓN DEFINITIVA
             let datosCompra = {
+                accion: "confirmar", // 🔥 Indicador clave para el switch del Servlet
                 direccion: direccion,
                 telefono: telefono,
                 metodoPago: metodoPagoSeleccionado,
-                tipoPedido: tipoPedido // "Catalogo" o "A Medida"
+                tipoPedido: tipoPedido 
             };
 
             if (tipoPedido === "A Medida") {
-                // 🎯 COLUMNA ESPEJO: Forzamos a que viaje con el nombre exacto de la base de datos
-                // Usamos || por si acaso el objeto original trae el ID en minúscula o en mayúscula
                 datosCompra.CotizacionPedido_Id = datosCotizacion.CotizacionPedido_Id || datosCotizacion.idCotizacion;
                 datosCompra.totalLinea = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
             } else {
@@ -128,7 +118,6 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                         localStorage.removeItem("carritoSastreria"); 
                     }
                     
-                    // Limpieza y renderizado de la ventana de éxito
                     const confirmarComprarDiv = document.querySelector("#compraCarrito");
                     if (confirmarComprarDiv) confirmarComprarDiv.innerHTML = ""; 
                     
@@ -144,15 +133,11 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
     }
 
     document.addEventListener("click", (e) => {
-    if (e.target.closest("#pagoConfirmado")) {
-        sombreado.classList.remove("aparecerSombreado");
-
-        const pagoConfirm = document.querySelector(".confirmacion__pago");
-        console.log(pagoConfirm);
-        
-
-        pagoConfirm.innerHTML = "";
-        rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
-    }
+        if (e.target.closest("#pagoConfirmado")) {
+            sombreado.classList.remove("aparecerSombreado");
+            const pagoConfirm = document.querySelector(".confirmacion__pago");
+            pagoConfirm.innerHTML = "";
+            rederizarCarrito(); 
+        }
     });
 }

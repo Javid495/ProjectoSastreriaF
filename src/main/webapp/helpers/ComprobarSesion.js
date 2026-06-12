@@ -2,19 +2,19 @@ import { cerrarSesionServidor } from "./CerrarSesion.js"
 
 export function comprobarSesion(ruta){
 
-    //Detectar el nombre base o funete origin del projecto
+    // Detectar el nombre base o fuente origen del proyecto
     const urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/',1));
     const headerPr = document.querySelector(".header__nav") 
     const ContSession = headerPr.querySelector("#SesionUser");
 
-    fetch(`${urlBase}/VerificarSesion`)
+    // 🔑 1. Agregamos el 'return' aquí para exportar la Promesa al exterior
+    return fetch(`${urlBase}/VerificarSesion`)
     .then(response => response.json())
     .then(data => {
 
         if (data.logeado){
 
             console.log(`El usuario: ${data.nombre} con el id ${data.id}`);
-
             let imagenUser = data.imagen;
 
             if (ruta === "../"){
@@ -44,7 +44,6 @@ export function comprobarSesion(ruta){
             const btnCerrarSesion = document.querySelector("#cerrarSesion");
 
             IconoPerfil.addEventListener("click", (e) => {
-
                 e.stopPropagation();
                 if (menuDesplegable.style.display === "none") {
                     menuDesplegable.style.display = "block";
@@ -52,16 +51,17 @@ export function comprobarSesion(ruta){
                 else {
                     menuDesplegable.style.display = "none";
                 }
-
             });
 
             btnCerrarSesion.addEventListener("click", (e) =>{
                 cerrarSesionServidor();
             })
             
+            // 🌟 2. Retornamos true si la sesión está activa
+            return true; 
         } 
 
-        else{
+        else {
             console.log("Usuario general"); 
             console.log(window.location.href);
             
@@ -71,10 +71,16 @@ export function comprobarSesion(ruta){
             else{
                 ContSession.innerHTML = `<a href="../inicioSecion.html" class="header__item"><button class="header__login" id="BtnHeader">Inicio de sesión</button></a>`;
             }
+
+            // 🌟 3. Retornamos false si es un visitante anónimo
+            return false;
         }
     })
-    .catch(error => console.error("hubo algun error al verificar la sesion" + error));
-
+    .catch(error => {
+        console.error("hubo algun error al verificar la sesion" + error);
+        // 🌟 4. Si hay error de red, asumimos false por seguridad de la tienda
+        return false; 
+    });
 }
 
 
