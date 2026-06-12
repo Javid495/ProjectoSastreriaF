@@ -1,334 +1,299 @@
+package dao;
 
-    package dao;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import modelo.Prendas;
 
-    import java.sql.Connection;
-    import java.sql.PreparedStatement;
-    import java.sql.ResultSet;
-    import java.sql.SQLException;
-    import java.util.*;
-    import modelo.Prendas;
-    import dao.ClaseConexion;
-    import java.util.List;
+public class PrendasDAO {
 
-    public class PrendasDAO {
+    // =========================================================================
+    // 1. CONSULTAS Y LECTURAS (Catálogo y Detalles)
+    // =========================================================================
 
-        public List<Prendas> listarPrendas() {
+    /**
+     * Lista las prendas agrupadas por nombre para el catálogo del cliente.
+     */
+    public List<Prendas> listarPrendas() {
+        List<Prendas> listaProductos = new ArrayList<>();
+        String sql = "SELECT " +
+                     "  MIN(p.Prenda_id) as Prenda_id, " + 
+                     "  p.Prenda_nombre, " +
+                     "  p.Prenda_tipo, " +
+                     "  MIN(p.Prenda_valor) as Prenda_valor, " + 
+                     "  p.Prenda_descripcion, " +
+                     "  SUM(p.Prenda_stock) as Prenda_stock, " + 
+                     "  p.Prenda_estado, " +
+                     "  c.Categoria_nombre, " +
+                     "  MAX(i.Imagenes_link) as Imagenes_link, " + 
+                     "  SUM(IFNULL(pop.Populares_visitas, 0)) as visitas, " + 
+                     "  GROUP_CONCAT(DISTINCT p.Prenda_talla ORDER BY p.Prenda_talla SEPARATOR ', ') as Prenda_talla " + 
+                     "FROM Prendas p " +
+                     "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
+                     "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id " +
+                     "LEFT JOIN Populares pop ON p.Prenda_id = pop.Prenda_id " +
+                     "WHERE p.Prenda_stock > 0 AND p.Prenda_estado = 'activa' " +
+                     "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_descripcion, p.Prenda_estado, c.Categoria_nombre " +
+                     "ORDER BY visitas DESC";
 
-            List<Prendas> listaProductos = new ArrayList<>();
+        try (Connection con = ClaseConexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-            String sql = "SELECT " +
-                 "  MIN(p.Prenda_id) as Prenda_id, " + 
-                 "  p.Prenda_nombre, " +
-                 "  p.Prenda_tipo, " +
-                 "  MIN(p.Prenda_valor) as Prenda_valor, " + // <<-- CORREGIDO: Enuelto en MIN() para evitar el error de sintaxis
-                 "  p.Prenda_descripcion, " +
-                 "  SUM(p.Prenda_stock) as Prenda_stock, " + 
-                 "  p.Prenda_estado, " +
-                 "  c.Categoria_nombre, " +
-                 "  MAX(i.Imagenes_link) as Imagenes_link, " + 
-                 "  SUM(IFNULL(pop.Populares_visitas, 0)) as visitas, " + 
-                 "  GROUP_CONCAT(DISTINCT p.Prenda_talla ORDER BY p.Prenda_talla SEPARATOR ', ') as Prenda_talla " + 
-                 "FROM Prendas p " +
-                 "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
-                 "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id " +
-                 "LEFT JOIN Populares pop ON p.Prenda_id = pop.Prenda_id " +
-                 "WHERE p.Prenda_stock > 0 AND p.Prenda_estado = 'activa' " +
-                 "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_descripcion, p.Prenda_estado, c.Categoria_nombre " +
-                 "ORDER BY visitas DESC";
-
-            try (Connection con = ClaseConexion.getConexion();
-                 PreparedStatement ps = con.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()){
-                 System.out.println(con);
-
-                while (rs.next()){
-
-                    Prendas p = new Prendas();
-                    p.setId(rs.getInt("Prenda_id") );
-                    p.setNombre(rs.getString("Prenda_nombre"));
-                    p.setTipoPrenda(rs.getString("Prenda_tipo"));
-                    p.setValor(rs.getDouble("Prenda_valor"));
-                    p.setTalla(rs.getString("Prenda_talla"));
-                    p.setDescripcion(rs.getString("Prenda_descripcion"));
-                    p.setStock(rs.getInt("Prenda_stock"));
-                    p.setEstado(rs.getString("Prenda_estado"));
-                    p.setCategoria(rs.getString("Categoria_nombre"));
-                    p.setImagen(rs.getString("Imagenes_link"));
-                    p.setVisitas(rs.getInt("visitas"));
-
-                    listaProductos.add(p);
-                }
-
-                System.out.println("DEBUG: Tamaño de la lista enviada: " + listaProductos.size());
+            while (rs.next()) {
+                Prendas p = new Prendas();
+                p.setId(rs.getInt("Prenda_id"));
+                p.setNombre(rs.getString("Prenda_nombre"));
+                p.setTipoPrenda(rs.getString("Prenda_tipo"));
+                p.setValor(rs.getDouble("Prenda_valor"));
+                p.setTalla(rs.getString("Prenda_talla"));
+                p.setDescripcion(rs.getString("Prenda_descripcion"));
+                p.setStock(rs.getInt("Prenda_stock"));
+                p.setEstado(rs.getString("Prenda_estado"));
+                p.setCategoria(rs.getString("Categoria_nombre"));
+                p.setImagen(rs.getString("Imagenes_link"));
+                p.setVisitas(rs.getInt("visitas"));
+                listaProductos.add(p);
             }
-
-
-            catch (SQLException e){
-                e.printStackTrace( );
-            }
-
-            return listaProductos;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
-        // Se crea un nuevo metodo para obtener las categorias sin repetirlas
-        public List<Map<String, String>> listarCategorias(){
-            
-            List<Map<String, String>> categorias = new ArrayList<>();
-            // Se hace la peticion a la tabla categorias para que me traiga las categorias disponibles
-            String sql = "SELECT Categoria_id, Categoria_nombre FROM Categoria ORDER BY Categoria_nombre ASC;";
-           
-            // Ejecucion de la varible sql
-            try (Connection con = ClaseConexion.getConexion();
-                PreparedStatement pd = con.prepareStatement(sql);
-                ResultSet rs = pd.executeQuery()){
-            
-                while (rs.next()){
-                    Map<String, String> categoria = new HashMap<>();
-                    categoria.put("id", String.valueOf(rs.getInt("Categoria_id")));
-                    categoria.put("nombre", rs.getString("Categoria_nombre"));
-                    categorias.add(categoria);
-                }
-            
+        return listaProductos;
+    }
+
+    /**
+     * Obtiene las categorías disponibles sin repetir para filtros e inputs.
+     */
+    public List<Map<String, String>> listarCategorias() {
+        List<Map<String, String>> categorias = new ArrayList<>();
+        String sql = "SELECT Categoria_id, Categoria_nombre FROM Categoria ORDER BY Categoria_nombre ASC;";
+
+        try (Connection con = ClaseConexion.getConexion();
+             PreparedStatement pd = con.prepareStatement(sql);
+             ResultSet rs = pd.executeQuery()) {
+
+            while (rs.next()) {
+                Map<String, String> categoria = new HashMap<>();
+                categoria.put("id", String.valueOf(rs.getInt("Categoria_id")));
+                categoria.put("nombre", rs.getString("Categoria_nombre"));
+                categorias.add(categoria);
             }
-            catch (SQLException e){
-                System.out.println("Error al listar desde la tabla Categoria: " + e.getMessage()); 
-            }
-            
-            return categorias;
+        } catch (SQLException e) {
+            System.out.println("Error al listar Categorias: " + e.getMessage());
         }
+        return categorias;
+    }
+
+    /**
+     * Trae la información unificada de una prenda base y desglosa todas sus variantes de tallas.
+     */
+    public Map<String, Object> obtenerDetallesPrendaConVariantes(int idReferencia) {
+        Map<String, Object> resultado = new java.util.LinkedHashMap<>();
+        java.util.Set<String> listaImagenes = new java.util.LinkedHashSet<>();
+        java.util.Map<Integer, Map<String, Object>> variantesMap = new java.util.LinkedHashMap<>();
         
-        //SErvelt de Actuaizar Prendas
-        public boolean actualizarPrenda(int idPrenda, String nombre, double valor, String talla, int idCategoria, int stock, String estado, String descripcion) {
-            // Sentencia SQL utilizando la relación FK de tu tabla Categoria
-            String sql = "UPDATE Prendas SET Prenda_nombre = ?, Prenda_valor = ?, Prenda_talla = ?, "
-               + "Categoria_id = ?, Prenda_stock = ?, Prenda_estado = ?, Prenda_descripcion = ? "
-               + "WHERE Prenda_id = ?;";
-               
-            try (Connection con = ClaseConexion.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-        
-                // Inyectamos las variables en el orden exacto de los signos de interrogación
-                ps.setString(1, nombre);
-                ps.setDouble(2, valor);
-                ps.setString(3, talla);
-                ps.setInt(4, idCategoria); // La FK numérica de la categoría elegida
-                ps.setInt(5, stock);
-                ps.setString(6, estado);    // "activa" o "inactiva" según validó el JS
-                ps.setString(7, descripcion);
-                ps.setInt(8, idPrenda);     // El identificador para el WHERE
-        
-                // Devuelve true si se modificó la fila exitosamente
-                return ps.executeUpdate() > 0;
-        
-            } 
-            catch (SQLException e) {
-                System.out.println("Error al realizar el UPDATE relacional en PrendasDAO: " + e.getMessage());
-                return false;
-            }
-        }
-        
-        //Servelt de Actualizar Imagenes
-        public void sincronizarImagenesPrenda(int idPrenda, java.util.List<String> listaRutas) {
-            // 1. Sentencia para limpiar el historial de imágenes de esta prenda en específico
-            String sqlDelete = "DELETE FROM imagenes WHERE Prenda_id = ?;"; // Ajusta 'Prendas_id' al nombre exacto de tu FK
-    
-            // 2. Sentencia para insertar las imágenes que quedaron vigentes
-            String sqlInsert = "INSERT INTO imagenes (Imagenes_link, Prenda_id) VALUES (?, ?);"; // Ajusta columnas si cambian
-    
-            try (Connection con = ClaseConexion.getConexion()) {
-                // Desactivamos el autocommit para controlar la transacción manualmente (Seguridad ante todo)
-                con.setAutoCommit(false);
-        
-                try (PreparedStatement psDelete = con.prepareStatement(sqlDelete);
-                    PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+        String sql = "SELECT p2.Prenda_id, p2.Prenda_nombre, p2.Prenda_descripcion, p2.Prenda_tipo, " +
+                     "       p2.Prenda_talla, p2.Prenda_stock, p2.Prenda_valor, i.Imagenes_link " +
+                     "FROM Prendas p1 " +
+                     "JOIN Prendas p2 ON p1.Prenda_nombre = p2.Prenda_nombre " +
+                     "LEFT JOIN imagenes i ON p2.Prenda_id = i.Prenda_id " +
+                     "WHERE p1.Prenda_id = ? AND p2.Prenda_estado = 'activa'";
+
+        try (Connection con = ClaseConexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             
-                    // Realizamos un borrado preventivo
-                    psDelete.setInt(1, idPrenda);
-                    psDelete.executeUpdate();
-            
-                    if (listaRutas != null && !listaRutas.isEmpty()) {
-                       
-                        // Se Realiza una insercion en masa
-                        for (String ruta : listaRutas) {
-                            if (!ruta.trim().isEmpty()) {
-                                psInsert.setString(1, ruta.trim());
-                                psInsert.setInt(2, idPrenda);
-                                psInsert.addBatch(); // Se acumula en el lote de ejecución
-                            }
-                        }
-                
-                        // Ejecutamos todo el lote de inserciones junto
-                        psInsert.executeBatch();
+            ps.setInt(1, idReferencia);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    if (!resultado.containsKey("nombre")) {
+                        resultado.put("nombre", rs.getString("Prenda_nombre"));
+                        resultado.put("descripcion", rs.getString("Prenda_descripcion"));
+                        resultado.put("tipo", rs.getString("Prenda_tipo"));
                     }
-            
-                    // Si todo salió perfecto, guardamos los cambios definitivamente en MySQL
-                    con.commit();
-                    System.out.println("Sincronización de imágenes realizada con éxito para la prenda ID: " + idPrenda);
-                
-                } 
-                catch (SQLException e) {
-                    // En caso de que algo llegue a fallar
-                    con.rollback();
-                    System.out.println("Error en la transacción de imágenes. Se aplicó Rollback: " + e.getMessage());
+                    
+                    String imgLink = rs.getString("Imagenes_link");
+                    if (imgLink != null && !imgLink.isEmpty()) {
+                        listaImagenes.add(imgLink);
+                    }
+                    
+                    int varianteId = rs.getInt("Prenda_id");
+                    if (!variantesMap.containsKey(varianteId)) {
+                        Map<String, Object> variante = new java.util.LinkedHashMap<>();
+                        variante.put("id", varianteId);
+                        variante.put("talla", rs.getString("Prenda_talla"));
+                        variante.put("stock", rs.getInt("Prenda_stock"));
+                        variante.put("valor", rs.getDouble("Prenda_valor"));
+                        variantesMap.put(varianteId, variante);
+                    }
                 }
-        
-            } 
-            catch (SQLException e) {
-                System.out.println("Error de conexión al sincronizar imágenes en PrendasDAO: " + e.getMessage());
             }
+            if (!resultado.isEmpty()) {
+                resultado.put("listaImagenes", new java.util.ArrayList<>(listaImagenes));
+                resultado.put("variantes", new java.util.ArrayList<>(variantesMap.values()));
+            }
+        } catch (Exception e) {
+            System.out.println("Error en obtenerDetallesPrendaConVariantes: " + e.getMessage());
         }
-        
-        //dao de añadirImagenes
+        return resultado.isEmpty() ? null : resultado;
+    }
 
-        // Recibe la conexión "con" activa para no romper la transacción masiva 
-        public void AñadirImagenesPrenda(int idPrenda, java.util.List<String> listaRutas, Connection con) throws SQLException {
-    
-        // Usamos las columnas exactas que tienes en tu base de datos: 'Imagenes_link' y 'Prenda_id'
-        String sqlDelete = "DELETE FROM imagenes WHERE Prenda_id = ?;"; 
-        String sqlInsert = "INSERT INTO imagenes (Imagenes_link, Prenda_id) VALUES (?, ?);"; 
-    
-        // Al usar "throws SQLException", delegamos la gestión de errores al catch de registrarPrenda
+    // =========================================================================
+    // 2. HELPERS PRIVADOS (Mantenimiento de Código Limpio / DRY)
+    // =========================================================================
+
+    /**
+     * ÚNICO método encargado de gestionar las imágenes. Elimina código duplicado.
+     * Reutiliza una conexión activa para integrarse a transacciones complejas.
+     */
+    private void guardarImagenesBatch(int idPrenda, List<String> listaRutas, Connection con) throws SQLException {
+        String sqlDelete = "DELETE FROM imagenes WHERE Prenda_id = ?;";
+        String sqlInsert = "INSERT INTO imagenes (Imagenes_link, Prenda_id) VALUES (?, ?);";
+
         try (PreparedStatement psDelete = con.prepareStatement(sqlDelete);
              PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
-        
-            // 1. Borrado preventivo dentro de la misma transacción
+            
             psDelete.setInt(1, idPrenda);
             psDelete.executeUpdate();
-        
-            // 2. Inserción en masa del lote
+
             if (listaRutas != null && !listaRutas.isEmpty()) {
                 for (String ruta : listaRutas) {
-                    if (!ruta.trim().isEmpty()) {
-                        psInsert.setString(1, ruta.trim()); // Param 1: Imagenes_link
-                        psInsert.setInt(2, idPrenda);       // Param 2: Prenda_id
+                    if (ruta != null && !ruta.trim().isEmpty()) {
+                        psInsert.setString(1, ruta.trim());
+                        psInsert.setInt(2, idPrenda);
                         psInsert.addBatch();
                     }
                 }
-            
                 psInsert.executeBatch();
-                System.out.println("¡Lote de imágenes acoplado con éxito a la transacción para la prenda ID!: " + idPrenda);
             }
         }
     }
-        
-        //dao de agregar Prendas
-        public boolean registrarPrenda(String nombre, double valor, String talla, int idCategoria, int stock, String estado, String descripcion, java.util.List<String> listaRutas) {
-        
-        //Consulta SQL para insertar la prenda base (sin ID, ya que es AUTO_INCREMENT)  
-        String sqlPrenda = "INSERT INTO Prendas (Prenda_nombre, Prenda_valor, Prenda_talla, Categoria_id, Prenda_stock, Prenda_estado, Prenda_descripcion) VALUES (?, ?, ?, ?, ?, ?, ?);";
-    
+
+    // =========================================================================
+    // 3. OPERACIONES DEL ADMINISTRADOR (Adaptadas a Variantes/Tallajes)
+    // =========================================================================
+
+    /**
+     * Inserta un nuevo producto creando una fila independiente por cada variante de talla.
+     */
+    public boolean registrarProductoConVariantes(String nombre, String tipo, int idCategoria, String estado, String descripcion, List<Map<String, Object>> variantes, List<String> listaRutas) {
+        String sqlPrenda = "INSERT INTO Prendas (Prenda_nombre, Prenda_tipo, Prenda_valor, Prenda_talla, Categoria_id, Prenda_stock, Prenda_estado, Prenda_descripcion) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         Connection con = null;
+        
         try {
             con = ClaseConexion.getConexion();
-            // Desactivamos el autocommit para que la prenda y sus fotos sean una SOLA transacción
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Garantiza una transacción atómica
 
-            // Preparamos la sentencia pidiéndole a MySQL que nos devuelva las llaves generadas automáticamente
-            try (PreparedStatement psPrenda = con.prepareStatement(sqlPrenda, java.sql.Statement.RETURN_GENERATED_KEYS)) {
-            
-                psPrenda.setString(1, nombre);
-                psPrenda.setDouble(2, valor);
-                psPrenda.setString(3, talla);
-                psPrenda.setInt(4, idCategoria);
-                psPrenda.setInt(5, stock);
-                psPrenda.setString(6, estado);
-                psPrenda.setString(7, descripcion);
+            try (PreparedStatement ps = con.prepareStatement(sqlPrenda, Statement.RETURN_GENERATED_KEYS)) {
+                int idPrimerVariante = -1;
 
-                int filasAfectadas = psPrenda.executeUpdate();
+                for (Map<String, Object> variante : variantes) {
+                    ps.setString(1, nombre);
+                    ps.setString(2, tipo);
+                    ps.setDouble(3, ((Number) variante.get("valor")).doubleValue());
+                    ps.setString(4, (String) variante.get("talla"));
+                    ps.setInt(5, idCategoria);
+                    ps.setInt(6, ((Number) variante.get("stock")).intValue());
+                    ps.setString(7, estado);
+                    ps.setString(8, descripcion);
+                    ps.addBatch();
+                }
 
-                // Si la prenda se insertó correctamente, recuperamos su ID generado
-                if (filasAfectadas > 0) {
-                    try (java.sql.ResultSet rs = psPrenda.getGeneratedKeys()) {
-                        if (rs.next()) {
-                            int idPrendaGenerado = rs.getInt(1); // ¡Aquí tenemos el nuevo ID!
-                            System.out.println("Prenda registrada con éxito. ID Asignado por MySQL: " + idPrendaGenerado);
+                int[] resultadoBatch = ps.executeBatch();
 
-                            // 2. Reutilizamos tu método de sincronización masiva pasándole el nuevo ID
-                            // Como es una prenda nueva, este método simplemente hará un delete de la nada e insertará todo el lote.
-                            AñadirImagenesPrenda(idPrendaGenerado, listaRutas, con);
-                        }
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        idPrimerVariante = rs.getInt(1); // Recupera el ID para asociar las imágenes
                     }
                 }
 
-                // Si todo el bloque (Prenda + Fotos) se ejecutó sin errores, consolidamos la transacción
+                if (resultadoBatch.length > 0 && idPrimerVariante != -1) {
+                    guardarImagenesBatch(idPrimerVariante, listaRutas, con);
+                }
+
                 con.commit();
                 return true;
-            } 
-            catch (SQLException e) {
-                if (con != null) con.rollback(); // Si falla la prenda o las fotos, se limpia la BD
-                System.out.println("Error en la transacción de registraes (Se aplicó Rollback): " + e.getMessage());
+            } catch (SQLException e) {
+                if (con != null) con.rollback();
+                System.out.println("Error al procesar lote de variantes: " + e.getMessage());
                 return false;
             }
-        }   
-        catch (SQLException e) {
-            System.out.println("Error de conexión en registrarPrenda: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error de conexión en registrarProducto: " + e.getMessage());
             return false;
-        } 
-        finally {
-            // Aseguramos el cierre de la conexión pase lo que pase
+        } finally {
             if (con != null) {
                 try { con.close(); } catch (SQLException e) { e.printStackTrace(); }
             }
         }
-      }
-       
-    // Modificacion a la consulta de obtener de talles de prenda, por tallaje
-    public Map<String, Object> obtenerDetallesPrendaConVariantes(int idReferencia) {
-    Map<String, Object> resultado = new java.util.LinkedHashMap<>();
-    java.util.Set<String> listaImagenes = new java.util.LinkedHashSet<>();
-    java.util.Map<Integer, Map<String, Object>> variantesMap = new java.util.LinkedHashMap<>();
-    
-    // Consulta inteligente: p1 busca la prenda por ID, p2 trae todas las prendas con ese mismo nombre
-    String sql = "SELECT p2.Prenda_id, p2.Prenda_nombre, p2.Prenda_descripcion, " +
-                 "       p2.Prenda_talla, p2.Prenda_stock, p2.Prenda_valor, i.Imagenes_link " +
-                 "FROM Prendas p1 " +
-                 "JOIN Prendas p2 ON p1.Prenda_nombre = p2.Prenda_nombre " +
-                 "LEFT JOIN imagenes i ON p2.Prenda_id = i.Prenda_id " +
-                 "WHERE p1.Prenda_id = ? AND p2.Prenda_estado = 'activa' AND p2.Prenda_stock > 0";
+    }
 
-    try (Connection con = ClaseConexion.getConexion();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        
-        ps.setInt(1, idReferencia);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                // Almacenamos los datos globales de la prenda (solo la primera vez)
-                if (!resultado.containsKey("nombre")) {
-                    resultado.put("nombre", rs.getString("Prenda_nombre"));
-                    resultado.put("descripcion", rs.getString("Prenda_descripcion"));
+    /**
+     * Actualiza los datos compartidos globalmente y procesa el inventario de las variantes.
+     */
+    public boolean actualizarProductoConVariantes(String nombreOriginal, String nuevoNombre, String tipo, int idCategoria, String estado, String descripcion, List<Map<String, Object>> variantes, List<String> listaRutas, int idRepresentativo) {
+        Connection con = null;
+        try {
+            con = ClaseConexion.getConexion();
+            con.setAutoCommit(false);
+
+            // 1. Actualizar los datos comunes de todas las variantes que compartían el nombre anterior
+            String sqlGlobal = "UPDATE Prendas SET Prenda_nombre = ?, Prenda_tipo = ?, Categoria_id = ?, Prenda_estado = ?, Prenda_descripcion = ? WHERE Prenda_nombre = ?;";
+            try (PreparedStatement psGlobal = con.prepareStatement(sqlGlobal)) {
+                psGlobal.setString(1, nuevoNombre);
+                psGlobal.setString(2, tipo);
+                psGlobal.setInt(3, idCategoria);
+                psGlobal.setString(4, estado);
+                psGlobal.setString(5, descripcion);
+                psGlobal.setString(6, nombreOriginal);
+                psGlobal.executeUpdate();
+            }
+
+            // 2. Sincronizar las variantes individuales (Actualizar stock/valor de las existentes)
+            String sqlVariante = "UPDATE Prendas SET Prenda_stock = ?, Prenda_valor = ? WHERE Prenda_id = ?;";
+            try (PreparedStatement psVar = con.prepareStatement(sqlVariante)) {
+                for (Map<String, Object> var : variantes) {
+                    if (var.containsKey("id")) { // Si tiene ID, es una variante ya existente en DB
+                        psVar.setInt(1, ((Number) var.get("stock")).intValue());
+                        psVar.setDouble(2, ((Number) var.get("valor")).doubleValue());
+                        psVar.setInt(3, ((Number) var.get("id")).intValue());
+                        psVar.addBatch();
+                    }
                 }
-                
-                // Recolectamos los links de imágenes evitando duplicados usando un Set
-                String imgLink = rs.getString("Imagenes_link");
-                if (imgLink != null && !imgLink.isEmpty()) {
-                    listaImagenes.add(imgLink);
-                }
-                
-                // Recolectamos las variantes de tallas evitando duplicados por ID de prenda
-                int varianteId = rs.getInt("Prenda_id");
-                if (!variantesMap.containsKey(varianteId)) {
-                    Map<String, Object> variante = new java.util.LinkedHashMap<>();
-                    variante.put("id", varianteId);
-                    variante.put("talla", rs.getString("Prenda_talla"));
-                    variante.put("stock", rs.getInt("Prenda_stock"));
-                    variante.put("valor", rs.getDouble("Prenda_valor"));
-                    variantesMap.put(varianteId, variante);
-                }
+                psVar.executeBatch();
+            }
+
+            // 3. Sincronizar lote de imágenes utilizando el helper unificado
+            guardarImagenesBatch(idRepresentativo, listaRutas, con);
+
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            System.out.println("Error en la transacción de actualización: " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) {
+                try { con.close(); } catch (SQLException e) { e.printStackTrace(); }
             }
         }
-        
-        // Empaquetamos todo en el mapa final
-        if (!resultado.isEmpty()) {
-            resultado.put("listaImagenes", new java.util.ArrayList<>(listaImagenes));
-            resultado.put("variantes", new java.util.ArrayList<>(variantesMap.values()));
+    }
+
+    /**
+     * Aplica un borrado lógico (inactiva) a todas las variantes asociadas a un nombre.
+     */
+    public boolean desactivarProductoCompleto(String nombrePrenda) {
+        String sql = "UPDATE Prendas SET Prenda_estado = 'inactiva' WHERE Prenda_nombre = ?;";
+        try (Connection con = ClaseConexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, nombrePrenda);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al desactivar el producto: " + e.getMessage());
+            return false;
         }
-        
-    } catch (Exception e) {
-        System.out.println("Error en obtenerDetallesPrendaConVariantes: " + e.getMessage());
     }
-    
-        return resultado.isEmpty() ? null : resultado;
-    }
-        
-        
 }
