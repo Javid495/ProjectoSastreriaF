@@ -15,12 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//Servelt encargado de comunicar o traer las modificaciones de algun producto
+
 @WebServlet("/ModificarPrendaServlet")
+
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
     maxFileSize = 1024 * 1024 * 10,       // 10MB por archivo
     maxRequestSize = 1024 * 1024 * 50     // 50MB total
 )
+
 public class ServeltModificarProducto extends HttpServlet {
 
     @Override

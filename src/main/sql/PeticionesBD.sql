@@ -12,9 +12,8 @@ SELECT * FROM Carrito;
 SELECT * FROM DetallesCarrito;
 SELECT * FROM DetallesPedidosMedida;
 SELECT * FROM CotizacionPedido;
-SELECT * FROM ConfirmarPago;
+SELECT * FROM DetallesPedidos;
 SELECT * FROM Pedidos;
-SELECT * FROM HistorialPagos;
 
 
 -- para verificar los datos de registro de usuario

@@ -7,9 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import modelo.IniciarSesion;
 
+// Dao que getion el proceso de iniciar sesion
+
 public class LoginDAO {
-    
-    
+     
     public IniciarSesion validarUsuario(String identificador, String contrasena){
     
         //Indicamos ell comando o la peticion que queremos que mysql ejecute

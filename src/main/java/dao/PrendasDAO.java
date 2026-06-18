@@ -221,7 +221,10 @@ public class PrendasDAO {
         
         try {
             con = ClaseConexion.getConexion();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); 
+            
+            //Con.setAutoCommit: funciona como un respaldo en caso de que algo salga mal ya que me hara un rollback
+            //Si alguna ejecucion sale mal o si todo funciona el codigo continua normalmente
 
             try (PreparedStatement ps = con.prepareStatement(sqlPrenda, Statement.RETURN_GENERATED_KEYS)) {
                 int idPrimerVariante = -1;
@@ -273,7 +276,7 @@ public class PrendasDAO {
             con = ClaseConexion.getConexion();
             con.setAutoCommit(false);
 
-            // 1. ACTUALIZACIÓN GLOBAL
+            // Actualizacion Global
             String sqlGlobal = "UPDATE Prendas SET Prenda_nombre = ?, Prenda_tipo = ?, Categoria_id = ?, Prenda_estado = ?, Prenda_descripcion = ? WHERE Prenda_nombre = ?;";
             try (PreparedStatement psGlobal = con.prepareStatement(sqlGlobal)) {
                 psGlobal.setString(1, nuevoNombre);
@@ -285,7 +288,7 @@ public class PrendasDAO {
                 psGlobal.executeUpdate();
             }
 
-            // 2. DETECCIÓN DE BAJAS
+            
             List<Integer> idsEntrantes = new ArrayList<>();
             for (Map<String, Object> var : variantes) {
                 if (var.containsKey("id") && var.get("id") != null) {
@@ -293,7 +296,7 @@ public class PrendasDAO {
                 }
             }
 
-            // 🌟 [CAMBIO BORRADO LÓGICO]: Se cambió 'activa' por != 'eliminada' para no omitir variantes inactivas
+            // Se cambió 'activa' por != 'eliminada' para no omitir variantes inactivas
             String sqlBuscarActuales = "SELECT Prenda_id FROM Prendas WHERE Prenda_nombre = ? AND Prenda_estado != 'eliminada';";
             List<Integer> idsEnBD = new ArrayList<>();
             try (PreparedStatement psBuscar = con.prepareStatement(sqlBuscarActuales)) {
@@ -305,7 +308,7 @@ public class PrendasDAO {
                 }
             }
 
-            // 🌟 [CAMBIO BORRADO LÓGICO]: Si una variante se borra desde el formulario de edición,
+            // Si una variante se borra desde el formulario de edición,
             // pasa al estado 'eliminada' para mantener la consistencia con el borrado masivo.
             String sqlDesactivarVar = "UPDATE Prendas SET Prenda_estado = 'eliminada' WHERE Prenda_id = ?;";
             try (PreparedStatement psDesactivar = con.prepareStatement(sqlDesactivarVar)) {
@@ -313,12 +316,15 @@ public class PrendasDAO {
                     if (!idsEntrantes.contains(idBD)) {
                         psDesactivar.setInt(1, idBD);
                         psDesactivar.addBatch();
+                        
+                        //El add batch funciona de tal foma de que si el usuario quiere comprar
+                        //10 camisas 
                     }
                 }
                 psDesactivar.executeBatch();
             }
 
-            // 3. PROCESAMIENTO DE VARIANTES
+            // Procesamiento de varientes esto funciona para manejar tallajes
             String sqlUpdateVariante = "UPDATE Prendas SET Prenda_talla = ?, Prenda_stock = ?, Prenda_valor = ?, Prenda_estado = ? WHERE Prenda_id = ?;";
             String sqlInsertVariante = "INSERT INTO Prendas (Prenda_nombre, Prenda_tipo, Prenda_valor, Prenda_talla, Categoria_id, Prenda_stock, Prenda_estado, Prenda_descripcion) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
@@ -380,7 +386,7 @@ public class PrendasDAO {
 
     /**
      * Aplica un borrado lógico (eliminada) a todas las variantes asociadas a un nombre.
-     * 🌟 [CAMBIO BORRADO LÓGICO]: Cambiado 'inactiva' por 'eliminada'.
+     *  Cambiado 'inactiva' por 'eliminada'.
      */
     public boolean desactivarProductoCompleto(String nombrePrenda) {
         String sql = "UPDATE Prendas SET Prenda_estado = 'eliminada' WHERE Prenda_nombre = ?;";

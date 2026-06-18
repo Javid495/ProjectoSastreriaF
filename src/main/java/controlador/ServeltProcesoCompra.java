@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//Servelt encargado de manejar las compras de catalogo y mediddas
+
 @WebServlet("/ProcesarCompraServlet")
 public class ServeltProcesoCompra extends HttpServlet {
 
@@ -43,7 +45,7 @@ public class ServeltProcesoCompra extends HttpServlet {
             }
             String jsonRaw = buffer.toString();
 
-            // 🎯 EXTRAER ACCIÓN: Saber si es inserción temporal (B1) o pedido definitivo (B2)
+            // Saber si es inserción temporal (B1) o pedido definitivo (B2)
             String accion = extraerValorJson(jsonRaw, "accion");
 
             CompraPedidosDAO dao = new CompraPedidosDAO();

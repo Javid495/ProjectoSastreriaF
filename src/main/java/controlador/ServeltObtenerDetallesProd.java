@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+//Servelt encargado de manejar los detalles de los productos
+
 @WebServlet("/ObtenerProductosDetalle")
 public class ServeltObtenerDetallesProd extends HttpServlet {
     

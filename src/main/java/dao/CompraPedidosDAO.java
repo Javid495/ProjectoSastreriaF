@@ -7,8 +7,8 @@ import java.sql.Statement;
 import java.util.List;
 
 
-//Realizar revisiones en el codigo de carrito de compra -
-// DAo que menja el proceso y el flujo ddel carrito de compra
+
+// Dao que maneja el proceso y el flujo de compra de los productos del catalogo y pedidos a medida
 public class CompraPedidosDAO {
 
     

@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+//Servelt que obtiene y muestra las prendas del catalogo
+
 @WebServlet("/ObtenerPrendas")
 public class ServeltPrendas extends HttpServlet {
     

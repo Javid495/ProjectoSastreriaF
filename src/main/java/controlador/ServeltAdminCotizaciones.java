@@ -11,21 +11,28 @@ import java.util.List;
 import dao.AdminCotizacionesDAO;
 import modelo.Prendas; 
 
-@WebServlet("/AdminCotizaciones") // Se define la URL pública para el fetch de JavaScript
+
+//Valida los pedidos a medida nuevo que esperan cotizacion
+
+@WebServlet("/AdminCotizaciones") //Es el indicador o la bandera en el cual puedo acceder a travez de fetch
 public class ServeltAdminCotizaciones extends HttpServlet {
 
     @Override
+    //Se realiza un metodo do get para hacer peticiones de lectura  de datos 
     protected void doGet(HttpServletRequest solicitud, HttpServletResponse respuesta)
             throws ServletException, IOException {
         
+        //Se le informa al navegador el tipo de dato que se le esta retornando
+        //al frontend
         respuesta.setContentType("application/json");
         respuesta.setCharacterEncoding("UTF-8");
         
+        //El printWrite es quien hace o me pinta la respuesta al frontend
         PrintWriter out = respuesta.getWriter();
         String accion = solicitud.getParameter("accion");
         AdminCotizacionesDAO dao = new AdminCotizacionesDAO();
 
-        // 📊 1. CASO: CONTAR NOTIFICACIONES
+        // CONTAR NOTIFICACIONES
         if ("contar".equals(accion)) {
             int cotizar = dao.contarPendientesPorCotizar();
             int nuevos = dao.contarNuevosPedidos();
@@ -33,7 +40,7 @@ public class ServeltAdminCotizaciones extends HttpServlet {
             // Retorna "cantidad" para la animación y los demás contadores por si los usas luego
             out.print("{\"cantidad\":" + cotizar + ", \"pedidosCotizar\":" + cotizar + ", \"nuevosPedidos\":" + nuevos + "}");
           
-        // 🪟 2. CASO: LISTAR COTIZACIONES PENDIENTES (A MEDIDA)
+        // LISTAR COTIZACIONES PENDIENTES (A MEDIDA)
         } else if ("listar".equals(accion)) {
             List<String[]> pendientes = dao.listarPedidosPorCotizar();
             StringBuilder json = new StringBuilder("[");
@@ -55,7 +62,7 @@ public class ServeltAdminCotizaciones extends HttpServlet {
             json.append("]");
             out.print(json.toString());
             
-        // 📉 3. CASO: ALERTAS DE BAJO STOCK (CATÁLOGO)
+        // Verifica los productos que se encuentran bajos de stock
         } else if ("bajoStock".equals(accion)) {
             // Revisa en la tabla prendas todo lo que sea menor o igual a 5 unidades
             List<Prendas> bajoStock = dao.listarPrendasBajasStock(5);

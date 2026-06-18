@@ -11,7 +11,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dao.ClaseConexion; // Ajusta a tu paquete real
+import dao.ClaseConexion;
+
+
+// Servelt encargado de eliminar una cotizacion en caso de que un usuario
+// no le paresca que la cotizacion sea correcta
 
 @WebServlet("/ResponderCotizacion")
 public class ServeltRespuestaEliminacionPedidoMedida extends HttpServlet {
@@ -34,7 +38,7 @@ public class ServeltRespuestaEliminacionPedidoMedida extends HttpServlet {
         
         Connection conn = null;
         PreparedStatement psGetSolicitud = null;
-        PreparedStatement psUnlinkDetalles = null; // 🆕 Para romper la FK
+        PreparedStatement psUnlinkDetalles = null;
         PreparedStatement psDeleteCotizacion = null;
         PreparedStatement psDeleteSolicitud = null;
         ResultSet rs = null;

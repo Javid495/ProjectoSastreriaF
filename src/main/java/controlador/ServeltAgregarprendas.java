@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//SErvelt de agregar prendas al catalogo
+//Servelt de agregar prendas al catalogo
 
 @WebServlet("/RegistrarPrendaServlet")
 @MultipartConfig(

@@ -12,7 +12,8 @@ import java.util.List;
 import dao.PedidosMedidaDao;
 import modelo.IniciarSesion;
 
-//Servelt encargado de mostrar las cotizaciones por usuario
+//Servelt encargado de mostrar las cotizaciones por el administrador
+
 @WebServlet("/MisCotizaciones")
 public class ServeltMostrarCotizaciones extends HttpServlet {
 

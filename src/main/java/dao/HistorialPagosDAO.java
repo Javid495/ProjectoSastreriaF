@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Dtos.*; 
 
+//DAO que solicita y genera el historial de pagos del local
+
 public class HistorialPagosDAO {
     
     // Método principal que unifica el reporte administrativo

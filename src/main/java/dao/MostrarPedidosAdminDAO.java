@@ -10,14 +10,13 @@ import java.util.Map;
 
 public class MostrarPedidosAdminDAO {
 
-    /**
-     * Trae todos los pedidos unificados para el tablero del administrador.
-     * Conecta Pedidos con DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
-     */
+
+//Trae todos los pedidos unificados para el tablero del administrador Conecta Pedidos con DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
+     
 public List<String[]> listarPedidosParaAdmin() {
     List<String[]> lista = new ArrayList<>();
 
-    // 🔑 Agregamos pe.Pedido_TipoPedido al SELECT
+    // Agregamos pe.Pedido_TipoPedido al SELECT
     String sql = "SELECT DISTINCT pe.Pedido_id, pe.Pedido_FechaInicio, pe.Pedido_Estado, pe.Pedido_TotalCompra, " +
                  "pe.Pedido_TipoPedido, dpm.Detalles_medidas, reg.Registro_Email, dpm.Detalles_TPrenda " +
                  "FROM Pedidos pe " +
@@ -33,7 +32,7 @@ public List<String[]> listarPedidosParaAdmin() {
          ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
-            String[] fila = new String[8]; // 🔥 CORREGIDO: Tamaño aumentado a 8
+            String[] fila = new String[8]; 
 
             fila[0] = String.valueOf(rs.getInt("Pedido_id"));
             
@@ -50,7 +49,7 @@ public List<String[]> listarPedidosParaAdmin() {
             String tipoPrenda = rs.getString("Detalles_TPrenda");
             fila[6] = (tipoPrenda != null) ? tipoPrenda : "Catálogo";
 
-            // 🌟 NUEVO ÍNDICE [7]: Tipo de pedido real de la tabla Pedidos ("A Medida" o "Catálogo")
+            //Tipo de pedido real de la tabla Pedidos ("A Medida" o "Catálogo")
             String tipoPedido = rs.getString("Pedido_TipoPedido");
             fila[7] = (tipoPedido != null) ? tipoPedido : "Catálogo";
 

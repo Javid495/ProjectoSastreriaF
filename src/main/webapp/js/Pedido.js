@@ -11,6 +11,7 @@ const filtroEstadoContainer = document.querySelector("#filtro-estado-container")
 
 const urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
 let pedidosCache = [];
+let fotosReferenciaArr = []; // 📸 Almacén temporal para las imágenes añadidas
 
 /**
  * Cambiar entre Pedidos de Catálogo y Pedidos Personalizados
@@ -159,10 +160,17 @@ document.addEventListener("submit", async (evento) => {
             formData.append("fotoReferencia", inputFile.files[0]);
         }
 
+        fotosReferenciaArr.forEach(archivo => {
+            if (archivo !== null) {
+                formData.append("fotoReferencia", archivo); 
+            }
+        });
+
         fetch(`${urlBase}/RegistrarPedidoMedida`, {
             method: "POST",
             body: formData
         })
+// ... (El resto del fetch e interacciones se mantienen igual) ...
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -176,6 +184,57 @@ document.addEventListener("submit", async (evento) => {
         .catch(err => console.error("Error en el envío del diseño a medida:", err));
     }
 });
+
+// 🖼️ ESCUCHADOR DE CAMBIO: Captura la imagen y genera la miniatura dinámicamente
+document.addEventListener("change", (evento) => {
+    if (evento.target.matches("#file-upload")) {
+        const input = evento.target;
+        
+        if (input.files && input.files[0]) {
+            const archivo = input.files[0];
+            fotosReferenciaArr.push(archivo); // Guardamos en nuestro array global
+
+            const uploadZone = input.closest(".upload-zone");
+            const lector = new FileReader();
+
+            lector.onload = function(e) {
+                // Creamos el contenedor de la miniatura
+                const divMiniatura = document.createElement("div");
+                divMiniatura.className = "preview-thumb";
+                // Guardamos el índice actual para saber cuál remover luego
+                divMiniatura.dataset.index = fotosReferenciaArr.length - 1; 
+
+                divMiniatura.innerHTML = `
+                    <img src="${e.target.result}" alt="Vista previa">
+                    <button type="button" class="btn-remove-thumb">&times;</button>
+                `;
+
+                // Lo insertamos en la zona de carga justo antes del botón (+)
+                const plusBox = uploadZone.querySelector(".plus-box");
+                uploadZone.insertBefore(divMiniatura, plusBox);
+            };
+
+            lector.readAsDataURL(archivo);
+            
+            // Limpiamos el valor del input para que permita volver a seleccionar la misma foto si se desea
+            input.value = "";
+        }
+    }
+});
+
+// 🗑️ ESCUCHADOR PARA QUITAR FOTOS: Remueve la miniatura de la vista y del array
+document.addEventListener("click", (evento) => {
+    if (evento.target.matches(".btn-remove-thumb")) {
+        const boton = evento.target;
+        const miniatura = boton.closest(".preview-thumb");
+        const indice = parseInt(miniatura.dataset.index);
+
+        // Marcamos como null para no alterar los índices de los demás elementos visibles
+        fotosReferenciaArr[indice] = null; 
+        miniatura.remove();
+    }
+});
+
 
 // 🗑️ Escucha global de eventos para RECHAZAR y ELIMINAR cotizaciones
 document.addEventListener("click", async (e) => {

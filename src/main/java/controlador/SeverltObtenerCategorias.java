@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import dao.PrendasDAO;
 
-//Servelt quien obtiene las categorias por usuario
+//Servelt quien obtiene las categorias registradas en la base de datos
 
 @WebServlet("/ObtenerCategorias")
 public class SeverltObtenerCategorias extends HttpServlet {

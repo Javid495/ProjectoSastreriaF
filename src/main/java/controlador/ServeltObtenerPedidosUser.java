@@ -13,7 +13,7 @@ import dao.PedidosClienteDAO;
 import modelo.IniciarSesion;
 import modelo.Pedidos;
 
-//Servelt encargado de comunicarse con el frontend de los pedidos
+//Servelt encargado de solicitar y mostrar los pedidos de los usuarios.
 
 @WebServlet("/ObtenerPedidos")
 public class ServeltObtenerPedidosUser extends HttpServlet {

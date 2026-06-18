@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import modelo.DetallesPedidoMedida;
 
+
+//Dao que maneja los pedidos a medida de los usuarios
+
 public class PedidosMedidaDao{
 
     public boolean registrarSolicitudMedida(DetallesPedidoMedida solicitud) {

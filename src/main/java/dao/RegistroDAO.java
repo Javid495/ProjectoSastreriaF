@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import modelo.Registro;
 
+//Dao que me maneja los datos que inserto en registro y usuarios
+
 public class RegistroDAO {
     
     public boolean registrar(Registro user, int RolCliente){

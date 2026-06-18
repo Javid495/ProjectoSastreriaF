@@ -132,6 +132,91 @@ body{
     width: 100%;
 }
 
+/* 🌟 CAPA OSCURA FLOTANTE (OVERLAY) */
+.alerta-overlay {
+  position: fixed;            /* 1. Rompe el flujo y se queda fijo en la pantalla */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* 2. Fondo oscuro semitransparente */
+  display: flex;
+  justify-content: center;    /* 3. Centra la caja horizontalmente */
+  align-items: center;        /* 4. Centra la caja verticalmente */
+  z-index: 99999;             /* 🛡️ LA CLAVE: Un nivel altísimo para ganarle a cualquier absolute */
+  backdrop-filter: blur(4px); /* Opcional: Da un efecto moderno difuminando el fondo */
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+/* 📦 CAJA CONTENEDORA DE LA ALERTA */
+.alerta-caja {
+  background-color: #ffffff;  /* Pon aquí tu color de fondo claro */
+  color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 85%;
+  text-align: center;
+  box-sizing: border-box;
+  animation: entradaModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 🎨 VARIACIONES DE COLOR SEGÚN EL TIPO */
+.alerta-error {
+  border-top: 5px solid #ff4d4d;
+}
+
+.alerta-success {
+  border-top: 5px solid #2ecc71;
+}
+
+/* INTERIORES DE LA ALERTA */
+.alerta-icono {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.alerta-mensaje {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-family: sans-serif;
+}
+
+.alerta-boton-cerrar {
+  background-color: var(--color-gris, #333);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.alerta-boton-cerrar:hover {
+  filter: brightness(1.2);
+}
+
+/* 💨 ANIMACIÓN DE SALIDA (Para tu setTimeout de JS) */
+.alerta-overlay.alerta-fade-out {
+  opacity: 0;
+}
+
+/* 🎬 ANIMACIÓN DE ENTRADA (Efecto Pop-up) */
+@keyframes entradaModal {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 992px) {
 
   .login__form {

@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+// Dao encargado de getionar la eliminacion de las prendas en el catalogo
+
 public class EliminarPrendasDAO {
 
     // ============================================================================

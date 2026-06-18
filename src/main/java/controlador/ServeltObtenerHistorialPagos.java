@@ -13,7 +13,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import dao.ClaseConexion;
 
-// Servlet que obtiene el historial de los pagos
+// Servlet que obtiene y genera el historial de los pagos
+
 @WebServlet("/ObtenerHistorialPagos")
 public class ServeltObtenerHistorialPagos extends HttpServlet {
     private final HistorialPagosDAO pagos = new HistorialPagosDAO();

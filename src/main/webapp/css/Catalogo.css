@@ -92,13 +92,11 @@ body{
   padding: var(--padding-seccion);
   position: relative;
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
 .popular__category{
-  gap: 10em;
+  gap: 30em;
 }
 
 .popular__title {
@@ -113,21 +111,29 @@ body{
   width: 70%;
 }
 
+/* 🛒 CONTENEDOR REPARADO CON GRID */
 .popular__cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 🌟 Fuerza exactamente 4 columnas por fila */
   gap: 2rem;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
+  width: 100%;
+  max-width: var(--ancho-maximo, 1800px);
+  padding: 0 1rem;
+  box-sizing: border-box; 
+  margin: 10px 20em;
 }
 
+/* 📦 CARDS ADAPTABLES */
 .card {
   background-color: var(--color-secundario);
   padding: 1rem;
   font-family: "Courgette", cursive;
   border-radius: var(--radio-card);
   text-align: center;
-  width: 15%;
-  gap: 10px;
+  width: 100%; /* 🌟 El card ahora se adapta al 100% de su celda de la rejilla */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .card__image {
@@ -145,23 +151,19 @@ body{
   margin-bottom: 0.5rem;
 }
 
-/* Media query */
 @media (max-width: 992px) {
-
-  .button{
+  .button {
     display: none;
   }
 
-  /* Grid de productos */
-  .products__grid {
-    grid-template-columns: repeat(2, 1fr);
+  /* 🌟 Corregido: Ahora cambia de 4 a 2 columnas en Tablets */
+  .popular__cards {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 1.5rem;
   }
 
-   .icon--logoheader{
-    display: none;
-  }
-
-  .header__menu{
+  .icon--logoheader,
+  .header__menu {
     display: none;
   }
 
@@ -169,56 +171,48 @@ body{
     display: block;
   }
 
-  .header__titulo{
+  .header__titulo {
     margin-left: 10%;
-
   } 
 
-  .navbar__menu-boton{
+  .navbar__menu-boton {
     display: block;
     position: absolute;
     left: 20px;
     top: 10px;
   }
 
-  .navbar__icono-menu{
+  .navbar__icono-menu {
     margin-top: 10%;
   }
 
-  /* Header */
-  .header__menu {
-    gap: 1rem;
-  }
-
-  .search__container{
+  .search__container {
     margin: 0;
     display: inline-block;
     gap: 30px;
   }
 
-  .search__brand{
+  .search__brand {
     width: 35%;
     font-size: 20px;
   }
 
-  .search__brand img{
+  .search__brand img {
     width: 20%;
   }
 
-  .search__voice{
+  .search__voice {
     position: relative;
     bottom: -2.5vh;
     margin-left: 10px;
   }
 
-  /* Footer */
   .footer__content {
     gap: 1.5rem;
   }
 }
 
 @media (max-width: 576px) {
-
   .header__nav {
     flex-direction: column;
     gap: 0.5rem;
@@ -233,22 +227,19 @@ body{
     align-self: center;
   }
 
-   .search__brand img{
+  .search__brand img {
     width: 15%;
   }
 
-  .filtrados{
+  .filtrados {
     gap: 0;
     flex-direction: column;
   }
 
+  /* 🌟 Corregido: Deja solo 1 columna vertical en pantallas de celular */
   .popular__cards {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .products__grid {
     grid-template-columns: 1fr;
+    gap: 1.2rem;
   }
 
   .footer__content {
@@ -257,10 +248,7 @@ body{
     text-align: center;
   }
 
-  .footer__icons {
-    justify-content: center;
-  }
-
+  .footer__icons,
   .footer__icon {
     justify-content: center;
   }

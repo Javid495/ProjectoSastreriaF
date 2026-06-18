@@ -333,5 +333,55 @@
     background-color: #FD9B9B;
 }
 
+/* 📸 ZONA DE CARGA DE IMÁGENES Y MINIATURAS */
+.upload-zone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
 
+/* Contenedor de cada miniatura */
+.preview-thumb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: visible; /* Permite que la 'X' sobresalga un poco */
+}
+
+.preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--color-secundario, #ddd);
+}
+
+/* Pequeño botón rojo para eliminar la foto */
+.btn-remove-thumb {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.1s ease;
+}
+
+.btn-remove-thumb:hover {
+  transform: scale(1.1);
+  background-color: #cc0000;
+}
 

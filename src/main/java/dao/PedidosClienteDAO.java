@@ -35,8 +35,6 @@ public class PedidosClienteDAO {
                     p.setFechaInicio(rs.getString("Pedido_FechaInicio"));
                     p.setTipoCompra(rs.getString("Pedido_TipoPedido")); // Cambiado de Pedido_TCompra a Pedido_TipoPedido
                     p.setEstadoPedido(rs.getString("Pedido_Estado"));
-                    // Si tu modelo 'Pedidos' tiene setTotalCompra, puedes mapearlo aquí:
-                    // p.setTotalCompra(rs.getDouble("Pedido_TotalCompra"));
                     
                     lista.add(p);
                 }
@@ -70,7 +68,7 @@ public class PedidosClienteDAO {
                     String[] registro = new String[5];
                     registro[0] = rs.getString("Prenda_nombre");
                     registro[1] = rs.getString("Prenda_valor");
-                    registro[2] = rs.getString("Detalles_PrecioTotal"); // Cambiado a Detalles_PrecioTotal según tu SQL
+                    registro[2] = rs.getString("Detalles_PrecioTotal"); // Cambiado a Detalles_PrecioTotal
                     registro[3] = String.valueOf(rs.getInt("Detalles_Cantidad")); // Cambiado a Detalles_Cantidad
                     
                     String rutaImg = rs.getString("Imagen_link");

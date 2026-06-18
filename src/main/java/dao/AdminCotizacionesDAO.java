@@ -8,14 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Prendas;
 
+// Dao encargado de manejar las cotizaciones de parte del administrador
+
 public class AdminCotizacionesDAO {
 
     // 1. Cuenta las solicitudes que NO tienen un registro en CotizacionPedido (Siguen pendientes)
     public int contarPendientesPorCotizar() {
+        
         // ?Hacemos LEFT JOIN; si cp.CotizacionPedido_Id es NULL, significa que el sastre no lo ha cotizado.
         String sql = "SELECT COUNT(*) FROM DetallesPedidosMedida dpm " +
                      "LEFT JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
                      "WHERE cp.CotizacionPedido_Id IS NULL";
+        
+        //La consulta anterior le solicita a la base de datos que clientes han mandado sus pedidos a medida
+        //pero el administrador o sastre no los ha cotizado aun.
         
         //Es quien abre la tuberia con la base de datos
         try (Connection con = ClaseConexion.getConexion();
@@ -29,7 +35,9 @@ public class AdminCotizacionesDAO {
     }
     
     public int contarNuevosPedidos() {
+        
         String sql = "SELECT COUNT(*) FROM Pedidos WHERE Pedido_Estado = 'Pendiente'";
+        //Vale La siguiente consulta revisa los nuevos pedidos que tengan el estado de pendiente
                      
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -52,6 +60,13 @@ public class AdminCotizacionesDAO {
                + "GROUP BY p.Prenda_id, c.Categoria_nombre "
                + "ORDER BY p.Prenda_stock ASC";
                
+    // La consulta anterior verifica las prendas que se encuentran activas y que tenga bajo stock 
+    // el inner join de categoria me permite traerme el nombre de categoria de la tabla de categorias
+    
+    //luego tenemos un escudo de duplicados lo que hace es revisar si la prenda o prendas
+    //gracias al min y group by, el min hace que al menos se lleve una sola imagen mientra el group by evita prendas repetidas
+    
+    
     try (Connection con = ClaseConexion.getConexion();
          PreparedStatement ps = con.prepareStatement(sql)) {
         
@@ -81,7 +96,7 @@ public class AdminCotizacionesDAO {
     // 2. Trae el listado de los pedidos que NO poseen cotización realizada
     public List<String[]> listarPedidosPorCotizar() {
         List<String[]> lista = new ArrayList<>();
-        // 🔑 Modificamos el WHERE para buscar la ausencia de registro en CotizacionPedido
+        // Modificamos el WHERE para buscar la ausencia de registro en CotizacionPedido
         String sql = "SELECT dpm.Detalles_PedidoMedida_id, r.Registro_Email, dpm.Detalles_TPrenda, " +
                      "dpm.Detalles_Tela, dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia " +
                      "FROM DetallesPedidosMedida dpm " +
@@ -121,6 +136,8 @@ public class AdminCotizacionesDAO {
         String sql = "INSERT INTO CotizacionPedido (DetallesPedidosMedida_id, Cotizacion_Valor, ComentarioAdmin, Cotizacion_FechaLimite) " +
                  "VALUES (?, ?, ?, ?)";
                  
+        //ESte ultimo insert lo que hace es guardar las cotizaciones finales de parte del administrador
+        
         try (Connection con = ClaseConexion.getConexion();
             PreparedStatement ps = con.prepareStatement(sql)) {
         
