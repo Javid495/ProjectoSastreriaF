@@ -232,13 +232,6 @@ public class CompraPedidosDAO {
             psDetallePed.setDouble(3, totalCompra);
             psDetallePed.executeUpdate();
 
-            // 4. 🔥 NUEVO/RECOMENDADO: Actualizar la cotización de origen para que cambie de estado
-            // Esto demuestra un control impecable del ciclo de vida de los datos en tu sustentación.
-            String sqlUpdateCot = "UPDATE CotizacionPedido SET Cotizacion_Estado = 'Finalizada' WHERE CotizacionPedido_Id = ?";
-            psUpdateCotizacion = con.prepareStatement(sqlUpdateCot);
-            psUpdateCotizacion.setInt(1, idCotizacion);
-            psUpdateCotizacion.executeUpdate();
-
             con.commit(); // Fin de la transacción: Todo guardado y actualizado con éxito
             System.out.println("🧵 Éxito transaccional: Cotización #" + idCotizacion + " convertida en Pedido definitivo #" + idPedidoGenerado);
             return true;

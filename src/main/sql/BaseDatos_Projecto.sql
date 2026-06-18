@@ -177,13 +177,4 @@ create table DetallesPedidos(
     foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
 );
 
--- HistorialPagos es quien tendra la informacion de todos los pedidos ya pagados
--- para que el administrador pueda llevar un control de ganacias del negocio
--- para que el administrador pueda llevar un control de ganacias del negocio
-create table HistorialPagos(
-	HistorialPagos_id int auto_increment primary key not null,
-	Pedido_id int not null,
-    Historial_Fecha date not null,
-    Monto_Pago decimal(10,2) not null,
-    foreign key(Pedido_id) references Pedidos(Pedido_id)
-);
+

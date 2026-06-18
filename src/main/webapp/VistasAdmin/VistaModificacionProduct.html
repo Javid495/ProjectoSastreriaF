@@ -31,25 +31,26 @@
                     <input type="text" name="nombreProducto" class="input-largo" id="nombreProducto" value="">
                 </div>
 
-                <div class="precios-row">
-                    <div class="precio-group">
-                        <label class="seccion-label">Precio:</label>
-                        <input type="text" name="precioPrenda" class="input-precio" id="precioProducto">
-                    </div>
-                    <div class="precio-group">
-                        <label class="seccion-label">Talla:</label>
-                        <input type="text" name="tallaPrenda" class="input-precio" id="tallaProducto" placeholder="Ejem: S">
-                    </div>
-                    <div class="precio-group">
-                        <label class="seccion-label">Categoria:</label>
-                        <select name="categoriaPrenda" class="input-precio opciones" id="categoriaProducto">
-                            <option value="" disabled selected>Categorias...</option>
-                        </select>
-                    </div>
-                    <div class="precio-group">
-                        <label class="seccion-label">Stock:</label>
-                        <input type="text" name="stockPrenda" class="input-precio" id="stockProducto" placeholder="Ejem: 10">
-                    </div>
+                <div class="form-row-inline">
+                    <label class="seccion-label">Categoría :</label>
+                    <select name="categoriaPrenda" class="input-largo opciones" id="categoriaProducto">
+                        <option value="" disabled selected>Categorías...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
+                    <label class="seccion-label" style="margin-bottom: 0;">Gestión de Tallajes e Inventario:</label>
+                    <button type="button" class="btn-subir-imagenes" id="btnAgregarVariante" style="padding: 5px 15px; font-size: 16px;">+ Añadir Talla</button>
+                </div>
+
+                <div class="precios-row" style="margin-bottom: 10px; font-weight: bold;">
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Talla</span></div>
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Stock</span></div>
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Precio</span></div>
+                    <div style="width: 24px;"></div> 
+                </div>
+
+                <div id="contenedorVariantes">
                 </div>
 
                 <div class="form-block">

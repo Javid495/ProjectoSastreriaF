@@ -116,7 +116,7 @@ function aplicarFiltros(e) {
 
 async function CargarCatalogoAdmin(){
     try {
-        const respuesta = await fetch("../ObtenerPrendas");
+        const respuesta = await fetch("../ObtenerPrendas?rol=admin");
         if(!respuesta.ok) throw new Error("Error en la obtencion de datos");
     
         todasLasPrendas = await respuesta.json();
@@ -154,20 +154,30 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     });
 });
 
-// Control del botón Agregar / Confirmar masivo
+// ============================================================================
+// Control del botón Agregar / Confirmar masivo (CORREGIDO)
+// ============================================================================
 if (btnAgregarC) {
-    btnAgregarC.addEventListener("click", async(e) => {
+    btnAgregarC.addEventListener("click", async (e) => {
         e.preventDefault();
         if (btnAgregarC.textContent === "Agregar Prenda") {
             window.location.href = "VistaAgregarProducto.html"; 
         } 
         else if (btnAgregarC.textContent === "Confirmar") {
-            await procesarEliminacionMasiva(desactivarModoEliminar);
+            // Capturamos el booleano devuelto por el helper
+            const seEliminoElLote = await procesarEliminacionMasiva(desactivarModoEliminar);
+    
+            // 🌟 Solo si la operación fue exitosa, limpiamos la memoria local sincronizando con la BD
+            if (seEliminoElLote) {
+                await CargarCatalogoAdmin(); 
+            }
         }
     });
 }
 
-// Delegación de eventos para eliminación individual
+// ============================================================================
+// Delegación de eventos para eliminación individual (REVISADO)
+// ============================================================================
 if (contenedor) {
     contenedor.addEventListener("click", async (e) => {
         const botonEliminar = e.target.closest(".btnEliminarPrenda");
@@ -177,7 +187,10 @@ if (contenedor) {
             e.preventDefault();
             const idPrenda = ContPreda.getAttribute("data-id");
             const card = ContPreda.closest(".card-inventario"); 
-            const nombrePrenda = card ? card.querySelector("p").textContent : "esta prenda";
+            
+            // Un pequeño seguro por si el <p> no existe o cambia en el HTML helper
+            const pNombre = card ? card.querySelector("p") : null;
+            const nombrePrenda = pNombre ? pNombre.textContent : "esta variante";
 
             if (confirm(`¿Seguro que deseas eliminar "${nombrePrenda}"?`)) {
                 try {
@@ -185,14 +198,17 @@ if (contenedor) {
                     const resultado = await respuesta.json();
 
                     if (resultado.status === "Exito") {
-                        alert("Prenda eliminada.");
+                        alert("Prenda deshabilitada con éxito.");
+                        
+                        // Aquí lo manejas excelente en memoria local sin re-fetch:
                         todasLasPrendas = todasLasPrendas.filter(p => p.id !== parseInt(idPrenda));
                         aplicarFiltros(); 
                     } else {
                         alert("Error: " + resultado.mensaje);
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.error("Error al eliminar prenda individual en frontend:", error);
+                    alert("No se pudo conectar con el servidor de eliminación.");
                 }
             }
         }

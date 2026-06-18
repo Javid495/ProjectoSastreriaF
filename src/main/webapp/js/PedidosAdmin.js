@@ -3,7 +3,7 @@ import { cerrarSesionServidor } from "../helpers/CerrarSesion.js";
 
 let urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
 let pedidosLocales = []; // Almacén en memoria para filtrar sin sobrecargar la red
-let estadoActivo = "elaboracion"; // Estado por defecto coincidiendo con tu HTML
+let estadoActivo = "elaboracion"; // Estado por defecto
 
 // 📦 Carga los datos desde el servidor y dispara el primer renderizado
 function cargarTableroPedidos() {
@@ -16,7 +16,6 @@ function cargarTableroPedidos() {
         .catch(err => console.error("Error al devengar pedidos de la BD:", err));
 }
 
-
 // Dibuja las Cards dentro de '#tablero-pedidos' aplicando el filtro seleccionado
 function renderizarPedidos() {
     const tablero = document.querySelector("#tablero-pedidos");
@@ -24,7 +23,7 @@ function renderizarPedidos() {
 
     tablero.innerHTML = ""; // Limpiamos las tarjetas estáticas
 
-    // 🔥 FILTRADO ROBUSTO: Evita fallos por diferencias de texto o plurales
+    // FILTRADO ROBUSTO: Incluye los estados principales y el nuevo estado "entregado"
     const pedidosFiltrados = pedidosLocales.filter(p => {
         const est = p.estado.toLowerCase().trim();
         
@@ -34,8 +33,12 @@ function renderizarPedidos() {
         if (estadoActivo === "elaboracion") {
             return est.includes("elaboracion");
         }
+        // 🔥 CORREGIDO: Añadimos && !est.includes("entregado") para que no se mezclen
         if (estadoActivo === "entregar") {
-            return est.includes("entregar") || est.includes("entrega");
+            return (est.includes("entregar") || est.includes("entrega")) && !est.includes("entregado");
+        }
+        if (estadoActivo === "entregado") {
+            return est.includes("entregado");
         }
         return est === estadoActivo;
     });
@@ -51,45 +54,63 @@ function renderizarPedidos() {
         const article = document.createElement("article");
         article.className = "card-pedido";
 
-        const metaInfo = p.tipo === "A Medida" 
-            ? `Medidas: ${p.medidas}` 
-            : `Fecha Pago: ${p.fecha}`;
+        // Evalúa si el pedido es personalizado "A Medida"
+        const esAMedida = p.medidas && !p.medidas.includes("N/A");
 
-        // Verificamos contención para marcar el 'selected' correcto del combo
+        // Estructura de marcas de selección para el combo select de estados
         const esPendiente = p.estado.includes("pendiente") ? "selected" : "";
         const esElaboracion = p.estado.includes("elaboracion") ? "selected" : "";
-        const esEntregar = (p.estado.includes("entregar") || p.estado.includes("entrega")) ? "selected" : "";
+        const esEntregar = (p.estado.includes("entregar") || p.estado.includes("entrega")) && !p.estado.includes("entregado") ? "selected" : "";
+        const esEntregado = p.estado.includes("entregado") ? "selected" : "";
 
+        // 🎚️ Inyección de contenido dinámico según las reglas de negocio solicitadas
+        let cuerpoTarjetaHTML = "";
+
+        if (esAMedida) {
+            // 🧵 CASO A MEDIDA: Muestra Usuario, Nombre de la prenda, Medidas y los agregados recomendados
+            cuerpoTarjetaHTML = `
+                <h2 class="pedido-cliente">Pedido #${p.id} (A Medida)</h2>
+                <p class="pedido-meta"><strong>Cliente:</strong> ${p.usuario || "No asignado"}</p>
+                <p class="pedido-meta"><strong>Prenda:</strong> ${p.prenda || "Diseño Personalizado"}</p>
+                <p class="pedido-meta"><strong>Medidas:</strong> ${p.medidas}</p>
+                <p class="pedido-meta"><strong>Monto Venta:</strong> $${p.total}</p>
+            `;
+        } else {
+            // 📦 CASO CATÁLOGO: Muestra Usuario, Fecha de realización y los agregados recomendados
+            cuerpoTarjetaHTML = `
+                <h2 class="pedido-cliente">Pedido #${p.id} (Catálogo)</h2>
+                <p class="pedido-meta"><strong>Cliente:</strong> ${p.usuario || "No asignado"}</p>
+                <p class="pedido-meta"><strong>Fecha Realizado:</strong> ${p.fecha}</p>
+                <p class="pedido-meta"><strong>Monto Venta:</strong> $${p.total}</p>
+            `;
+        }
+
+        // Bloque común final para todas las tarjetas (Selector de estado y Botón de detalles)
         article.innerHTML = `
-            <h2 class="pedido-cliente">Pedido #${p.id}</h2>
-            <p class="pedido-meta">${metaInfo}</p>
-            <p class="pedido-meta"><strong>Tipo - P :</strong> ${p.tipo}</p>
+            ${cuerpoTarjetaHTML}
             
-            <div class="pedido-estado-container">
+            <div class="pedido-estado-container" style="margin-top: 10px;">
                 <label>Estado:</label>
                 <select class="select-estado-pedido" data-id="${p.id}">
                     <option value="pendiente" ${esPendiente}>Pendiente</option>
-                    <option value="elaboracion" ${esElaboracion}>En elaboracion</option>
+                    <option value="elaboracion" ${esElaboracion}>En elaboración</option>
                     <option value="entregar" ${esEntregar}>Por entregar</option>
+                    <option value="entregado" ${esEntregado}>Entregado</option> 
                 </select>
             </div>
             
-            <button type="button" class="btn-detalles-pedido" data-id="${p.id}">Ver Detalles</button>
+            <button type="button" class="btn-detalles-pedido" data-id="${p.id}" style="margin-top: 10px;">Ver Detalles</button>
         `;
 
         tablero.appendChild(article);
     });
 }
 
-// 🔀 Intercambiador de pestañas expuesto a 'window' para que tu HTML lo encuentre sin problemas
+// 🔀 Intercambiador de pestañas expuesto a 'window'
 window.cambiarFiltroEstado = function(estado, botonElemento) {
     estadoActivo = estado.toLowerCase();
-    
-    // Cambiar clases visuales de los botones
     document.querySelectorAll(".tab-estado").forEach(btn => btn.classList.remove("active"));
     botonElemento.classList.add("active");
-    
-    // Repintar con el nuevo filtro aplicado
     renderizarPedidos();
 };
 
@@ -112,16 +133,16 @@ document.addEventListener("change", (e) => {
         .then(res => {
             if (res.success) {
                 alert(`¡Pedido #${idPedido} movido a "${nuevoEstado}" con éxito!`);
-                cargarTableroPedidos(); // Recargamos para que desaparezca de la pestaña actual
+                cargarTableroPedidos(); 
             } else {
-                alert("No se pudo actualizar el estado en el servidor.");
+                alert("No se pudo actualizar el estado en el servidor: " + (res.mensaje || "Error"));
             }
         })
         .catch(err => console.error("Error actualizando estado:", err));
     }
 });
 
-// 📊 Comprueba el estado actual en la base de datos y actualiza el contador
+// 📊 Mantiene la funcionalidad de animación si existen cotizaciones por procesar
 function verificarPedidosPorCotizar() {
     fetch(`${urlBase}/AdminCotizaciones?accion=contar`)
         .then(res => res.json())
@@ -133,7 +154,9 @@ function verificarPedidosPorCotizar() {
             if(badgePrevio) badgePrevio.remove();
 
             if (data.cantidad > 0) {
+                // Inyecta la clase CSS encargada de ejecutar tu animación
                 barra.classList.add("tiene-pendientes");
+                
                 const badge = document.createElement("span");
                 badge.className = "badge-contador";
                 badge.innerText = `${data.cantidad} NUEVOS`;
@@ -142,7 +165,7 @@ function verificarPedidosPorCotizar() {
                 barra.classList.remove("tiene-pendientes");
             }
         })
-        .catch(err => console.error("Error verificando conteo:", err));
+        .catch(err => console.error("Error verificando conteo de cotizaciones:", err));
 }
 
 // 🪟 Despliega el modal emergente de cotizaciones pendientes
@@ -168,9 +191,9 @@ function abrirModalCotizaciones() {
                         
                         <form class="form-enviar-cotizacion" data-id="${p.id}" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
                             <input type="number" placeholder="Precio Cotizado ($)" required class="input-precio" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
-                            <label style="font-size:10px; display: flex; align-items: center;">Fecha Aproximada de entrega:</label>
+                            <label style="font-size:10px; display: flex; align-items: center;">Fecha Entrega:</label>
                             <input type="date" required class="input-fecha" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;">
-                            <input type="text" placeholder="Comentario o validez de fecha" required class="input-comentario" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 2;">
+                            <input type="text" placeholder="Comentario" required class="input-comentario" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 2;">
                             <button type="submit" style="background: #5d2b90; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Enviar</button>
                         </form>
                     </div>
@@ -194,7 +217,7 @@ function abrirModalCotizaciones() {
 document.addEventListener("DOMContentLoaded", async () => {
     await MostrarSide();
     await verificarPedidosPorCotizar();
-    cargarTableroPedidos(); // 🚀 Inyección inicial de datos reales en el tablero
+    cargarTableroPedidos(); 
     
     document.addEventListener("click", (e) => {
         if (e.target.matches("#cerrarSesion")) {
@@ -246,7 +269,7 @@ document.addEventListener("submit", (evento) => {
                     listaContenedora.innerHTML = '<p style="text-align:center; padding: 20px;">No hay elementos que procesar.</p>';
                 }
                 verificarPedidosPorCotizar();
-                cargarTableroPedidos(); // Refrescamos el tablero de pedidos general por si acaso
+                cargarTableroPedidos(); 
             } else {
                 alert("Error al guardar: " + resultado.mensaje);
             }
@@ -270,7 +293,6 @@ document.addEventListener("click", (e) => {
 });
 
 function abrirModalDetalleEspecifico(data, idPedido) {
-    // Eliminar modal previo si existe
     const modalExistente = document.querySelector(".modal-overlay");
     if (modalExistente) modalExistente.remove();
 
@@ -280,19 +302,14 @@ function abrirModalDetalleEspecifico(data, idPedido) {
 
     let contenidoInterno = "";
 
-    if (data.tipo === "A Medida") {
-        // Procesamos las medidas separadas por guiones (ej: "90-60-90" -> [90, 60, 90])
-        // 🔍 CORRECCIÓN: Separar por coma (,) o por guion (-), y limpiar espacios
+    if (data.tipo === "A Medida" || (data.medidas && !data.medidas.includes("N/A"))) {
         const arrayMedidas = data.medidas ? data.medidas.split(/[,\-]/) : ["0","0","0"];
-
-        // Tomamos cada valor y le quitamos espacios fantasmas con .trim()
         const m1 = arrayMedidas[0] ? arrayMedidas[0].trim() : 0;
         const m2 = arrayMedidas[1] ? arrayMedidas[1].trim() : 0;
         const m3 = arrayMedidas[2] ? arrayMedidas[2].trim() : 0;
         
         const fotoPrenda = data.imagen ? `${urlBase}/${data.imagen}` : `${urlBase}/images/Perfil/Ellipse 14.png`;
 
-        // Renderizado usando tu estructura Web Component de Formulario Deshabilitado
         contenidoInterno = `
             <div class="modal-container">
                 <div class="modal-header">
@@ -305,11 +322,11 @@ function abrirModalDetalleEspecifico(data, idPedido) {
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Tipo de prenda:</label>
-                            <input type="text" value="${data.prenda}" class="input-grey" readonly>
+                            <input type="text" value="${data.prenda || 'No especificada'}" class="input-grey" readonly>
                         </div>
                         <div class="form-group">
                             <label>Sugerencia de telas / Elegida:</label>
-                            <input type="text" value="${data.tela}" class="input-grey" readonly>
+                            <input type="text" value="${data.tela || 'No especificada'}" class="input-grey" readonly>
                         </div>
                     </div>
                     <div class="inline-row">
@@ -326,10 +343,10 @@ function abrirModalDetalleEspecifico(data, idPedido) {
                     </div>
                     <div class="form-group">
                         <label>Descripción del pedido:</label>
-                        <textarea class="textarea-full" readonly>${data.descripcion}</textarea>
+                        <textarea class="textarea-full" readonly>${data.descripcion || 'Sin descripción'}</textarea>
                     </div>
                     <div class="form-group">
-                        <label>Imagen de referencia asignada (Pasa el mouse para ampliar):</label>
+                        <label>Imagen de referencia asignada:</label>
                         <div class="upload-zone zoom-container">
                             <img src="${fotoPrenda}" class="img-zoom-efecto" alt="Prenda referencia">
                         </div>
@@ -341,7 +358,6 @@ function abrirModalDetalleEspecifico(data, idPedido) {
                 </form>
             </div>`;
     } else {
-        // Renderizado del flujo del Catálogo en Cuadrícula (Múltiples prendas)
         let tarjetasPrendasHTML = "";
         data.prendas.forEach(p => {
             const pathImg = p.imagen.startsWith("http") || p.imagen.startsWith("images") ? `${urlBase}/${p.imagen}` : `${urlBase}/${p.imagen}`;
@@ -352,8 +368,8 @@ function abrirModalDetalleEspecifico(data, idPedido) {
                     </div>
                     <div>
                         <h4 style="margin:0; color: var(--color-Tipografia);">${p.nombre}</h4>
-                        <p style="margin: 4px 0; font-size: 14px; color: var(--color-gris-oscuro);">Talla: <strong>${p.talla}</strong></p>
-                        <p style="margin:0; font-weight: bold; color: var(--color-letra);">$${p.precio}</p>
+                        <p style="margin: 4px 0; font-size: 14px; color: var(--color-gris-oscuro);">Talla: <strong>${p.talla}</strong> | Cantidad: <strong>${p.cantidad || 1}</strong></p>
+                        <p style="margin:0; font-weight: bold; color: var(--color-letra);">$${p.subtotal || p.precio}</p>
                     </div>
                 </div>`;
         });

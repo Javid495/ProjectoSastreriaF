@@ -1,84 +1,122 @@
-// helpers/RegistrarPrendasAdmin.js
+// ../helpers/AgregarPrendas.js
 
 export function RegistrarPrendas() {
-    const formulario = document.querySelector("#registrarProducto");
-
-    // Verificación preventiva de que el formulario exista en el DOM actual
-    if (!formulario) return;
+    // Buscamos el formulario usando el ID exacto de tu HTML: id="registrarProducto"
+    const formulario = document.getElementById("registrarProducto");
+    
+    if (!formulario) {
+        console.warn("No se encontró el formulario #registrarProducto en el DOM.");
+        return;
+    }
 
     formulario.addEventListener("submit", async (e) => {
-        // Evitamos recargas involuntarias del navegador
-        e.preventDefault();
+        e.preventDefault(); // Detenemos la recarga de página por defecto
 
-        // Captura de los elementos del DOM usando los ID del nuevo diseño
-        const nombre = document.querySelector("#nombreProducto").value.trim();
-        const talla = document.querySelector("#tallaProducto").value.trim();
-        const Tprecio = document.querySelector("#precioProducto").value.trim(); 
-        const stockInput = document.querySelector("#stockProducto").value.trim();
-        const categoria = document.querySelector("#categoriaProducto").value.trim(); 
-        const descripcion = document.querySelector("#descripcion").value.trim();
+        // 1. CAPTURA DE VALORES BASE (Campos únicos del producto)
+        const nombre = document.getElementById("nombreProducto").value.trim();
+        const categoria = document.getElementById("categoriaProducto").value;
+        const descripcion = document.getElementById("descripcion").value.trim();
 
-        const precio = parseFloat(Tprecio);
-
-        // 1. Validar que no haya campos vacíos
-        if (!nombre || !talla || isNaN(precio) || !stockInput || !categoria || !descripcion) {
-            alert("Por favor, complete todos los campos del formulario antes de registrar la prenda.");
-            return; // Detiene el envío
-        }
-
-        const stock = parseInt(stockInput, 10);
-
-        // 2. Validar que el stock sea un número coherente
-        if (isNaN(stock) || stock < 0) {
-            alert("Por favor, en el campo stock ingrese un número igual o mayor a cero.");
+        // Validación previa de los datos de cabecera obligatorios
+        if (!nombre || !categoria) {
+            alert("Por favor, completa los campos obligatorios principales (Nombre y Categoría).");
             return;
         }
 
-        // 3. Construcción del FormData para el envío Multipart (Texto + Binarios)
-        const formData = new FormData();
-        formData.append("nombreProducto", nombre);
-        formData.append("talla", talla);
-        formData.append("precio", precio);
-        formData.append("stock", stock);
-        formData.append("categoria", categoria); // Envía el ID numérico de la FK
-        formData.append("descripcion", descripcion);
+        // 2. RECOLECCIÓN DINÁMICA DE TODAS LAS VARIANTES EN PANTALLA
+        const filasVariantes = document.querySelectorAll(".fila-variante");
+        const loteVariantes = [];
+        let validacionPreciosStock = true;
 
-        // 4. Recolección de las imágenes subidas a la miniatura
+        filasVariantes.forEach(fila => {
+            // Buscamos por clase dentro de la fila específica actual
+            const talla = fila.querySelector(".input-talla").value.trim();
+            const precioRaw = fila.querySelector(".input-precio").value.trim();
+            const stockRaw = fila.querySelector(".input-stock").value.trim();
 
-        const contenedoresFotos = document.querySelectorAll("#contenedorImgs .img-miniatura-admin");
-        
-        contenedoresFotos.forEach((contenedor, indice) => {
-            const imgElement = contenedor.querySelector("img");
-            
-            // Leemos el archivo binario puro que guardamos previamente en memoria
-            if (imgElement && imgElement.fileObject) {
-                formData.append("archivo_imagen_" + indice, imgElement.fileObject);
-                console.log(`Adjuntado con éxito al FormData: archivo_imagen_${indice}`);
+            // Solo procesamos la fila si el administrador escribió algo en la Talla
+            if (talla) {
+                const precio = parseFloat(precioRaw) || 0.0;
+                const stock = parseInt(stockRaw, 10) || 0;
+
+                // Validación de negocio intermedia
+                if (precio <= 0) {
+                    validacionPreciosStock = false;
+                }
+
+                loteVariantes.push({
+                    talla: talla,
+                    stock: stock,
+                    valor: precio // <-- Clave "valor" idéntica a lo esperado por variante.get("valor") en Java
+                });
             }
         });
 
+        // Validaciones de las variantes recolectadas
+        if (loteVariantes.length === 0) {
+            alert("Debe ingresar al menos una variante con su Talla, Precio y Stock.");
+            return;
+        }
 
-        // 5. Envío asíncrono al nuevo Servlet de Registro
+        if (!validacionPreciosStock) {
+            alert("Por favor, asegúrate de que todas las tallas ingresadas tengan un precio mayor a 0.");
+            return;
+        }
+
+        // 3. CONSTRUCCIÓN DEL OBJETO MULTIPART (FormData)
+        const formData = new FormData();
+        
+        formData.append("nombreProducto", nombre);
+        formData.append("categoria", categoria);
+        formData.append("descripcion", descripcion);
+        formData.append("tipoProducto", "General"); 
+        formData.append("estado", "activa");        
+
+        // Empaquetamos el array completo de mapas en un único String JSON
+        formData.append("variantes", JSON.stringify(loteVariantes));
+
+        // 4. RECOLECCIÓN DE IMÁGENES DESDE EL DOM (Mantiene tu lógica intacta)
+        const imagenesEnPantalla = document.querySelectorAll(".img-miniatura-admin img");
+        
+        imagenesEnPantalla.forEach((img, indice) => {
+            if (img.fileObject) {
+                formData.append(`archivo_imagen_${indice}`, img.fileObject);
+            }
+        });
+
+        // 5. ENVÍO ASÍNCRONO AL SERVLET
         try {
             const respuesta = await fetch("../RegistrarPrendaServlet", {
                 method: "POST",
-                body: formData
+                body: formData 
             });
 
-            if (!respuesta.ok) throw new Error("Error en la respuesta del servidor");
+            const resultado = await respuesta.json();
 
-            const resultado = await respuesta.json(); 
-
-            if (resultado.status === "Exito") {
-                alert("¡Prenda registrada y guardada con éxito!");
-                window.location.href = "InicioAdmin.html"; // Redirección al catálogo principal
+            if (respuesta.ok && resultado.status === "Exito") {
+                alert("🎉 " + resultado.mensaje);
+                
+                // --- LIMPIEZA INTEGRAL DEL FORMULARIO ---
+                formulario.reset();
+                
+                // Removemos las miniaturas de imágenes de la pantalla
+                document.querySelectorAll(".img-miniatura-admin").forEach(div => div.remove());
+                
+                // Limpieza de filas clonadas: dejamos solo la primera fila limpia y borramos las demás
+                const filas = document.querySelectorAll(".fila-variante");
+                filas.forEach((fila, indice) => {
+                    if (indice > 0) {
+                        fila.remove();
+                    }
+                });
+                
             } else {
-                alert("Hubo un error al registrar el producto: " + resultado.mensaje);
+                alert("Error en el servidor: " + (resultado.mensaje || "No se pudo registrar la prenda."));
             }
 
         } catch (error) {
-            console.error("Error al enviar el registro de la prenda:", error);
-            alert("No se pudo conectar con el servidor para guardar la nueva prenda.");
+            console.error("Error detectado en fetch:", error);
+            alert("Ocurrió un fallo en la comunicación con el servidor.");
         }
     });
 }

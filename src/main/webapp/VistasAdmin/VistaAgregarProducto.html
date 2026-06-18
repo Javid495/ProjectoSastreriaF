@@ -31,26 +31,41 @@
 
                 <div class="form-row">
                     <div class="form-group-inline">
-                        <label for="tallaProducto">Talla:</label>
-                        <input type="text" id="tallaProducto" name="talla" class="input-inline" placeholder="Ej: M, 32">
-                    </div>
-                    
-                    <div class="form-group-inline">
-                        <label for="precioProducto">Precio:</label>
-                        <input type="text" id="precioProducto" name="precio" class="input-inline" placeholder="0.00">
-                    </div>
-
-                    <div class="form-group-inline">
-                        <label for="stockProducto">Stock:</label>
-                        <input type="text" id="stockProducto" name="stock" class="input-inline" placeholder="0">
-                    </div>
-
-                    <div class="form-group-inline">
                         <label for="categoriaProducto">Categoría:</label>
-                        <select id="categoriaProducto" name="categoria" class="input-inline">
+                        <select id="categoriaProducto" name="categoria" class="input-inline select-categoria">
                             <option value="">Seleccione...</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Variantes de la Prenda (Tallas y Stock):</label>
+                    <div id="seccionVariantes">
+                        
+                        <div class="form-row fila-variante">
+                            <div class="form-group-inline">
+                                <label>Talla:</label>
+                                <input type="text" class="input-inline input-talla" placeholder="Ej: M, 32">
+                            </div>
+                            
+                            <div class="form-group-inline">
+                                <label>Precio:</label>
+                                <input type="text" class="input-inline input-precio" placeholder="0.00">
+                            </div>
+
+                            <div class="form-group-inline">
+                                <label>Stock:</label>
+                                <input type="text" class="input-inline input-stock" placeholder="0">
+                            </div>
+
+                            <button type="button" class="btn-remover-variante visualmente-oculto">&times;</button>
+                        </div>
+
+                    </div>
+
+                    <button type="button" id="btnAgregarVariante" class="btn-secundario-admin">
+                        + Añadir otra Talla
+                    </button>
                 </div>
 
                 <div class="form-group">

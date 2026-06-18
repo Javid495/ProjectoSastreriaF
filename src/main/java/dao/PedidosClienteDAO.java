@@ -1,4 +1,3 @@
-
 package dao;
 
 import java.sql.Connection;
@@ -9,133 +8,117 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Pedidos;
 
+//DAo encargado de los pedidos del catalogo
+
 public class PedidosClienteDAO {
     
+    // 1. OBTENER LOS PEDIDOS CABECERA DEL USUARIO (Catálogo y Medida entran aquí de forma directa)
     public List<Pedidos> obtenerPedidosUsuario(int idUsuario){
         List<Pedidos> lista = new ArrayList<>();
         
-        //consulta a la base de datos mysql
-        String sql = "SELECT p.Pedido_id, p.Pedido_FechaInicio, p.Pedido_TCompra, p.Pedido_Estado " +
-            "FROM Pedidos p " +
-            "JOIN ConfirmarPago cp ON p.ConfirmarPago_id = cp.ConfirmarPago_id " +
-            "LEFT JOIN DetallesCarrito dc ON cp.DetallesCarrito_id = dc.DetallesCarrito_id " +
-            "LEFT JOIN Carrito c ON dc.Carrito_id = c.Carrito_id " +
-            "LEFT JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id " +
-            "LEFT JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
-            "WHERE c.Usuarios_id = ? OR dpm.Usuario_id = ? " +
-            "ORDER BY p.Pedido_FechaInicio DESC;";
+        // Consulta simplificada y corregida según tus columnas reales de la tabla 'Pedidos'
+        String sql = "SELECT Pedido_id, Pedido_FechaInicio, Pedido_TipoPedido, Pedido_Estado, Pedido_TotalCompra " +
+                     "FROM Pedidos " +
+                     "WHERE Usuario_id = ? " +
+                     "ORDER BY Pedido_FechaInicio DESC;";
         
-        //Hago la conexion con la bese de datos
         try (Connection con = ClaseConexion.getConexion();
-             // Preparo y mando la consulta
              PreparedStatement ps = con.prepareStatement(sql)){
             
-            //Mando el id del usuario a buscar
             ps.setInt(1, idUsuario);
-            ps.setInt(2, idUsuario);
             
             try (ResultSet rs = ps.executeQuery()){
-                
                 while(rs.next()){
-                    
-                    //Referencio a mi modelo de prendas
                     Pedidos p  = new Pedidos();
                     
-                    //Mapeo los datos 
                     p.setIdPedido(rs.getInt("Pedido_id"));
                     p.setFechaInicio(rs.getString("Pedido_FechaInicio"));
-                    p.setTipoCompra(rs.getString("Pedido_TCompra"));
+                    p.setTipoCompra(rs.getString("Pedido_TipoPedido")); // Cambiado de Pedido_TCompra a Pedido_TipoPedido
                     p.setEstadoPedido(rs.getString("Pedido_Estado"));
+                    // Si tu modelo 'Pedidos' tiene setTotalCompra, puedes mapearlo aquí:
+                    // p.setTotalCompra(rs.getDouble("Pedido_TotalCompra"));
                     
                     lista.add(p);
                 }
             }
         }
         catch (SQLException e){
-            System.out.println("Hubo algun error en obtener la lista de pedidos del usuario" + idUsuario + ": " + e.getMessage());
+            System.out.println("❌ Error en obtenerPedidosUsuario (" + idUsuario + "): " + e.getMessage());
         }
         return lista;
-    
     }
     
+    // 2. DESGLOSE DE PRODUCTOS PARA COMPRAS DESDE EL CATÁLOGO
     public List<String[]> obtenerProductosPorPedido(int idPedido) {
-    List<String[]> lista = new ArrayList<>();
-    String sql = "SELECT p.Prenda_nombre, p.Prenda_valor, dc.Detalles_total, " +
-                 "ROUND(dc.Detalles_total / p.Prenda_valor) AS Cantidad, " +
-                 "MIN(img.Imagenes_link) AS Imagen_link " +
-                 "FROM Pedidos pe " +
-                 "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                 "JOIN DetallesCarrito dc_ref ON cp.DetallesCarrito_id = dc_ref.DetallesCarrito_Id " +
-                 "JOIN DetallesCarrito dc ON dc_ref.Carrito_id = dc.Carrito_id " +
-                 "JOIN Prendas p ON dc.Prendas_id = p.Prenda_id " +
-                 "LEFT JOIN imagenes img ON p.Prenda_id = img.Prenda_id " +
-                 "WHERE pe.Pedido_id = ? " +
-                 "GROUP BY p.Prenda_id, p.Prenda_nombre, p.Prenda_valor, dc.Detalles_total";
-                 
-    // Nota: Revisa si en tu base de datos tu llave primaria de pedidos se llama Pedido_id o idPedido.
-
-    try (Connection con = ClaseConexion.getConexion();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        List<String[]> lista = new ArrayList<>();
         
-        ps.setInt(1, idPedido);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String[] registro = new String[5];
-                registro[0] = rs.getString("Prenda_nombre");
-                registro[1] = rs.getString("Prenda_valor");
-                registro[2] = rs.getString("Detalles_total");
-                registro[3] = String.valueOf(rs.getInt("Cantidad"));
-                
-                // Salvaguarda para las rutas de imágenes con contrabarras (\)
-                String rutaImg = rs.getString("Imagen_link");
-                if (rutaImg != null) {
-                    rutaImg = rutaImg.replace("\\", "\\\\"); // Evita que rompa el JSON
+        // Consulta corregida usando la tabla intermedia real 'DetallesPedidos'
+        String sql = "SELECT p.Prenda_nombre, p.Prenda_valor, dp.Detalles_PrecioTotal, dp.Detalles_Cantidad, " +
+                     "MIN(img.Imagenes_link) AS Imagen_link " +
+                     "FROM DetallesPedidos dp " +
+                     "JOIN Prendas p ON dp.Prenda_id = p.Prenda_id " +
+                     "LEFT JOIN imagenes img ON p.Prenda_id = img.Prenda_id " +
+                     "WHERE dp.Pedido_id = ? " +
+                     "GROUP BY p.Prenda_id, p.Prenda_nombre, p.Prenda_valor, dp.Detalles_PrecioTotal, dp.Detalles_Cantidad;";
+                     
+        try (Connection con = ClaseConexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, idPedido);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String[] registro = new String[5];
+                    registro[0] = rs.getString("Prenda_nombre");
+                    registro[1] = rs.getString("Prenda_valor");
+                    registro[2] = rs.getString("Detalles_PrecioTotal"); // Cambiado a Detalles_PrecioTotal según tu SQL
+                    registro[3] = String.valueOf(rs.getInt("Detalles_Cantidad")); // Cambiado a Detalles_Cantidad
+                    
+                    String rutaImg = rs.getString("Imagen_link");
+                    if (rutaImg != null) {
+                        rutaImg = rutaImg.replace("\\", "\\\\"); // Escapa barras inclinadas para no romper el JSON
+                    }
+                    registro[4] = rutaImg;
+                    
+                    lista.add(registro);
                 }
-                registro[4] = rutaImg;
-                
-                lista.add(registro);
             }
+        } 
+        catch (Exception e) {
+            System.out.println("❌ Error consultando desglose de catálogo (obtenerProductosPorPedido): " + e.getMessage());
         }
-    } 
-    catch (Exception e) {
-        System.out.println("Error consultando desglose del pedido: " + e.getMessage());
-    }
         return lista;
     }
     
+    // 3. DESGLOSE DE DETALLES PARA COMPRAS Hechas A MEDIDA
     public String[] obtenerDetallesPedidoMedida(int idPedido) {
         String[] detalles = null;
     
-        // 🔍 CONSULTA CORREGIDA: Trae los datos de la solicitud y de la cotización usando los nombres reales de la BD
+        // Consulta corregida uniendo Pedidos -> DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
         String sql = "SELECT dpm.Detalles_TPrenda, dpm.Detalles_Tela, cot.Cotizacion_Valor, cot.ComentarioAdmin " +
-                    "FROM Pedidos pe " +
-                    "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                    "JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id " +
-                    "JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
-                    "WHERE pe.Pedido_id = ?;";
+                     "FROM DetallesPedidos dp " +
+                     "JOIN CotizacionPedido cot ON dp.CotizacionPedido_id = cot.CotizacionPedido_id " +
+                     "JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
+                     "WHERE dp.Pedido_id = ?;";
 
         try (Connection con = ClaseConexion.getConexion();
-            PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
         
             ps.setInt(1, idPedido);
         
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     detalles = new String[4];
-                    // 🎯 MAPEO SEGURO: Usamos exactamente los mismos nombres que pusimos en el SELECT de arriba
-                    detalles[0] = rs.getString("Detalles_TPrenda");    // Nombre/Tipo de la prenda (Ej: Chaqueta)
-                    detalles[1] = rs.getString("Detalles_Tela");       // Tipo de tela (Ej: Lino)
-                    detalles[2] = rs.getString("Cotizacion_Valor");    // Valor final acordado (Decimal convertido a String)
-                    detalles[3] = rs.getString("ComentarioAdmin");     // Observaciones o notas del sastre
+                    detalles[0] = rs.getString("Detalles_TPrenda");      
+                    detalles[1] = rs.getString("Detalles_Tela");        
+                    detalles[2] = rs.getString("Cotizacion_Valor");    
+                    detalles[3] = rs.getString("ComentarioAdmin");     
                 }
             }
         } 
         catch (Exception e) {
             System.out.println("❌ Error consultando detalles del pedido a medida: " + e.getMessage());
-            e.printStackTrace();
         }
-    
-    return detalles; // Devuelve null si no encuentra el pedido o si hubo un error
-}
-    
+        
+        return detalles; 
+    }
 }

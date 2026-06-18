@@ -8,7 +8,7 @@ SELECT * FROM Categoria;
 SELECT * FROM Prendas;
 SELECT * FROM Populares;
 SELECT * FROM imagenes;
-SELECT * FROM Carrito;
+SELECT * FROM Carrito; 
 SELECT * FROM DetallesCarrito;
 SELECT * FROM DetallesPedidosMedida;
 SELECT * FROM CotizacionPedido;

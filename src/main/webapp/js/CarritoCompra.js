@@ -11,18 +11,25 @@ const ContPrecio = document.querySelector(".precio__prenda");
 
 export function rederizarCarrito(){
     const contenedor = document.querySelector("#mostrarCompra");
+    
+    // 🌟 CONTROL DE ESCAPE: Si no existe el contenedor del carrito, salimos de la función inmediatamente
+    if (!contenedor) {
+        return; 
+    }
+
     const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
+    const txtPrecioTotal = document.querySelector("#precio__total");
 
     if (carrito.length === 0){
         contenedor.innerHTML = "<p>Tu carrito actualmente se encuentra vacío</p>";
         if (ContPrecio) ContPrecio.innerHTML = "";
-        document.querySelector("#precio__total").textContent = "$0";
+        if (txtPrecioTotal) txtPrecioTotal.textContent = "$0"; // 🌟 Protegido
         return;
     }
 
     let totalCompra = 0;
     contenedor.innerHTML = "";
-    ContPrecio.innerHTML = ""; 
+    if (ContPrecio) ContPrecio.innerHTML = ""; // 🌟 Protegido
 
     carrito.forEach(producto => {
         const rutaImg = (producto.imagen.startsWith("http")) || producto.imagen.startsWith("data:") 
@@ -55,11 +62,12 @@ export function rederizarCarrito(){
         precio.id = `id${producto.id}`;
         precio.innerText = `${producto.nombre} (${producto.talla}): $${subtotal.toLocaleString()}`;
 
-        ContPrecio.append(precio);
+        if (ContPrecio) ContPrecio.append(precio); // 🌟 Protegido
         contenedor.appendChild(divItem);
+        
     });
 
-    document.querySelector("#precio__total").textContent = `$${totalCompra.toLocaleString()}`;
+    if (txtPrecioTotal) txtPrecioTotal.textContent = `$${totalCompra.toLocaleString()}`; // 🌟 Protegido
 }
 
 function eliminarProducto(id){
@@ -69,80 +77,77 @@ function eliminarProducto(id){
     rederizarCarrito();
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await aparecerCont("../");
-    await comprobarSesion("../");
-    await rederizarCarrito();
-});
-
 // =================================================================
-// 🚀 EVENTO DE DESPLIEGUE Y GUARDADO TEMPORAL EN BD
+// 🚀 EVENTO DE DESPLIEGUE Y GUARDADO TEMPORAL EN BD (PROTEGIDO)
 // =================================================================
-btnRealizarC.addEventListener("click", async (e) => {
-    const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
-    if(carrito.length === 0) {
-        alert("Agrega productos antes de proceder al pago.");
-        return;
-    }
-
-    // 🔒 1. Esperamos la verificación de sesión del servidor
-    const sesionActiva = await comprobarSesion("../"); 
-
-    if (!sesionActiva) {
-        alert("Para proceder con la compra de tus prendas, por favor inicia sesión.");
-        window.location.href = "../inicioSecion.html"; 
-        return;
-    }
-
-    // 💾 2. NUEVO: Enviamos el estado del LocalStorage al Servlet en modo 'temporal'
-    const payloadTemporal = {
-        accion: "temporal",
-        productos: carrito.map(item => ({
-            idPrenda: item.id,
-            cantidad: item.cantidad || 1
-        }))
-    };
-
-    try {
-        const urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
-        const respuesta = await fetch(`${urlBase}/ProcesarCompraServlet`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payloadTemporal)
-        });
-
-        const resultado = await respuesta.json();
-
-        // Si la base de datos falla por alguna razón transaccional, detenemos el flujo aquí
-        if (resultado.status !== "Exito") {
-            alert("No se pudo preparar la orden en el servidor: " + resultado.mensaje);
+if (btnRealizarC) {
+    btnRealizarC.addEventListener("click", async (e) => {
+        const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
+        if(carrito.length === 0) {
+            alert("Agrega productos antes de proceder al pago.");
             return;
         }
-        
-        console.log("💾 Éxito: Registro del carrito guardado de forma temporal en la Base de Datos.");
 
-    } catch (error) {
-        console.error("Error crítico en la comunicación temporal:", error);
-        alert("Ocurrió un error de red al intentar sincronizar tu carrito.");
-        return;
+        const sesionActiva = await comprobarSesion("../"); 
+        if (!sesionActiva) {
+            alert("Para proceder con la compra de tus prendas, por favor inicia sesión.");
+            window.location.href = "../inicioSecion.html"; 
+            return;
+        }
+
+        const payloadTemporal = {
+            accion: "temporal",
+            productos: carrito.map(item => ({
+                idPrenda: item.id,
+                cantidad: item.cantidad || 1
+            }))
+        };
+
+        try {
+            const urlBase = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+            const respuesta = await fetch(`${urlBase}/ProcesarCompraServlet`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payloadTemporal)
+            });
+
+            const resultado = await respuesta.json();
+            if (resultado.status !== "Exito") {
+                alert("No se pudo preparar la orden en el servidor: " + resultado.mensaje);
+                return;
+            }
+            console.log("💾 Éxito: Registro del carrito guardado de forma temporal.");
+        } catch (error) {
+            console.error("Error crítico en la comunicación temporal:", error);
+            alert("Ocurrió un error de red al intentar sincronizar tu carrito.");
+            return;
+        }
+
+        if (sombreado) sombreado.classList.add("aparecerSombreado");
+        await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
+        await RealizarCompra();
+    });
+}
+
+// 🛒 DELEGACIÓN DE EVENTOS PARA CANCELAR COMPRA (LÍNEA 88 PROTEGIDA)
+if (confirmarComprar) {
+    confirmarComprar.addEventListener("click", (e) => {
+        if (e.target.closest("#cancelarCompra")) {
+            if (sombreado) sombreado.classList.remove("aparecerSombreado");
+            confirmarComprar.innerHTML = "";
+        }
+    });
+}
+
+// ⏳ AUTO-EJECUCIÓN INTELIGENTE
+document.addEventListener("DOMContentLoaded", async () => {
+    // 🌟 Solo se ejecuta de forma automática si estamos físicamente en la vista del Carrito
+    if (document.querySelector("#mostrarCompra")) {
+        await aparecerCont("../");
+        await comprobarSesion("../");
+        rederizarCarrito();
     }
-
-    // 🔓 3. Si todo salió bien, procedemos a abrir el Modal e inicializar el formulario de pago
-    sombreado.classList.add("aparecerSombreado");
-    await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
-
-    // Llama a la función definitiva (la que modificamos en el paso anterior que enviará la 'accion':'confirmar')
-    await RealizarCompra();
 });
-
-// Delegación de eventos EXCLUSIVAMENTE para Cancelar Compra
-confirmarComprar.addEventListener("click", (e) => {
-    if (e.target.closest("#cancelarCompra")) {
-        sombreado.classList.remove("aparecerSombreado");
-        confirmarComprar.innerHTML = "";
-    }
-});
-
 // Cerrar ventana de Pago Confirmado
 // pagoConfirm.addEventListener("click", (e) => {
 //     if (e.target.closest("#pagoConfirmado")) {

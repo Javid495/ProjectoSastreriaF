@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-//Servelt Encargado de Eliminar Varias Prendas/Productos del catalogo
+// Servlet encargado de cambiar el estado a 'eliminada' a múltiples prendas en lote
 @WebServlet("/EliminarVariasPrendas")
 public class ServeltEliminarVarios extends HttpServlet {
 
@@ -33,7 +32,7 @@ public class ServeltEliminarVarios extends HttpServlet {
             while ((linea = reader.readLine()) != null) {
                 buffer.append(linea);
             }
-            String jsonRaw = buffer.toString(); // Esto contendrá algo como: {"ids":[1,2,3]}
+            String jsonRaw = buffer.toString(); // Ejemplo: {"ids":[1,2,3]}
 
             // 2. EXTRAER LOS NÚMEROS DE FORMA NATIVA (Con Expresiones Regulares)
             List<Integer> listaIds = new ArrayList<>();
@@ -46,13 +45,13 @@ public class ServeltEliminarVarios extends HttpServlet {
 
             // Validación de seguridad por si el array venía vacío
             if (listaIds.isEmpty()) {
-                response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"No se recibieron IDs válidos para eliminar.\"}");
+                response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"No se recibieron IDs válidos para procesar.\"}");
                 return;
             }
 
-            System.out.println("Servlet: Procesando la eliminación masiva de los IDs: " + listaIds);
+            System.out.println("Servlet: Procesando la deshabilitación masiva de los IDs: " + listaIds);
 
-            // 3. INVOCAR AL DAO REUTILIZANDO TU MÉTODO MASIVO
+            // 3. INVOCAR AL DAO REUTILIZANDO EL MÉTODO DE ACTUALIZACIÓN EN MASA
             EliminarPrendasDAO dao = new EliminarPrendasDAO();
             boolean exito = dao.eliminarPrendasEnMasa(listaIds);
 
@@ -60,12 +59,12 @@ public class ServeltEliminarVarios extends HttpServlet {
             if (exito) {
                 response.getWriter().write("{\"status\": \"Exito\"}");
             } else {
-                response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Hubo un problema al borrar el lote en la base de datos.\"}");
+                response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Hubo un problema al actualizar el estado del lote en la base de datos.\"}");
             }
 
         } catch (Exception e) {
-            System.out.println("Error crítico en ServeltEliminarPrenda: " + e.getMessage());
-            response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error en el servidor: " + e.getMessage() + "\"}");
+            System.out.println("Error crítico en ServeltEliminarVarios: " + e.getMessage());
+            response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error interno en el servidor: " + e.getMessage() + "\"}");
         }
     }
 }

@@ -1,4 +1,3 @@
-
 package controlador;
 
 import dao.PrendasDAO;
@@ -13,45 +12,45 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-//Servelt quien obtiene las prendas del catalogo y las imprime
-//Al cliente
-
-//Realizamos o creamo nuestra referencia a js
 @WebServlet("/ObtenerPrendas")
-
-public class ServeltPrendas extends HttpServlet{
+public class ServeltPrendas extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest solicitud, HttpServletResponse response)
                 throws ServletException , IOException {
     
-        //Definimos el tipo de contenido que la respuesta
+        // Definimos el tipo de contenido y codificación de la respuesta
         response.setContentType("application/json");
-        
-        // Definimos el lenguaje estandar del contenido
         response.setCharacterEncoding("UTF-8");
         
-        try{
-            //Instanciamos a nuestro archivo prendasDAO y obtenemos la lista de prendsas
+        try {
             PrendasDAO dao = new PrendasDAO();
-            List<Prendas> listaPrendas = dao.listarPrendas();
+            List<Prendas> listaPrendas;
             
-            //Usamos el Gson para convertir la lista en un json
+            // 🌟 [INTEGRACIÓN] Detectamos quién solicita los datos
+            String rol = solicitud.getParameter("rol");
+            
+            if ("admin".equals(rol)) {
+                // Si viene de la interfaz de administración, incluimos las prendas inactivas
+                listaPrendas = dao.listarPrendasAdmin();
+            } else {
+                // Si es un cliente normal o no se especifica rol, cargamos el catálogo público
+                listaPrendas = dao.listarPrendas();
+            }
+            
+            // Usamos Gson para convertir la lista seleccionada en JSON
             Gson gson = new Gson();
             String jsonRespuesta = gson.toJson(listaPrendas);
             
-            //Se envia el json al cliente (el navegador)
+            // Se envía el JSON al navegador (cliente)
             PrintWriter out = response.getWriter();
             out.print(jsonRespuesta);
             out.flush();
             
-            
-        }
-        catch (Exception e){
-            //Si se llega a presentar algun error entonces, enviamos un error 500
+        } catch (Exception e) {
+            // Si se presenta algún error, enviamos un código de estado 500
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            System.out.println("Error en el servelt de prendas: " + e.getMessage());
-        
+            System.out.println("Error en el servlet de prendas: " + e.getMessage());
         }
     }
 }

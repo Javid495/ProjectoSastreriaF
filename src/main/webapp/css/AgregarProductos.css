@@ -227,3 +227,59 @@
         .btn-form:hover {
             filter: brightness(0.92);
         }
+
+/* =========================================================================
+   NUEVOS ESTILOS PARA VARIANTES DINÁMICAS (INTEGRADOS AL SISTEMA)
+========================================================================= */
+
+/* Botón para añadir nuevas variantes */
+.btn-secundario-admin {
+    align-self: flex-start;
+    background-color: var(--color-input-bg);
+    border: var(--estilo-borde);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-secundario-admin:hover {
+    background-color: var(--color-FondoInputs);
+}
+
+/* Botón para eliminar una fila de variante específica */
+.btn-remover-variante {
+    background: none;
+    border: none;
+    color: #ff4d4d; /* Un rojo sutil que combina con tu botón de regreso */
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+}
+
+.btn-remover-variante:hover {
+    transform: scale(1.2);
+}
+
+/* Estado oculto para la primera fila (para que no borren la única variante) */
+.btn-remover-variante.visualmente-oculto {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    padding: 0;
+}
+
+/* Ajuste fino para el select de categoría */
+.select-categoria {
+    width: 200px; /* Le damos un poco más de aire que a los números */
+    text-align: left;
+    padding-left: 10px;
+}

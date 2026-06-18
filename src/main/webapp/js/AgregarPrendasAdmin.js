@@ -3,16 +3,16 @@ import { MostrarSide } from "../helpers/RelizarPeticion.js";
 import { RegistrarPrendas } from "../helpers/AgregarPrendas.js";
 import { cargarSelectorCategorias } from "../helpers/MostrarCategoriasAdmin.js"
 
-
 document.addEventListener("DOMContentLoaded", async (e) => {
     
     // Carga de la estructura compartida de tu Admin panel
     MostrarSide();
     
     // 1. Inicializamos la escucha del evento Submit para registrar el producto
+    // (Este helper ahora barrerá todas las filas clonadas automáticamente)
     RegistrarPrendas();
 
-    //2. Mostramos ls categorias disponibles:
+    // 2. Mostramos las categorías disponibles:
     cargarSelectorCategorias();
 
 
@@ -74,4 +74,36 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             inputOculto.value = ""; 
         });
     }
+
+
+    // === NUEVO === INTERFAZ GRÁFICA: MANEJO DE VARIANTES DINÁMICAS (TALLAS/STOCK)
+    const btnAgregarVariante = document.getElementById("btnAgregarVariante");
+    const seccionVariantes = document.getElementById("seccionVariantes");
+
+    if (btnAgregarVariante && seccionVariantes) {
+        btnAgregarVariante.addEventListener("click", () => {
+            // 1. Clonamos la fila modelo exacta que ya tienes maquetada en el HTML
+            const nuevaFila = seccionVariantes.querySelector(".fila-variante").cloneNode(true);
+            
+            // 2. Limpiamos los valores clonados para que la nueva fila aparezca vacía
+            nuevaFila.querySelector(".input-talla").value = "";
+            nuevaFila.querySelector(".input-precio").value = "";
+            nuevaFila.querySelector(".input-stock").value = "";
+            
+            // 3. Hacemos visible el botón de eliminar fila en este clon
+            const btnEliminar = nuevaFila.querySelector(".btn-remover-variante");
+            if (btnEliminar) {
+                btnEliminar.classList.remove("visually-oculto");
+                
+                // 4. Escuchador de eventos para destruir esta fila específica si se pulsa la "×"
+                btnEliminar.addEventListener("click", () => {
+                    nuevaFila.remove();
+                });
+            }
+            
+            // 5. Inyectamos la nueva fila al final del contenedor de variantes
+            seccionVariantes.appendChild(nuevaFila);
+        });
+    }
+
 });

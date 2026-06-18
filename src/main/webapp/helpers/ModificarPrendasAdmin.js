@@ -8,55 +8,103 @@ export function ModificarPrendas(id) {
         // Evitamos recargas involuntarias de parte del navegador
         e.preventDefault();
 
-        // Se capturan los elementos del DOM
+        // 1. Capturamos los elementos GLOBALES del DOM
         const nombre = document.querySelector("#nombreProducto").value.trim();
-        const Tprecio = document.querySelector("#precioProducto").value.trim(); 
-        const talla = document.querySelector("#tallaProducto").value.trim();
         const categoria = document.querySelector("#categoriaProducto").value.trim(); 
-        const stockInput = document.querySelector("#stockProducto").value.trim();
         const descripcion = document.querySelector("#descripcion").value.trim();
 
-        console.log(nombre, Tprecio, talla, categoria, stockInput, descripcion);
+        // 2. RECOLECCIÓN Y VALIDACIÓN DINÁMICA DE VARIANTES (TALLAS)
+        const filasVariantes = document.querySelectorAll(".fila-variante-item");
+        let listaVariantesEnviar = [];
+        let totalStockProducto = 0;
+        let tieneCamposVacios = false;
+        let tieneErrorPrecio = false;
+        let tieneErrorStock = false;
 
-        const precio = parseFloat(Tprecio);
+        // Validar que al menos exista una fila de talla
+        if (filasVariantes.length === 0) {
+            alert("Debes definir al menos una variante de talla para el producto.");
+            return;
+        }
 
-        // Validar que no hayan campos vacíos
-        if (!nombre || !precio || !talla || !categoria || !stockInput || !descripcion) {
+        filasVariantes.forEach(fila => {
+            const idVariante = fila.getAttribute("data-id-variante");
+            const tallaInput = fila.querySelector(".var-talla").value.trim();
+            const stockInput = fila.querySelector(".var-stock").value.trim();
+            const precioInput = fila.querySelector(".var-precio").value.trim();
+
+            // Validación: Campos vacíos en la fila
+            if (!tallaInput || !stockInput || !precioInput) {
+                tieneCamposVacios = true;
+                return;
+            }
+
+            const precio = parseFloat(precioInput);
+            const stock = parseInt(stockInput, 10);
+
+            // Validación: Si el precio no es un número válido
+            if (isNaN(precio) || precio <= 0) {
+                tieneErrorPrecio = true;
+            }
+
+            // Validación: Si el stock es negativo o inválido
+            if (isNaN(stock) || stock < 0) {
+                tieneErrorStock = true;
+            }
+
+            // Si pasa los filtros iniciales, acumulamos el stock global
+            totalStockProducto += isNaN(stock) ? 0 : stock;
+
+            // Construimos el objeto de la variante
+            let objetoVariante = {
+                talla: tallaInput,
+                stock: stock,
+                valor: precio
+            };
+
+            // Si la variante ya existía en la BD, conservamos su ID para que el DAO la actualice
+            if (idVariante) {
+                objetoVariante.id = parseInt(idVariante, 10);
+            }
+
+            listaVariantesEnviar.push(objetoVariante);
+        });
+
+        // --- Lanzador de tus Alertas Nativas ---
+        if (!nombre || !categoria || !descripcion || tieneCamposVacios) {
             alert("Durante la edición ninguno de los campos puede quedar vacío.");
-            return; // Detiene el envío
+            return; 
         }
 
-        if (Tprecio){
-            alert("En el campo de valor no deben haber letras/ palabras")
+        if (tieneErrorPrecio) {
+            alert("En el campo de valor no deben haber letras/palabras y debe ser mayor a 0.");
+            return;
         }
 
-        const stock = parseInt(stockInput, 10);
-
-        // Se valida que el número sea igual o mayor a cero
-        if (isNaN(stock) || stock < 0) {
+        if (tieneErrorStock) {
             alert("Por favor, en el campo stock ingrese un número igual o mayor a cero.");
             return;
         }
 
-        // Definición del estado según el stock
+        // Definición del estado global según el stock acumulado de todas las tallas
         let estado = "activa"; 
-        if (stock === 0) {
+        if (totalStockProducto === 0) {
             estado = "inactiva";
-            console.log("El stock del producto actualmente es 0, por lo tanto estará inactivo.");
+            console.log("El stock total de todas las variantes actualmente es 0, por lo tanto estará inactivo.");
         }
 
-        // === SOLUCIÓN: Instanciamos formData AQUÍ para que exista antes del bucle ===
+        // 3. INSTANCIAMOS EL FORMDATA
         const formData = new FormData();
         formData.append("idPrenda", id);
         formData.append("nombre", nombre);
-        formData.append("precio", precio);
-        formData.append("talla", talla);
         formData.append("categoria", categoria); 
-        formData.append("stock", stock);
         formData.append("estado", estado);
         formData.append("descripcion", descripcion);
+        
+        // Adjuntamos el JSON string de las variantes que procesará tu Servlet
+        formData.append("variantes", JSON.stringify(listaVariantesEnviar));
 
-        // Recolecciones de imagenes modificadas o actualizadas
+        // 4. RECOLECCIÓN DE IMÁGENES (Tu lógica original intacta y pulida)
         const contenedoresFotos = document.querySelectorAll("#contenedorImgs .img-miniatura-admin");
         let listaImagenesRestantes = [];
 
@@ -66,7 +114,6 @@ export function ModificarPrendas(id) {
             if (imgElement) {
                 // ¿Es una imagen nueva subida desde el ordenador?
                 if (imgElement.hasAttribute("data-nuevo") && imgElement.fileObject) {
-                    // Ahora formData sí existe y se puede adjuntar el archivo binario sin problemas
                     formData.append("archivo_imagen_" + indice, imgElement.fileObject);
                 } else {
                     // Es una imagen que ya existía en el servidor
@@ -79,12 +126,10 @@ export function ModificarPrendas(id) {
             }
         });
 
-        
-
-        // Modificado a "imagenesViejas" para acoplarse con la lectura del Servlet
+        // Enviamos las imágenes viejas que sobrevivieron al borrado del usuario
         formData.append("imagenesViejas", JSON.stringify(listaImagenesRestantes));
 
-        // Realizamos la peticion al servlet de ModificarPrendas
+        // 5. REALIZAMOS LA PETICIÓN AL SERVLET
         try {
             const respuesta = await fetch("../ModificarPrendaServlet", {
                 method: "POST",
@@ -97,7 +142,7 @@ export function ModificarPrendas(id) {
 
             if (resultado.status === "Exito") {
                 alert("¡Prenda modificada con éxito!");
-                window.location.href = "InicioAdmin.html"; 
+                window.location.href = "InicioAdmin.html"; // Tu redirección nativa
             } else {
                 alert("Hubo un error al procesar el cambio: " + resultado.mensaje);
             }

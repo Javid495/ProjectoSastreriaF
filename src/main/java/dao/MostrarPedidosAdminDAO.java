@@ -11,52 +11,60 @@ import java.util.Map;
 public class MostrarPedidosAdminDAO {
 
     /**
-     * Trae todos los pedidos del sistema unificados para el tablero del administrador.Une las compras de catálogo y los diseños hechos desde cero.
-     * 
+     * Trae todos los pedidos unificados para el tablero del administrador.
+     * Conecta Pedidos con DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
      */
-    public List<String[]> listarPedidosParaAdmin() {
+public List<String[]> listarPedidosParaAdmin() {
     List<String[]> lista = new ArrayList<>();
-    
-    // 💡 Usamos LEFT JOIN en ConfirmarPago para evitar que se oculten filas por nulos
-    String sql = "SELECT pe.Pedido_id, pe.Pedido_FechaInicio, pe.Pedido_Estado, pe.Pedido_TCompra, " +
-                 "dpm.Detalles_medidas, cp.ConfirmarPago_Fecha " +
+
+    // 🔑 Agregamos pe.Pedido_TipoPedido al SELECT
+    String sql = "SELECT DISTINCT pe.Pedido_id, pe.Pedido_FechaInicio, pe.Pedido_Estado, pe.Pedido_TotalCompra, " +
+                 "pe.Pedido_TipoPedido, dpm.Detalles_medidas, reg.Registro_Email, dpm.Detalles_TPrenda " +
                  "FROM Pedidos pe " +
-                 "LEFT JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                 "LEFT JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id " +
+                 "LEFT JOIN Usuarios u ON pe.Usuario_id = u.Usuarios_id " +
+                 "LEFT JOIN Registro reg ON u.Registro_id = reg.Registro_id " +
+                 "LEFT JOIN DetallesPedidos dp ON pe.Pedido_id = dp.Pedido_id " +
+                 "LEFT JOIN CotizacionPedido cot ON dp.CotizacionPedido_id = cot.CotizacionPedido_Id " +
                  "LEFT JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
                  "ORDER BY pe.Pedido_id DESC;";
-    
+
     try (Connection con = ClaseConexion.getConexion();
          PreparedStatement ps = con.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
-        
+
         while (rs.next()) {
-            String[] fila = new String[5];
+            String[] fila = new String[8]; // 🔥 CORREGIDO: Tamaño aumentado a 8
+
             fila[0] = String.valueOf(rs.getInt("Pedido_id"));
             
             String fechaInicio = rs.getString("Pedido_FechaInicio");
-            String fechaPago = rs.getString("ConfirmarPago_Fecha");
-            fila[1] = (fechaInicio != null) ? fechaInicio : (fechaPago != null ? fechaPago : "Sin fecha");
-            
-            // Sanitizamos la lectura del estado eliminando espacios molestos
+            fila[1] = (fechaInicio != null) ? fechaInicio : "Sin fecha";
+
             fila[2] = rs.getString("Pedido_Estado") != null ? rs.getString("Pedido_Estado").toLowerCase().trim() : "pendiente";
-            fila[3] = rs.getString("Pedido_TCompra") != null ? rs.getString("Pedido_TCompra") : "No especificado";
+            fila[3] = rs.getString("Pedido_TotalCompra") != null ? rs.getString("Pedido_TotalCompra") : "0.00";
             fila[4] = rs.getString("Detalles_medidas") != null ? rs.getString("Detalles_medidas") : "N/A (Compra Catálogo)";
+
+            String emailUser = rs.getString("Registro_Email");
+            fila[5] = (emailUser != null) ? emailUser : "Anónimo";
             
+            String tipoPrenda = rs.getString("Detalles_TPrenda");
+            fila[6] = (tipoPrenda != null) ? tipoPrenda : "Catálogo";
+
+            // 🌟 NUEVO ÍNDICE [7]: Tipo de pedido real de la tabla Pedidos ("A Medida" o "Catálogo")
+            String tipoPedido = rs.getString("Pedido_TipoPedido");
+            fila[7] = (tipoPedido != null) ? tipoPedido : "Catálogo";
+
             lista.add(fila);
         }
-    } 
-    
-    catch (Exception e) {
+    } catch (Exception e) {
         System.out.println("❌ Error listando pedidos en AdminPedidosDAO: " + e.getMessage());
         e.printStackTrace();
     }
-
     return lista;
-    }
+}
 
     /**
-     * Modifica el estado del pedido en la base de datos (pendiente, elaboracion, entregar).
+     * Modifica el estado del pedido en la base de datos.
      */
     public boolean actualizarEstadoPedido(int idPedido, String nuevoEstado) {
         String sql = "UPDATE Pedidos SET Pedido_Estado = ? WHERE Pedido_id = ?;";
@@ -74,27 +82,26 @@ public class MostrarPedidosAdminDAO {
         }
     }
     
+    /**
+     * Obtiene los detalles de un pedido de CATÁLOGO usando DetallesPedidos
+     */
     public Map<String, Object> obtenerDetalleCatalogo(int idPedido) {
         Map<String, Object> resultado = new HashMap<>();
         List<Map<String, String>> prendas = new ArrayList<>();
         
-        String sqlInfoGeneral = "SELECT cp.ConfirmarPago_Fecha, reg.Registro_Email, pe.Pedido_TCompra " +
+        // Relación directa: Pedidos -> Usuarios -> Registro
+        String sqlInfoGeneral = "SELECT pe.Pedido_FechaInicio, reg.Registro_Email, pe.Pedido_TipoPedido, pe.Pedido_TotalCompra " +
                                 "FROM Pedidos pe " +
-                                "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                                "JOIN DetallesCarrito dc ON cp.DetallesCarrito_id = dc.DetallesCarrito_Id " +
-                                "JOIN Carrito carr ON dc.Carrito_id = carr.Carrito_id " +
-                                "JOIN Usuarios u ON carr.Usuarios_id = u.Usuarios_id " +
+                                "JOIN Usuarios u ON pe.Usuario_id = u.Usuarios_id " +
                                 "JOIN Registro reg ON u.Registro_id = reg.Registro_id " +
                                 "WHERE pe.Pedido_id = ? LIMIT 1;";
 
-        String sqlPrendas = "SELECT pr.Prenda_nombre, pr.Prenda_valor, pr.Prenda_talla, dc.Detalles_total, " +
+        // Relación directa: DetallesPedidos -> Prendas -> imagenes
+        String sqlPrendas = "SELECT pr.Prenda_id, pr.Prenda_nombre, pr.Prenda_valor, pr.Prenda_talla, dp.Detalles_Cantidad, dp.Detalles_PrecioTotal, " +
                             "(SELECT img.Imagenes_link FROM imagenes img WHERE img.Prenda_id = pr.Prenda_id LIMIT 1) AS Imagen " +
-                            "FROM Pedidos pe " +
-                            "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                            "JOIN DetallesCarrito dc_main ON cp.DetallesCarrito_id = dc_main.DetallesCarrito_Id " +
-                            "JOIN DetallesCarrito dc ON dc_main.Carrito_id = dc.Carrito_id " +
-                            "JOIN Prendas pr ON dc.Prendas_id = pr.Prenda_id " +
-                            "WHERE pe.Pedido_id = ?;";
+                            "FROM DetallesPedidos dp " +
+                            "JOIN Prendas pr ON dp.Prenda_id = pr.Prenda_id " +
+                            "WHERE dp.Pedido_id = ?;";
 
         try (Connection con = ClaseConexion.getConexion()) {
             // 1. Cargar metadatos generales
@@ -102,14 +109,15 @@ public class MostrarPedidosAdminDAO {
                 ps.setInt(1, idPedido);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        resultado.put("fecha", rs.getString("ConfirmarPago_Fecha"));
+                        resultado.put("fecha", rs.getString("Pedido_FechaInicio"));
                         resultado.put("email", rs.getString("Registro_Email"));
-                        resultado.put("tipo", rs.getString("Pedido_TCompra"));
+                        resultado.put("tipo", rs.getString("Pedido_TipoPedido"));
+                        resultado.put("total", rs.getDouble("Pedido_TotalCompra"));
                     }
                 }
             }
-            // 2. Cargar lista de prendas compradas en ese carrito
-            double totalAcumulado = 0;
+            
+            // 2. Cargar lista de prendas compradas desde DetallesPedidos
             try (PreparedStatement ps = con.prepareStatement(sqlPrendas)) {
                 ps.setInt(1, idPedido);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -118,34 +126,35 @@ public class MostrarPedidosAdminDAO {
                         p.put("nombre", rs.getString("Prenda_nombre"));
                         p.put("precio", String.valueOf(rs.getDouble("Prenda_valor")));
                         p.put("talla", rs.getString("Prenda_talla"));
+                        p.put("cantidad", String.valueOf(rs.getInt("Detalles_Cantidad")));
+                        p.put("subtotal", String.valueOf(rs.getDouble("Detalles_PrecioTotal")));
                         p.put("imagen", rs.getString("Imagen") != null ? rs.getString("Imagen") : "images/Perfil/Ellipse 14.png");
                         prendas.add(p);
-                        totalAcumulado += rs.getDouble("Detalles_total");
                     }
                 }
             }
-            resultado.put("total", totalAcumulado);
             resultado.put("prendas", prendas);
 
         } catch (Exception e) {
-            System.out.println("❌ Error detalle catálogo: " + e.getMessage());
+            System.out.println("❌ Error detalle catálogo admin: " + e.getMessage());
         }
         return resultado;
     }
 
     /**
-     * Obtiene los detalles de un pedido HECHO A MEDIDA desde cero
+     * Obtiene los detalles de un pedido HECHO A MEDIDA
      */
     public Map<String, Object> obtenerDetalleAMedida(int idPedido) {
         Map<String, Object> resultado = new HashMap<>();
-        String sql = "SELECT pe.Pedido_TCompra, cp.ConfirmarPago_Fecha, reg.Registro_Email, " +
+        
+        String sql = "SELECT pe.Pedido_TipoPedido, pe.Pedido_FechaInicio, reg.Registro_Email, " +
                      "dpm.Detalles_TPrenda, dpm.Detalles_Tela, dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
                      "cot.Cotizacion_Valor " +
                      "FROM Pedidos pe " +
-                     "JOIN ConfirmarPago cp ON pe.ConfirmarPago_id = cp.ConfirmarPago_id " +
-                     "JOIN CotizacionPedido cot ON cp.CotizacionPedido_id = cot.CotizacionPedido_id " +
+                     "JOIN DetallesPedidos dp ON pe.Pedido_id = dp.Pedido_id " +
+                     "JOIN CotizacionPedido cot ON dp.CotizacionPedido_id = cot.CotizacionPedido_Id " +
                      "JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
-                     "JOIN Usuarios u ON dpm.Usuario_id = u.Usuarios_id " +
+                     "JOIN Usuarios u ON pe.Usuario_id = u.Usuarios_id " +
                      "JOIN Registro reg ON u.Registro_id = reg.Registro_id " +
                      "WHERE pe.Pedido_id = ?;";
 
@@ -154,8 +163,8 @@ public class MostrarPedidosAdminDAO {
             ps.setInt(1, idPedido);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    resultado.put("tipo", rs.getString("Pedido_TCompra"));
-                    resultado.put("fecha", rs.getString("ConfirmarPago_Fecha"));
+                    resultado.put("tipo", rs.getString("Pedido_TipoPedido"));
+                    resultado.put("fecha", rs.getString("Pedido_FechaInicio"));
                     resultado.put("email", rs.getString("Registro_Email"));
                     resultado.put("prenda", rs.getString("Detalles_TPrenda"));
                     resultado.put("tela", rs.getString("Detalles_Tela"));
@@ -166,7 +175,7 @@ public class MostrarPedidosAdminDAO {
                 }
             }
         } catch (Exception e) {
-            System.out.println("❌ Error detalle A Medida: " + e.getMessage());
+            System.out.println("❌ Error detalle A Medida admin: " + e.getMessage());
         }
         return resultado;
     }

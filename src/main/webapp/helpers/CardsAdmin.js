@@ -48,7 +48,7 @@ export function CardPrendasAdmin(datos){
     Article.dataset.visitas = datos.visitas;
 
 
-    //Funcion del boton eliminar
+    //Funcion del boton ver detalles
     btnModificar.addEventListener("click" , () => {
         window.location.href = `VistaModificacionProduct.html?id=${datos.id}`
     });

@@ -3,26 +3,24 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.Dtos.*; // Al importar con .* traemos todas las clases estáticas internas (PagoDTO, MetricasDTO, etc.)
+import modelo.Dtos.*; 
 
 public class HistorialPagosDAO {
     
-    // Método para obtener todo el consolidado administrativo
+    // Método principal que unifica el reporte administrativo
     public ReporteCajaDTO obtenerReporteAdministrativo(Connection conn) throws SQLException {
         MetricasDTO metricas = obtenerMetricas(conn);
         List<PagoDTO> listaPagos = obtenerListaPagos(conn);
         return new ReporteCajaDTO(metricas, listaPagos);
     }
 
+    // 📊 MÉTRICAS: Calculadas directamente desde el total y la fecha de la tabla Pedidos
     private MetricasDTO obtenerMetricas(Connection conn) throws SQLException {
         String sql = "SELECT " +
-                "IFNULL(SUM(CASE WHEN hp.Historial_Fecha = CURDATE() THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS diario, " +
-                "IFNULL(SUM(CASE WHEN YEARWEEK(hp.Historial_Fecha, 1) = YEARWEEK(CURDATE(), 1) THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS semanal, " +
-                "IFNULL(SUM(CASE WHEN MONTH(hp.Historial_Fecha) = MONTH(CURDATE()) AND YEAR(hp.Historial_Fecha) = YEAR(CURDATE()) THEN COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) ELSE 0 END), 0) AS mensual " +
-                "FROM HistorialPagos hp " +
-                "JOIN ConfirmarPago cf ON hp.ConfirmarPago_id = cf.ConfirmarPago_id " +
-                "LEFT JOIN DetallesCarrito dc ON cf.DetallesCarrito_id = dc.DetallesCarrito_Id " +
-                "LEFT JOIN CotizacionPedido cp ON cf.CotizacionPedido_id = cp.CotizacionPedido_Id";
+                "IFNULL(SUM(CASE WHEN Pedido_FechaInicio = CURDATE() THEN Pedido_TotalCompra ELSE 0 END), 0) AS diario, " +
+                "IFNULL(SUM(CASE WHEN YEARWEEK(Pedido_FechaInicio, 1) = YEARWEEK(CURDATE(), 1) THEN Pedido_TotalCompra ELSE 0 END), 0) AS semanal, " +
+                "IFNULL(SUM(CASE WHEN MONTH(Pedido_FechaInicio) = MONTH(CURDATE()) AND YEAR(Pedido_FechaInicio) = YEAR(CURDATE()) THEN Pedido_TotalCompra ELSE 0 END), 0) AS mensual " +
+                "FROM Pedidos";
         
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
@@ -32,20 +30,20 @@ public class HistorialPagosDAO {
         return new MetricasDTO(0, 0, 0);
     }
 
+    // 📋 LISTADO: Consulta basada en Pedidos con LEFT JOIN para asegurar que se muestren aunque falten datos de usuario
     private List<PagoDTO> obtenerListaPagos(Connection conn) throws SQLException {
         List<PagoDTO> pagos = new ArrayList<>();
-        String sql = "SELECT hp.HistorialPagos_id AS idPago, r.Registro_Usuario AS usuario, " +
-                "COALESCE(dc.Detalles_total, cp.Cotizacion_Valor) AS total, cf.ConfirmarPago_MetodoP AS metodoPago, " +
-                "hp.Historial_Fecha AS fecha, cf.ConfirmarPago_TipoPedido AS tipoCompra " +
-                "FROM HistorialPagos hp " +
-                "JOIN ConfirmarPago cf ON hp.ConfirmarPago_id = cf.ConfirmarPago_id " +
-                "LEFT JOIN DetallesCarrito dc ON cf.DetallesCarrito_id = dc.DetallesCarrito_Id " +
-                "LEFT JOIN Carrito c ON dc.Carrito_id = c.Carrito_id " +
-                "LEFT JOIN CotizacionPedido cp ON cf.CotizacionPedido_id = cp.CotizacionPedido_Id " +
-                "LEFT JOIN DetallesPedidosMedida dpm ON cp.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
-                "JOIN Usuarios u ON u.Usuarios_id = COALESCE(c.Usuarios_id, dpm.Usuario_id) " +
-                "JOIN Registro r ON u.Registro_id = r.Registro_id " +
-                "ORDER BY hp.Historial_Fecha DESC";
+        String sql = "SELECT " +
+                "p.Pedido_id AS idPago, " +
+                "IFNULL(r.Registro_Usuario, 'Cliente Temporal') AS usuario, " +
+                "p.Pedido_TotalCompra AS total, " +
+                "p.Pedido_MetodoPago AS metodoPago, " +
+                "p.Pedido_FechaInicio AS fecha, " +
+                "p.Pedido_TipoPedido AS tipoCompra " +
+                "FROM Pedidos p " +
+                "LEFT JOIN Usuarios u ON p.Usuario_id = u.Usuarios_id " +
+                "LEFT JOIN Registro r ON u.Registro_id = r.Registro_id " +
+                "ORDER BY p.Pedido_FechaInicio DESC";
 
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {

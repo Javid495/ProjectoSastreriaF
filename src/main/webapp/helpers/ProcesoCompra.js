@@ -8,6 +8,18 @@ import { rederizarCarrito } from "../js/CarritoCompra.js";
  */
 export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = null) {
     
+    // 🌟 CORRECCIÓN: Detectar dinámicamente cuál contenedor está activo en el DOM actual
+    let contenedorCarrito = document.querySelector("#mostrarCompra");
+    if (!contenedorCarrito) {
+        contenedorCarrito = document.querySelector("#compraCarrito");
+    }
+
+    // Si ninguno de los dos existe en la página actual, salimos de forma segura
+    if (!contenedorCarrito) {
+        console.warn("No se encontró ningún contenedor de compra válido (#mostrarCompra o #compraCarrito)");
+        return; 
+    }
+
     // Elementos del DOM
     const txtTotal = document.querySelector("#MostrarTotal");
     const contenedorTelefono = document.querySelector("#contenedorTelefono");
@@ -57,8 +69,8 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         metodoPagoSeleccionado = metodo;
         botonActivo.style.border = "3px solid #5d2b90"; 
         botonInactivo.style.border = "none";
-        contenedorTelefono.style.display = "flex";
-        inputTelefono.focus(); 
+        if (contenedorTelefono) contenedorTelefono.style.display = "flex";
+        if (inputTelefono) inputTelefono.focus(); 
     };
 
     if (btnNequi && btnDaviplata) {
@@ -74,16 +86,16 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         nuevoBtnConfirmar.addEventListener("click", async (e) => {
             e.preventDefault();
 
-            const direccion = inputDireccion.value.trim();
-            const telefono = inputTelefono.value.trim();
+            const direccion = inputDireccion ? inputDireccion.value.trim() : "";
+            const telefono = inputTelefono ? inputTelefono.value.trim() : "";
 
             if (!direccion) return alert("Por favor, ingresa tu dirección de entrega.");
             if (!metodoPagoSeleccionado) return alert("Debes seleccionar un método de pago antes de continuar.");
             if (!telefono || telefono.length < 7) return alert("Por favor, ingresa un número de teléfono válido.");
 
-            // 🌟 CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE CON ACCIÓN DEFINITIVA
+            // 🌟 CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE
             let datosCompra = {
-                accion: "confirmar", // 🔥 Indicador clave para el switch del Servlet
+                accion: "confirmar", 
                 direccion: direccion,
                 telefono: telefono,
                 metodoPago: metodoPagoSeleccionado,
@@ -91,20 +103,45 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
             };
 
             if (tipoPedido === "A Medida") {
-                datosCompra.CotizacionPedido_Id = datosCotizacion.CotizacionPedido_Id || datosCotizacion.idCotizacion;
+                // 🛡️ Filtro estricto: Eliminamos 'datosCotizacion.id' para evitar que use el ID del detalle por error
+                const idCotizacionReal = parseInt(
+                    datosCotizacion.idCotizacion || 
+                    datosCotizacion.CotizacionPedido_Id || 
+                    datosCotizacion.CotizacionPedido_id || 
+                    0
+                );
+
+                // Si el ID final es 0 o no es un número válido, frenamos antes de ir al Servlet
+                if (idCotizacionReal === 0 || isNaN(idCotizacionReal)) {
+                    console.error("❌ Error: Se intentó procesar una cotización sin un ID válido.", datosCotizacion);
+                    return alert("Error crítico: No se detectó el ID real de la cotización. Revisa el botón de pago.");
+                }
+
+                datosCompra.CotizacionPedido_Id = idCotizacionReal;
+    
+                // Alerta de depuración en la consola del navegador para que verifiques el número antes de pagar
+                console.log("✅ ID de Cotización correcto asignado al Payload:", datosCompra.CotizacionPedido_Id);
+
                 datosCompra.totalLinea = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
-            } else {
+            }
+            
+            else {
                 const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
                 if (carrito.length === 0) return alert("El carrito está vacío.");
     
                 datosCompra.productos = carrito.map(item => ({
                     idPrenda: item.id,
+                    id: item.id, // Doble mapeo por precaución con el regex del backend
                     cantidad: item.cantidad || 1,
                     totalLinea: item.precio * (item.cantidad || 1)
                 }));
             }
 
             try {
+                // Deshabilitar botón temporalmente para evitar doble envío masivo
+                nuevoBtnConfirmar.disabled = true;
+                nuevoBtnConfirmar.textContent = "Procesando...";
+
                 const respuesta = await fetch("../ProcesarCompraServlet", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -118,26 +155,40 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                         localStorage.removeItem("carritoSastreria"); 
                     }
                     
-                    const confirmarComprarDiv = document.querySelector("#compraCarrito");
-                    if (confirmarComprarDiv) confirmarComprarDiv.innerHTML = ""; 
+                    // Limpiar el contenedor actual que contenga el formulario
+                    contenedorCarrito.innerHTML = ""; 
                     
+                    // Mostrar modal de éxito
                     await llamarComponente("#confirmacionPago", "../componentesWeb/VentanaComprobacion.html");
                 } else {
                     alert("Error en el servidor: " + resultado.mensaje);
+                    nuevoBtnConfirmar.disabled = false;
+                    nuevoBtnConfirmar.textContent = "Confirmar Compra";
                 }
             } catch (error) {
                 console.error("Error crítico de red:", error);
                 alert("No se pudo procesar la transacción.");
+                nuevoBtnConfirmar.disabled = false;
+                nuevoBtnConfirmar.textContent = "Confirmar Compra";
             }
         });
     }
 
     document.addEventListener("click", (e) => {
         if (e.target.closest("#pagoConfirmado")) {
-            sombreado.classList.remove("aparecerSombreado");
+            if (sombreado) sombreado.classList.remove("aparecerSombreado");
+            
             const pagoConfirm = document.querySelector(".confirmacion__pago");
-            pagoConfirm.innerHTML = "";
-            rederizarCarrito(); 
+            if (pagoConfirm) pagoConfirm.innerHTML = ""; 
+            
+            // Solo renderizar el carrito si la función existe en el contexto actual
+            if (typeof rederizarCarrito === "function" && document.querySelector("#mostrarCompra")) {
+                rederizarCarrito(); 
+            } else {
+                // Si está en pedidos, recargar la vista para reflejar el nuevo estado
+                window.location.reload();
+            }
         }
     });
 }
+

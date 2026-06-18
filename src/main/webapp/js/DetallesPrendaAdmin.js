@@ -1,7 +1,7 @@
-import { MostrarSide } from "../helpers/RelizarPeticion.js"
+import { MostrarSide } from "../helpers/RelizarPeticion.js";
 import { CargarDetallesAdmin } from "../helpers/CargarDetallesAdmin.js";
 import { ModificarPrendas } from "../helpers/ModificarPrendasAdmin.js";
-
+import { PintarFilaVariante } from "../helpers/AñadirModiPrendas.js"; // <-- NUEVO: Importamos el helper
 
 const ContAside = document.querySelector(".sidebar");
 
@@ -10,22 +10,34 @@ document.addEventListener("DOMContentLoaded", (e) => {
     MostrarSide();
     
     const url = new URLSearchParams(window.location.search);
-
     const PrendaId = url.get("id");
 
     if (PrendaId){
         CargarDetallesAdmin(PrendaId);
-
         ModificarPrendas(PrendaId);
     }
 
-    const btnAgregar = document.querySelector(".btn-subir-imagenes"); // Ajusta al selector de tu botón blanco
-    const inputOculto = document.querySelector("#inputArchivoOculto");
-    const contenedorImgs = document.querySelector("#contenedorImgs"); // El contenedor gris de tu imagen 3
+    // --- NUEVO: Escuchador para Añadir Nuevas Filas de Tallaje ---
+    const btnAgregarVariante = document.querySelector("#btnAgregarVariante");
+    const contenedorVariantes = document.querySelector("#contenedorVariantes");
 
-    if (btnAgregar && inputOculto) {
-    // Al hacer clic en el botón "Agregar imágenes", transferimos el clic al input oculto
-        btnAgregar.addEventListener("click", (e) => {
+    if (btnAgregarVariante && contenedorVariantes) {
+        btnAgregarVariante.addEventListener("click", (e) => {
+            e.preventDefault();
+            // Creamos una fila vacía para que el usuario digite una nueva combinación
+            PintarFilaVariante(contenedorVariantes, null, "", 0, 0);
+        });
+    }
+
+    // --- LÓGICA DE IMÁGENES (Tu código original intacto con selectores corregidos) ---
+    // Agregamos el id '#btnSubirFotos' en el HTML al de las imágenes para que no choque con el de tallas
+    const btnAgregarImg = document.querySelector("#btnSubirFotos") || document.querySelector(".imagenes-galeria-container .btn-subir-imagenes"); 
+    const inputOculto = document.querySelector("#inputArchivoOculto");
+    const contenedorImgs = document.querySelector("#contenedorImgs"); 
+
+    if (btnAgregarImg && inputOculto) {
+        // Al hacer clic en el botón "Agregar imágenes", transferimos el clic al input oculto
+        btnAgregarImg.addEventListener("click", (e) => {
             e.preventDefault(); // Evita cualquier comportamiento extraño o submit
             inputOculto.click(); 
         });
@@ -49,7 +61,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
                         const nuevaImg = document.createElement("img");
                         nuevaImg.setAttribute("src", rutaBase64);
                 
-                        //Aquí es donde se amarra el archivo físico
+                        // Aquí es donde se amarra el archivo físico
                         nuevaImg.fileObject = archivo; 
                         nuevaImg.setAttribute("data-nuevo", "true"); 
 
@@ -70,11 +82,11 @@ document.addEventListener("DOMContentLoaded", (e) => {
                     };
 
                     lector.readAsDataURL(archivo);
+                });
+            }
+            // Limpiar el input para permitir subir el mismo archivo consecutivamente si se desea
+            inputOculto.value = ""; 
         });
     }
-    // Limpiar el input para permitir subir el mismo archivo consecutivamente si se desea
-    inputOculto.value = ""; 
-        });
-    }
-})
+});
 
