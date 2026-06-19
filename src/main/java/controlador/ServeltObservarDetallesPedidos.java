@@ -8,7 +8,7 @@ import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import dao.PedidosClienteDAO;
+import modelo.PedidosClienteDAO;
 
 
 //Servelt encargado de mostrar los detalles de los pedidos Sean del catalogo o sean

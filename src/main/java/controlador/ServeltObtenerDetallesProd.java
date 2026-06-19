@@ -1,6 +1,7 @@
 package controlador;
 
-import dao.PrendasDAO;
+import modelo.PrendasDAO;
+import modelo.PopularesDAO;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;

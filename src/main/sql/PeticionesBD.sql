@@ -15,6 +15,16 @@ SELECT * FROM CotizacionPedido;
 SELECT * FROM DetallesPedidos;
 SELECT * FROM Pedidos;
 
+-- Consulta de verificar el pedido de su usuario
+SELECT p.* FROM Pedidos p
+LEFT JOIN DetallesPedidos dp ON p.Pedido_id = dp.Pedido_id
+LEFT JOIN DetallesCarrito dc ON dp.DetallesCarrito_id = dc.DetallesCarrito_Id
+LEFT JOIN Carrito c ON dc.Carrito_id = c.Carrito_id
+LEFT JOIN CotizacionPedido cp ON dp.CotizacionPedido_id = cp.CotizacionPedido_Id
+LEFT JOIN DetallesPedidosMedida dpm ON cp.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id
+WHERE c.Usuarios_id = 7 OR dpm.Usuario_id = 7
+GROUP BY p.Pedido_id;
+
 
 -- para verificar los datos de registro de usuario
 SELECT 

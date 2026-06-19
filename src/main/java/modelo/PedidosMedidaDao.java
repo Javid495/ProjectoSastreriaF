@@ -1,10 +1,10 @@
-package dao;
+package modelo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import modelo.DetallesPedidoMedida;
+import getsSets.DetallesPedidoMedida;
 
 
 //Dao que maneja los pedidos a medida de los usuarios

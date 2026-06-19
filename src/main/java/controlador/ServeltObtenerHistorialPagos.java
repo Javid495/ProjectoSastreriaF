@@ -1,17 +1,17 @@
 package controlador;
 
 import com.google.gson.Gson;
-import dao.HistorialPagosDAO;
+import modelo.HistorialPagosDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import modelo.Dtos.ReporteCajaDTO;
+import getsSets.Dtos.ReporteCajaDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import dao.ClaseConexion;
+import modelo.ClaseConexion;
 
 // Servlet que obtiene y genera el historial de los pagos
 

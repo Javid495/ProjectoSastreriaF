@@ -9,9 +9,9 @@ import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import dao.PedidosClienteDAO;
-import modelo.IniciarSesion;
-import modelo.Pedidos;
+import modelo.PedidosClienteDAO;
+import getsSets.IniciarSesion;
+import getsSets.Pedidos;
 
 //Servelt encargado de solicitar y mostrar los pedidos de los usuarios.
 

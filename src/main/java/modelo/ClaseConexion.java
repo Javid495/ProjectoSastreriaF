@@ -1,4 +1,4 @@
-package dao; // 1. Indica que este archivo vive en la carpeta 'modelo'
+package modelo; // 1. Indica que este archivo vive en la carpeta 'modelo'
 
 import java.sql.Connection;
 import java.sql.DriverManager;

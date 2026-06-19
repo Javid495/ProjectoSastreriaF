@@ -1,6 +1,6 @@
 package controlador;
 
-import dao.PrendasDAO;
+import modelo.PrendasDAO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import jakarta.servlet.ServletException;

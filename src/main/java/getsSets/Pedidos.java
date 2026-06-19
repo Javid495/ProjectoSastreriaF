@@ -1,5 +1,5 @@
 
-package modelo;
+package getsSets;
 
 // Getters y setter que hacen referencia a la tabla de pedidos
 public class Pedidos {

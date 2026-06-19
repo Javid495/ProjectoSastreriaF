@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.util.*;
-import dao.PrendasDAO;
+import modelo.PrendasDAO;
 
 //Servelt quien obtiene las categorias registradas en la base de datos
 

@@ -1,9 +1,9 @@
-package dao;
+package modelo;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.Dtos.*; 
+import getsSets.Dtos.*; 
 
 //DAO que solicita y genera el historial de pagos del local
 

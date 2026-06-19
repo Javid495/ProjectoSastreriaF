@@ -1,8 +1,8 @@
 -- creacion de la base de datos de proyecto llamado moda suescun
-create database ModaS;
+create database ModaSv3;
 
 -- uso de la base de datos ModaS
-use ModaS;
+use ModaSv3;
 
 -- Creacion de tabla de registros usuarios : Solicitar la informacion de nuevos clientes 
 create table Registro(
@@ -59,9 +59,8 @@ create table Prendas (
 create table Populares (
 	Populares_id int primary key auto_increment,
     Prenda_id int not null,
-    
     -- populares_visitas : LLevara la cuenta de cuantas personas han visto un producto
-    Populares_visitas char(10) not null,
+    Populares_visitas int not null,
     foreign key(Prenda_id) references Prendas(Prenda_id)
 );
 
@@ -118,6 +117,7 @@ create table DetallesCarrito( -- reutilizable
     Prendas_id int not null,
     Carrito_id int not null,
     Detalles_cantidad int not null default 1,
+    Detalles_PrecioTotal decimal (10,2) not null,
     foreign key(Prendas_id) references Prendas(Prenda_id),
     foreign key(Carrito_id) references Carrito(Carrito_id)
 );
@@ -153,27 +153,19 @@ create table CotizacionPedido(
 -- miesntra que el admin tenga libre acceso a ver cada pedido
 create table Pedidos(
 	Pedido_id int auto_increment primary key not null,
+    DetallesCarrito_id int,
+    CotizacionPedido_id int null,
     Pedido_TipoPedido varchar(50) not null,
     Pedido_MetodoPago varchar(50) not null,
     Pedido_FechaInicio date not null,
     Pedido_TelefonoContacto char(10) not null,
     Pedido_Direccion varchar(255) not null,
     Pedido_Estado varchar(50) not null,
-    Pedido_TotalCompra double(10,2) not null
-);
-
--- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido
--- Como de la direccion de entrega y de conctato del cliente
-create table DetallesPedidos(
-	DetallesPedidos_id int auto_increment primary key not null,
-    Pedido_id int not null,
-    DetallesCarrito_id int,
-    CotizacionPedido_id int null,
-    Detalles_PrecioTotal decimal (10,2) not null,
-    foreign key(Pedido_id) references Pedidos(Pedido_id),
+    Pedido_TotalCompra double(10,2) not null,
     foreign key (DetallesCarrito_id) references DetallesCarrito(DetallesCarrito_Id),
     foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
 );
+
 
 -- Tabla que maneja las acciones del usuario
 create table HistorialUsuario(
@@ -186,6 +178,3 @@ create table HistorialUsuario(
     HistorialFechaHora timestamp default current_timestamp, -- fecha y hora en la cual se reliazo el cambio
     foreign key (Usuarios_id) references Usuarios(Usuarios_id)
 );
-
-
-

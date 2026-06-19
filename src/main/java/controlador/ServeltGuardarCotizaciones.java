@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import dao.AdminCotizacionesDAO;
+import modelo.AdminCotizacionesDAO;
 
 
 //Servelt Encargado de guardar la cotizacion del admin

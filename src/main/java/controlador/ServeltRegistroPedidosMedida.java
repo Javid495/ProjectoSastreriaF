@@ -11,9 +11,9 @@ import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import dao.PedidosMedidaDao;
-import modelo.IniciarSesion;
-import modelo.DetallesPedidoMedida;
+import modelo.PedidosMedidaDao;
+import getsSets.IniciarSesion;
+import getsSets.DetallesPedidoMedida;
 
 //Servelt quien registra nuevos pedidos a medida
 

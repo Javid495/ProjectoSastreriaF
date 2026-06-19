@@ -1,7 +1,7 @@
 package controlador;
 
-import dao.CompraPedidosDAO;
-import modelo.IniciarSesion;
+import modelo.CompraPedidosDAO;
+import getsSets.IniciarSesion;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

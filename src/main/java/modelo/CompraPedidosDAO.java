@@ -1,4 +1,4 @@
-package dao;
+package modelo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,11 +55,11 @@ public class CompraPedidosDAO {
             psDetalleCar.executeBatch(); // Guardamos los detalles en lote
 
             con.commit(); // Confirmamos: ¡Datos visibles en MySQL Workbench ahora mismo!
-            System.out.println("💾 Evidencia Académica: Carrito temporal creado para Usuario ID: " + idUsuario);
+            System.out.println("Evidencia Académica: Carrito temporal creado para Usuario ID: " + idUsuario);
             return true;
 
         } catch (Exception e) {
-            System.out.println("❌ Error al registrar el carrito temporal: " + e.getMessage());
+            System.out.println("Error al registrar el carrito temporal: " + e.getMessage());
             if (con != null) {
                 try { con.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             }

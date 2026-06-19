@@ -1,4 +1,4 @@
-package modelo;
+package getsSets;
 
 import java.util.List;
 

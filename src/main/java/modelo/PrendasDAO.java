@@ -1,4 +1,4 @@
-package dao;
+package modelo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import modelo.Prendas;
+import getsSets.Prendas;
 
 public class PrendasDAO {
 
@@ -39,6 +39,9 @@ public class PrendasDAO {
                      "WHERE p.Prenda_stock > 0 AND p.Prenda_estado = 'activa' " +
                      "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_descripcion, p.Prenda_estado, c.Categoria_nombre " +
                      "ORDER BY visitas DESC";
+        
+        //la consulta de listar prendas es la maxima encarga de verificar que no se repitan las prendas que tengan ciertas similitudes
+        //F
 
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -66,7 +69,7 @@ public class PrendasDAO {
     }
 
     /**
-     * 🌟 [NUEVO MÉTODO] Lista las prendas de forma individual para el ADMINISTRADOR.
+     *Lista las prendas de forma individual para el ADMINISTRADOR.
      * Muestra productos activos e inactivos, pero oculta los que están en estado 'eliminada'.
      */
     public List<Prendas> listarPrendasAdmin() {
@@ -136,7 +139,6 @@ public class PrendasDAO {
         java.util.Set<String> listaImagenes = new java.util.LinkedHashSet<>();
         java.util.Map<Integer, Map<String, Object>> variantesMap = new java.util.LinkedHashMap<>();
         
-        // 🌟 [CAMBIO BORRADO LÓGICO]: Cambiado p2.Prenda_estado = 'activa' por != 'eliminada' 
         // para permitir editar prendas inactivas. Agregado c.Categoria_id al SELECT.
         String sql = "SELECT p2.Prenda_id, p2.Prenda_nombre, p2.Prenda_descripcion, p2.Prenda_tipo, " +
                      "       p2.Prenda_talla, p2.Prenda_stock, p2.Prenda_valor, p2.Categoria_id, i.Imagenes_link " +
@@ -184,9 +186,7 @@ public class PrendasDAO {
         return resultado.isEmpty() ? null : resultado;
     }
 
-    // =========================================================================
-    // 2. HELPERS PRIVADOS (Mantenimiento de Código Limpio / DRY)
-    // =========================================================================
+    //Helpers de mantenimiento de los productos
 
     private void guardarImagenesBatch(int idPrenda, List<String> listaRutas, Connection con) throws SQLException {
         String sqlDelete = "DELETE FROM imagenes WHERE Prenda_id = ?;";

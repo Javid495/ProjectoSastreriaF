@@ -1,7 +1,7 @@
 
 //Getter y setter qye hace referencia a los datos de la tabla registro
 
-package modelo;
+package getsSets;
 
 
 public class Registro {

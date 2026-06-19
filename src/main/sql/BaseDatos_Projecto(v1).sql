@@ -26,8 +26,10 @@ create table Usuarios (
 	Usuarios_id int primary key auto_increment,
     Registro_id int, 
     Permisos_roles_id int,
+    
     -- Datos Opcionales que los clientes podran completar una vez ingresen a su perfil
     Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png",
+    Usuario_Medidas varchar(50) null,
     foreign key (Registro_id) references Registro(Registro_id),
     foreign key (Permisos_Roles_id) references Permisos_Roles(Permisos_Roles_id)
 );
@@ -90,7 +92,7 @@ create table Resenas(
 
 
 -- Tabla Historial_Recientes : La tabla historial tendra la informacion con respecto a las comprs de los usuarios
-create table Historial_PrendasRecientes(
+create table Historial_Recientes(
 	Id_Historial int auto_increment primary key not null,
     Id_Usuarios int not null,
     Id_Prenda int not null,
@@ -104,20 +106,19 @@ create table Historial_PrendasRecientes(
 
 -- La tabla carrito sera un "guardado" del carrito de compras del usuario
 create table Carrito(
-	Carrito_id int auto_increment primary key not null, -- sera fijo para cada usuario
+	Carrito_id int auto_increment primary key not null,
     Usuarios_id int not null,
-    Carrito_fechaCreacion date not null,
-    Carrito_Estado varchar(50) not null default 'activo',
+    Carrito_fecha date not null,
     foreign key(Usuarios_id) references Usuarios(Usuarios_id)
 );
 
 -- La tabla detalles carrito tendra toda la informacion con respecto a la compra actual del cliente
 -- Ademas de ir incluido el total de la compra
-create table DetallesCarrito( -- reutilizable
+create table DetallesCarrito(
 	DetallesCarrito_Id int auto_increment primary key not null,
     Prendas_id int not null,
     Carrito_id int not null,
-    Detalles_cantidad int not null default 1,
+    Detalles_total decimal(10,2) not null,
     foreign key(Prendas_id) references Prendas(Prenda_id),
     foreign key(Carrito_id) references Carrito(Carrito_id)
 );
@@ -130,9 +131,10 @@ create table DetallesPedidosMedida(
     Usuario_id int not null,
     Detalles_medidas varchar(255) not null,
     Detalles_TPrenda varchar(50) not null,
-    Detalles_ImagenReferencia varchar(255) not null,
     Detalles_Tela varchar(50) not null,
     Detalles_Descripcion text not null,
+    Detalles_Cotizacion decimal(10,2) null,
+    Detalles_ComentarioAdmin text null,
     foreign key(Usuario_id) references Usuarios(Usuarios_id)
 );
 
@@ -141,51 +143,44 @@ create table DetallesPedidosMedida(
 create table CotizacionPedido(
 	CotizacionPedido_Id int auto_increment primary key not null,
     DetallesPedidosMedida_id int not null,
-    Cotizacion_Valor decimal(10,2) null,
-    ComentarioAdmin text null,
+    Solicitud_Pedido varchar(50) not null,
     Cotizacion_FechaLimite date not null,
     foreign key(DetallesPedidosMedida_id) references DetallesPedidosMedida(Detalles_PedidoMedida_id)
 );
 
+-- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido
+-- Como de la direccion de entrega y de conctato del cliente
+create table ConfirmarPago(
+	ConfirmarPago_id int auto_increment primary key not null,
+    CotizacionPedido_id int,
+    DetallesCarrito_id int,
+    ConfirmarPago_TipoPedido varchar(50) not null,
+    ConfirmarPago_MetodoP varchar(50) not null,
+    ConfirmarPago_Fecha date not null,
+    ConfirmarTelefono char(10) not null,
+    foreign key (DetallesCarrito_id) references DetallesCarrito(DetallesCarrito_id),
+    foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
+);
 
 -- La tabla pedidos es quien almacena todos los pedidos que se han realizado
 -- como cada pedido tiene un usuario la idea es que cada usuario puedaver solo los pedidos que ha realizado
 -- miesntra que el admin tenga libre acceso a ver cada pedido
 create table Pedidos(
 	Pedido_id int auto_increment primary key not null,
-    Pedido_TipoPedido varchar(50) not null,
-    Pedido_MetodoPago varchar(50) not null,
+    ConfirmarPago_id int not null,
     Pedido_FechaInicio date not null,
-    Pedido_TelefonoContacto char(10) not null,
-    Pedido_Direccion varchar(255) not null,
     Pedido_Estado varchar(50) not null,
-    Pedido_TotalCompra double(10,2) not null
+    Pedido_Direcccion varchar(50) not null,
+    Pedido_TCompra varchar(50) not null,
+    foreign key(ConfirmarPago_id) references ConfirmarPago(ConfirmarPago_id)
 );
 
--- Confirmar pago : esta tabla tendra la informacion de tanto del pago del pedido
--- Como de la direccion de entrega y de conctato del cliente
-create table DetallesPedidos(
-	DetallesPedidos_id int auto_increment primary key not null,
-    Pedido_id int not null,
-    DetallesCarrito_id int,
-    CotizacionPedido_id int null,
-    Detalles_PrecioTotal decimal (10,2) not null,
-    foreign key(Pedido_id) references Pedidos(Pedido_id),
-    foreign key (DetallesCarrito_id) references DetallesCarrito(DetallesCarrito_Id),
-    foreign key (CotizacionPedido_id) references CotizacionPedido(CotizacionPedido_id)
+-- HistorialPagos es quien tendra la informacion de todos los pedidos ya pagados
+-- para que el administrador pueda llevar un control de ganacias del negocio
+-- para que el administrador pueda llevar un control de ganacias del negocio
+create table HistorialPagos(
+	HistorialPagos_id int auto_increment primary key not null,
+    ConfirmarPago_id int not null,
+    Historial_Fecha date not null,
+    foreign key(ConfirmarPago_id) references ConfirmarPago(ConfirmarPago_id)
 );
-
--- Tabla que maneja las acciones del usuario
-create table HistorialUsuario(
-	HistorialUsuario_id int auto_increment primary key not null,
-    Usuarios_id int not null,
-    HistorialAccion varchar (50) not null,  -- La accion que realiza el usuario
-    HistoriaTablaAfectada varchar(50) not null, -- La tabla que fue afecta por el cambio del usuario
-    HistorialRegistroAfectado_id int not null, -- id de la columna afectada
-    HistorialDescripcion text not null, -- Descripcion del proceso que se ha realizado
-    HistorialFechaHora timestamp default current_timestamp, -- fecha y hora en la cual se reliazo el cambio
-    foreign key (Usuarios_id) references Usuarios(Usuarios_id)
-);
-
-
-

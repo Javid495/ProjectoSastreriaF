@@ -1,6 +1,6 @@
 package controlador;
 
-import dao.MostrarPedidosAdminDAO;
+import modelo.MostrarPedidosAdminDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
