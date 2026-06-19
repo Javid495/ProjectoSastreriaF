@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 //Servelt encargado de manejar los detalles de los productos
 
+//El webServelt me hace o me indica una ruta por la cual el frontend se puede comunicar con este archivo
 @WebServlet("/ObtenerProductosDetalle")
+
 public class ServeltObtenerDetallesProd extends HttpServlet {
     
     @Override
@@ -40,9 +42,18 @@ public class ServeltObtenerDetallesProd extends HttpServlet {
             Map<String, Object> prendaDetalle = dao.obtenerDetallesPrendaConVariantes(id);
             
             if (prendaDetalle != null) {
+                
+                // Esta parte se comunica con el dao y guarda el registro
+                // de la visita en caliente
+                PopularesDAO popularesDAO = new PopularesDAO();
+                popularesDAO.registrarVisita(id);
+                
+                // El gson nos ayuda a establecer los datos
                 Gson gson = new Gson();
+                // una vez estabecidos lo pasamos a un formato .json qu epuede interpretar js
                 String json = gson.toJson(prendaDetalle);
                 out.print(json);
+                
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Producto no encontrado o sin existencias");
             }
