@@ -3,59 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/Perfil.css">
-    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
-    <title>Document</title>
+    <title>Mi Perfil - ModaS</title>
+    <link rel="stylesheet" href="../css/Usuario.css">
 </head>
 <body>
-    
-    <!-- Header principal -->
-        <header class="header">
 
-        </header>
+    <header class="header"></header>
 
-        <main class="contenedor__principal">
-            <div class="contenedor__perfil">
-                <article class="contenedor__usuario">
-                    <img src="../images/Perfil/Ellipse 14.png" alt="Prenda A" class="contenedor__image">
-                    <h3 class="card__datouse card--username">Juan Caceres</h3>
-                    <p class="card__datouse">Telefono: XX-XXXX-XXX</p>
-                    <p class="card__datouse">Correo: juan@gmail.com</p>
-                    <p class="card__datouse">Direccion: XX-XXXX-XXX</p>
-                    <p class="card__datouse">Medidas: No disponible</p>
-                    <button class="btn__config"><img src="../images/Perfil/Vector.png" class="icon__perfil" alt=""></button>
-                    <button class="btn__config btn__edit"><img src="../images/Perfil/Vector (1).png" class="icon__perfil" alt=""></button>
-                </article>
-            </div>
+    <main class="main usuario-container">
+        
+        <section id="no-session-state" class="profile-card profile-card--hidden" style="grid-column: 1 / -1; text-align: center; max-width: 500px; margin: 2rem auto;">
+            <h2 style="color: var(--color-salmon); margin-bottom: 1rem;">Acceso Restringido</h2>
+            <p style="margin-bottom: 1.5rem;">Para poder visualizar tus compras, consultas recientes y datos de perfil, necesitas iniciar sesión.</p>
+            <a href="../inicioSecion.html" class="btn btn--save" style="text-decoration: none; display: inline-block; padding: 0.8rem 2rem;">Ir a Iniciar Sesión</a>
+        </section>
 
-            <div class="contenedor__historial">
-                
-                <h1 class="historial__titulo">Vistos Recientemente</h1>
-
-                <div class="productos__historial">
-                    <article class="card">
-                        <img src="../images/Rectangle 11.png" alt="Prenda A" class="card__image">
-                        <h3 class="card__title">Prenda A</h3>
-                        <p class="card__price">Precio: 40.000</p>
-                        <button class="card__button">Ver detalles</button>
-                    </article>
-    
-                    <article class="card">
-                        <img src="../images/Rectangle 26.png" alt="Prenda B" class="card__image">
-                        <h3 class="card__title">Prenda B</h3>
-                        <p class="card__price">Precio: 80.000</p>
-                        <button class="card__button">Ver detalles</button>
-                    </article>
+        <div id="user-profile-content" style="display: contents;">
+            
+            <section class="profile-card">
+                <div class="profile-card__actions">
+                    <button type="button" id="btn-config" class="icon-btn">
+                        <img src="../images/Perfil/Vector.png" alt="Configuración" class="icon-gear">
+                    </button>
                 </div>
+
+                <div class="profile-card__avatar-wrapper">
+                    <img src="images/Perfil/Ellipse 14.png" alt="Foto de perfil" id="user-avatar" class="profile-card__avatar">
+                    <button type="button" id="btn-edit-avatar" class="profile-card__edit-avatar-btn">
+                        <img src="../images/Perfil/Vector (1).png" alt="Editar foto">
+                    </button>
+                </div>
+
+                <div id="profile-view-state" class="profile-card__info">
+                    <h2 id="view-username" class="profile-card__name">Cargando...</h2>
+                    <div class="profile-card__data-group">
+                        <p><strong>Tel:</strong> <span id="view-phone">XXXXXXXXXX</span></p>
+                        <p><strong>Correo:</strong> <span id="view-email">Cargando...</span></p>
+                    </div>
+                </div>
+
+                <form id="profile-edit-state" class="profile-card__form profile-card--hidden" novalidate>
+                    <div id="form-error-msg" style="color: red; font-size: 0.9rem; font-weight: 600; display: none; background: #ffdadb; padding: 0.5rem; border-radius: 6px; margin-bottom: 0.5rem;"></div>
+
+                    <div class="form-group">
+                        <label for="input-username">Nombre:</label>
+                        <input type="text" id="input-username">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-phone">Tel:</label>
+                        <input type="text" id="input-phone" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-email">Correo:</label>
+                        <input type="email" id="input-email">
+                    </div>
+                    <div class="profile-card__form-buttons">
+                        <button type="button" id="btn-cancel" class="btn btn--cancel">Cancelar</button>
+                        <button type="submit" id="btn-save" class="btn btn--save">Hecho</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="activity-container">
+                
+                <div class="activity-section">
+                    <div class="activity-section__header">
+                        <h3>Visito Recientemente</h3>
+                        <span class="arrow-indicator">&gt;</span>
+                    </div>
+                    <div class="products-grid-mini" id="recent-products-container"></div>
+                </div>
+
+                <div class="activity-section">
+                    <div class="activity-section__header">
+                        <h3>Detalles de Compras</h3>
+                        <span class="arrow-indicator">&gt;</span>
+                    </div>
+                    <div class="orders-list" id="orders-container"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="avatar-modal" class="avatar-modal avatar-modal--hidden">
+        <div class="avatar-modal__content">
+            <h3>Iconos de perfil</h3>
+            <div class="avatar-modal__grid">
+                <div class="avatar-option avatar-option--upload">
+                    <span>+</span>
+                </div>
+                <div class="avatar-option"><img src="images/Perfil/cat1.png" alt="Gato 1"></div>
+                <div class="avatar-option"><img src="images/Perfil/cat2.png" alt="Gato 2"></div>
+                <div class="avatar-option"><img src="images/Perfil/cat3.png" alt="Gato 3"></div>
+                <div class="avatar-option"><img src="images/Perfil/cat4.png" alt="Gato 4"></div>
+                <div class="avatar-option"><img src="images/Perfil/cat5.png" alt="Gato 5"></div>
             </div>
+            <button type="button" id="btn-select-avatar" class="btn btn--select">Seleccionar Icono</button>
+        </div>
+    </div>
 
-        </main>
+    <div id="btnCompra"></div>
 
-         <!-- Footer principal de la pagina -->
-        <footer class="footer">
-        </footer>
+    <footer class="footer"></footer>
 
-    <script src="../js/LlamarComp/RelizarPeticion.js" type="module"></script>
-
+    <script type="module" src="../js/Usuario.js"></script>
 </body>
 </html>

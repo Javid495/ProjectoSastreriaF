@@ -1,16 +1,21 @@
 package controlador;
 
-import modelo.PrendasDAO;
-import modelo.PopularesDAO;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
+
+import com.google.gson.Gson;
+
+import getsSets.IniciarSesion;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import modelo.PopularesDAO;
+import modelo.PrendasDAO;
+import modelo.UsuariosDAO;
 
 //Servelt encargado de manejar los detalles de los productos
 
@@ -38,17 +43,31 @@ public class ServeltObtenerDetallesProd extends HttpServlet {
             int id = Integer.parseInt(idParam);
             
             PrendasDAO dao = new PrendasDAO();
-            // Llamamos al nuevo método que junta el producto, sus imágenes y todas sus tallas
             Map<String, Object> prendaDetalle = dao.obtenerDetallesPrendaConVariantes(id);
             
             if (prendaDetalle != null) {
                 
-                // Esta parte se comunica con el dao y guarda el registro
-                // de la visita en caliente
+                // 1. Registro global de la prenda (Suma de populares que ya tenías)
                 PopularesDAO popularesDAO = new PopularesDAO();
                 popularesDAO.registrarVisita(id);
                 
-                // El gson nos ayuda a establecer los datos
+                // 2. 🆕 REGISTRO PERSONALIZADO: Historial de prendas recientes
+                // Intentamos capturar la sesión del usuario si existe
+                HttpSession session = request.getSession(false);
+                
+                if (session != null && session.getAttribute("PerfilUsuario") != null) {
+                    // Recuperamos el DTO de la sesión de forma limpia
+                    IniciarSesion usuarioLog = (IniciarSesion) session.getAttribute("PerfilUsuario");
+                    int usuarioId = usuarioLog.getId();
+                    
+                    // Instanciamos el DAO de usuarios para guardar el registro
+                    UsuariosDAO usuarioDAO = new UsuariosDAO();
+                    usuarioDAO.registrarPrendaReciente(usuarioId, id);
+                } else {
+                    System.out.println("ℹ️ [ServletDetalle] Un usuario invitado vio la prenda " + id + ". No se guarda historial.");
+                }
+                
+                // Despachamos la respuesta JSON original para el frontend
                 Gson gson = new Gson();
                 // una vez estabecidos lo pasamos a un formato .json qu epuede interpretar js
                 String json = gson.toJson(prendaDetalle);
@@ -57,6 +76,7 @@ public class ServeltObtenerDetallesProd extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Producto no encontrado o sin existencias");
             }
+            
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID no válido");
         }

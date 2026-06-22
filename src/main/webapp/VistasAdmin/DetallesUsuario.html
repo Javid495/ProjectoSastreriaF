@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Detalle de Actividad</title>
+    <link rel="stylesheet" href="../css/UsuariosAdmin.css">
+</head>
+
+    <body style="display: flex; flex-direction: row; min-height: 100vh; background-color: var(--color-fondo);">
+
+        <aside class="sidebar"></aside>
+
+        <main class="main-content" style="flex: 1; padding: var(--padding-seccion);">
+            
+            <button type="button" onclick="window.location.href='UsuariosAdmin.html'" 
+                    style="background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:30px; font-weight:bold; font-size:16px; font-family: var(--tipo-letra);">
+                <img src="../images/DetallesProducto/Vector.png" alt="Volver" style="transform: scaleX(-1); width: 12px; filter: brightness(0);"> 
+                Volver al listado
+            </button>
+
+            <div class="detalles-split-layout">
+                <div class="perfil-ficha-gris" id="perfil-usuario-card">
+                    <p>Cargando datos del cliente...</p>
+                </div>
+
+                <div class="historial-bloque-auditoria">
+                    <h2 class="titulo-historial">Historial de Interacciones</h2>
+                    <div class="timeline-scroll-contenedor" id="contenedor-historial">
+                        </div>
+                </div>
+            </div>
+
+        </main>
+
+        <script type="module" src="../js/DetallesUsuariosAdmin.js"></script>
+    </body>
+</html>

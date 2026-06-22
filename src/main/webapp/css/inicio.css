@@ -50,86 +50,113 @@ body{
     width: 40%;
 }
 
-/* Seccion de populares */
 
-.button {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  background-color: var(--color-secundario);
-  border: none;
-}
-
-.button-left{
-  left: 9em;
-  top: 31em;
-  background-color: var(--color-BotonesFlecha);
-}
-
-.button-rigth{
-  right: 9em;
-  top: 31em;
-  background-color: var(--color-BotonesFlecha);
-}
-
+/* ==========================================================================
+   Sección de Populares (Carrusel Corregido)
+   ========================================================================== */
 
 .popular {
   padding: var(--padding-seccion);
-  gap: 10px;
-  
-}
-
-.popular__category{
-  display: flex;
-  gap: 10px;
+  max-width: var(--ancho-maximo);
+  margin: auto;
 }
 
 .popular__title {
   padding-bottom: 2rem;
 }
 
-.popular__icon {
-  margin-top: 0.5vh;
+/* 🔥 NUEVO: Contenedor de control relativo para las flechas absolutas */
+.popular__carousel-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 50px; /* Margen interno para que las flechas no tapen las tarjetas de los extremos */
+  box-sizing: border-box;
 }
 
-.popular__icon img{
-  width: 70%;
+/* Estilos base de los botones de paginación */
+.button {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background-color: var(--color-BotonesFlecha);
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10; /* Asegura que queden siempre sobre las imágenes */
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical matemático perfecto */
+  transition: background-color 0.3s ease;
 }
 
+.button:hover {
+  background-color: var(--color-secundario); /* Efecto feedback al pasar el mouse */
+}
+
+/* Posicionamiento en los bordes limpios del contenedor wrapper */
+.button-left {
+  left: 0;
+}
+
+.button-right {
+  right: 0; /* Corregido el typo de 'button-rigth' a 'button-right' */
+}
+
+/* El riel de las tarjetas */
 .popular__cards {
   display: flex;
-  gap: 2rem;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  
+  gap: 1.5rem;
+  width: 100%;
+  flex-wrap: nowrap;       /* ❌ CAMBIADO: Obliga a que se mantengan en una sola fila horizontal */
+  overflow-x: auto;         /* Permite el deslizamiento horizontal */
+  scroll-behavior: smooth;  /* Desplazamiento fluido */
+  padding: 10px 0;
 }
 
+.popular__cards::-webkit-scrollbar {
+  display: none;            /* Sigue ocultando la barra nativa */
+}
+
+/* La tarjeta individual */
 .card {
   background-color: var(--color-secundario);
   padding: 1rem;
   border-radius: var(--radio-card);
   text-align: center;
-  width: 15%;
+  
+  /* ❌ CAMBIADO: Evita que la tarjeta se encoja o colapse horizontalmente */
+  flex: 0 0 220px;          
+  width: 220px;             /* Ancho fijo seguro para que la tipografía luzca perfecta */
+  
   font-family: "Courgette", cursive;
   font-weight: 400;
   font-style: normal;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Opcional: una sutil sombra para darle relieve */
 }
 
 .card__image {
   width: 100%;
+  height: 180px;            /* Aseguramos que todas las fotos de catálogo tengan la misma proporción */
+  object-fit: cover;        /* Recorta proporcionalmente la imagen sin deformarla */
   border-radius: 10px;
   margin-bottom: 0.5rem;
 }
 
 .card__title {
   font-size: 0.95rem;
+  white-space: nowrap;      /* Evita que títulos largos rompan el diseño hacia abajo */
+  overflow: hidden;
+  text-overflow: ellipsis;  /* Agrega "..." si el nombre de la prenda es extremadamente largo */
 }
 
 .card__price {
   font-size: 0.85rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
+
 
 
 /* Section de nuestros productos */

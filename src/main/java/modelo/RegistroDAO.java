@@ -1,76 +1,73 @@
-
 package modelo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement; // 👈 Asegúrate de importar esto
 import getsSets.Registro;
-
-//Dao que me maneja los datos que inserto en registro y usuarios
 
 public class RegistroDAO {
     
     public boolean registrar(Registro user, int RolCliente){
     
-        //Parte de mysql para generar el registro
         String sqlRegistro = "insert into Registro(Registro_Usuario ,Registro_Contraseña, Registro_Email, Registro_Telefono) values(?, ?, ?, ?)";
-        
-        //Parte de mysql para generar el usuario
         String sqlUsuario = "insert into Usuarios(Registro_id, Permisos_Roles_id) values (?, ?)";
         
-        Connection con= null;
+        Connection con = null;
         
-        try{
-        
+        try {
             con = ClaseConexion.getConexion();
-            
-            //Evitamos que java guarde cambios automaticamente
-            //hasta que demos orden
             con.setAutoCommit(false);
             
-            //Se pregunta a la tabla Registro id Cual fue el id que se le asigno al nuevo registro 
-            try(PreparedStatement psReg = con.prepareStatement(sqlRegistro, PreparedStatement.RETURN_GENERATED_KEYS)){
-            
-            //Se hace referencia a cada columnas de la tabla
+            // 1. Insertar en la tabla Registro
+            try(PreparedStatement psReg = con.prepareStatement(sqlRegistro, Statement.RETURN_GENERATED_KEYS)){
                 psReg.setString(1, user.getUsuario());
                 psReg.setString(2, user.getContrasena());
                 psReg.setString(3, user.getEmail());
-                psReg.setInt(4, user.getTelefono());
+                psReg.setString(4, String.valueOf(user.getTelefono())); // Si teléfono es String o int conviértelo según corresponda
             
                 int filasReg = psReg.executeUpdate(); 
             
                 if(filasReg > 0 ){
-                    //seObtiene el nuevo id que hace el registro
                     ResultSet rs = psReg.getGeneratedKeys();
                 
                     if (rs.next()){
-                        int lastId = rs.getInt(1); //se guarda el id que se creo recientemente
+                        int lastRegistroId = rs.getInt(1); // ID de la tabla Registro
                         
-                        //se realiza la insercion a usuarios
-                        try(PreparedStatement psUser = con.prepareStatement(sqlUsuario)){
+                        // 2. Insertar en la tabla Usuarios obteniendo SU PROPIO ID GENERADO 👈 (Cambio Crítico)
+                        try(PreparedStatement psUser = con.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)){
                         
-                            psUser.setInt(1, lastId);
+                            psUser.setInt(1, lastRegistroId);
                             psUser.setInt(2, RolCliente);
-                            psUser.executeUpdate();
+                            int filasUser = psUser.executeUpdate();
+                            
+                            if (filasUser > 0) {
+                                ResultSet rsUser = psUser.getGeneratedKeys();
+                                if (rsUser.next()) {
+                                    int idUsuarioVerdadero = rsUser.getInt(1); // 🌟 ¡Este es el Usuarios_id real!
+                                    
+                                    // 3. Registrar en la bitácora con privacidad e IDs correctos
+                                    HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
+                                    historialDAO.registrarAccion(
+                                        idUsuarioVerdadero, 
+                                        "REGISTRO", 
+                                        "Registro", 
+                                        lastRegistroId, 
+                                        "El usuario creó una cuenta nueva en la plataforma con éxito."
+                                    );
+                                }
+                            }
                         }
-                    
                     }
                 }
                 
-                //Se hace el guardado si no se presentaron errores
                 con.commit();
                 return true;
             }
   
-        }
-        
-        //En caso de que ocurra algun error con la BD de mysql
-        catch (SQLException e) {
-            
+        } catch (SQLException e) {
             if (con != null) {
-                //Si alguno de los datos es nulo se ejecuta el rolback
-                //y evita que lo inserte en la tabla
                 try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
             System.err.println("Error en la transacción de registro: " + e.getMessage());

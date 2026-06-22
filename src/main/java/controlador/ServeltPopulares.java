@@ -1,17 +1,18 @@
-
 package controlador;
 
-import modelo.PopularesDAO;
-import getsSets.Prendas;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+
+import com.google.gson.Gson;
+
+import getsSets.Prendas;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import modelo.PopularesDAO;
 
 // Servlet encargado de proveer las prendas más populares para la página de inicio
 @WebServlet("/ObtenerPopularesInicio")
@@ -21,7 +22,7 @@ public class ServeltPopulares extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Configuramos la respuesta para que el navegador sepa que recibe un JSON en UTF-8 que pueda interpretar el navegador
+        // Configuramos la respuesta para que el navegador sepa que recibe un JSON en UTF-8
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 

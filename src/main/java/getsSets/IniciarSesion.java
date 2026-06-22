@@ -10,6 +10,7 @@ public class IniciarSesion {
     private String contrasena;
     private int rolUsuario;
     private String imagen;
+    private String telefono;
     
     // Geters y setters que haran de cables para almacenar y guardar los 
     //dato de la base de datos
@@ -37,8 +38,6 @@ public class IniciarSesion {
         this.rolUsuario = rolUsuario;
     }
 
-      
-
     public String getImagen() {
         return imagen;
     }
@@ -46,4 +45,15 @@ public class IniciarSesion {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+    
+    
 }
+

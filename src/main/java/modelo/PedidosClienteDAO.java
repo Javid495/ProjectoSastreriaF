@@ -8,33 +8,50 @@ import java.util.ArrayList;
 import java.util.List;
 import getsSets.Pedidos;
 
-//DAo encargado de los pedidos del catalogo
-
+// DAO encargado de consultar las compras y pedidos históricos del cliente
 public class PedidosClienteDAO {
     
-    // 1. OBTENER LOS PEDIDOS CABECERA DEL USUARIO (Catálogo y Medida entran aquí de forma directa)
+    // ==========================================================================
+    // 1. OBTENER LOS PEDIDOS CABECERA DEL USUARIO (Catálogo y Medida mediante JOINs)
+    // ==========================================================================
     public List<Pedidos> obtenerPedidosUsuario(int idUsuario){
         List<Pedidos> lista = new ArrayList<>();
         
-        // Consulta simplificada y corregida según tus columnas reales de la tabla 'Pedidos'
-        String sql = "SELECT Pedido_id, Pedido_FechaInicio, Pedido_TipoPedido, Pedido_Estado, Pedido_TotalCompra " +
-                     "FROM Pedidos " +
-                     "WHERE Usuario_id = ? " +
+        // 💡 CORRECCIÓN CRÍTICA: Como no hay Usuario_id en Pedidos, unimos usando UNION 
+        // para rastrear al usuario por el Carrito (Catálogo) o por la Solicitud (Medida)
+        String sql = "SELECT p.Pedido_id, p.Pedido_FechaInicio, p.Pedido_TipoPedido, p.Pedido_Estado, p.Pedido_TotalCompra " +
+                     "FROM Pedidos p " +
+                     "JOIN DetallesPedidos dp ON p.Pedido_id = dp.Pedido_id " +
+                     "JOIN DetallesCarrito dc ON dp.DetallesCarrito_id = dc.DetallesCarrito_Id " +
+                     "JOIN Carrito c ON dc.Carrito_id = c.Carrito_id " +
+                     "WHERE c.Usuarios_id = ? " +
+                     "UNION " +
+                     "SELECT p.Pedido_id, p.Pedido_FechaInicio, p.Pedido_TipoPedido, p.Pedido_Estado, p.Pedido_TotalCompra " +
+                     "FROM Pedidos p " +
+                     "JOIN DetallesPedidos dp ON p.Pedido_id = dp.Pedido_id " +
+                     "JOIN CotizacionPedido cot ON dp.CotizacionPedido_id = cot.CotizacionPedido_id " +
+                     "JOIN DetallesPedidosMedida dpm ON cot.DetallesPedidosMedida_id = dpm.Detalles_PedidoMedida_id " +
+                     "WHERE dpm.Usuario_id = ? " +
                      "ORDER BY Pedido_FechaInicio DESC;";
         
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)){
             
+            // 💡 NOTA: Al usar UNION, tenemos dos comodines '?', por lo que enviamos el idUsuario dos veces
             ps.setInt(1, idUsuario);
+            ps.setInt(2, idUsuario);
             
             try (ResultSet rs = ps.executeQuery()){
                 while(rs.next()){
-                    Pedidos p  = new Pedidos();
+                    Pedidos p = new Pedidos();
                     
                     p.setIdPedido(rs.getInt("Pedido_id"));
                     p.setFechaInicio(rs.getString("Pedido_FechaInicio"));
-                    p.setTipoCompra(rs.getString("Pedido_TipoPedido")); // Cambiado de Pedido_TCompra a Pedido_TipoPedido
+                    p.setTipoCompra(rs.getString("Pedido_TipoPedido")); 
                     p.setEstadoPedido(rs.getString("Pedido_Estado"));
+                    
+                    // Opcional: si tu clase Pedidos tiene setTotalCompra, puedes mapearlo aquí:
+                    // p.setTotalCompra(rs.getDouble("Pedido_TotalCompra"));
                     
                     lista.add(p);
                 }
@@ -46,18 +63,22 @@ public class PedidosClienteDAO {
         return lista;
     }
     
+    // ==========================================================================
     // 2. DESGLOSE DE PRODUCTOS PARA COMPRAS DESDE EL CATÁLOGO
+    // ==========================================================================
     public List<String[]> obtenerProductosPorPedido(int idPedido) {
         List<String[]> lista = new ArrayList<>();
         
-        // Consulta corregida usando la tabla intermedia real 'DetallesPedidos'
-        String sql = "SELECT p.Prenda_nombre, p.Prenda_valor, dp.Detalles_PrecioTotal, dp.Detalles_Cantidad, " +
+        // 💡 CORRECCIÓN CRÍTICA: Cambiado para pasar correctamente por DetallesCarrito,
+        // ya que DetallesPedidos no contiene las columnas 'Prenda_id' ni 'Cantidad' de forma directa.
+        String sql = "SELECT pr.Prenda_nombre, pr.Prenda_valor, dp.Detalles_PrecioTotal, dc.Detalles_cantidad, " +
                      "MIN(img.Imagenes_link) AS Imagen_link " +
                      "FROM DetallesPedidos dp " +
-                     "JOIN Prendas p ON dp.Prenda_id = p.Prenda_id " +
-                     "LEFT JOIN imagenes img ON p.Prenda_id = img.Prenda_id " +
+                     "JOIN DetallesCarrito dc ON dp.DetallesCarrito_id = dc.DetallesCarrito_Id " +
+                     "JOIN Prendas pr ON dc.Prendas_id = pr.Prenda_id " +
+                     "LEFT JOIN imagenes img ON pr.Prenda_id = img.Prenda_id " +
                      "WHERE dp.Pedido_id = ? " +
-                     "GROUP BY p.Prenda_id, p.Prenda_nombre, p.Prenda_valor, dp.Detalles_PrecioTotal, dp.Detalles_Cantidad;";
+                     "GROUP BY pr.Prenda_id, pr.Prenda_nombre, pr.Prenda_valor, dp.Detalles_PrecioTotal, dc.Detalles_cantidad;";
                      
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -68,12 +89,12 @@ public class PedidosClienteDAO {
                     String[] registro = new String[5];
                     registro[0] = rs.getString("Prenda_nombre");
                     registro[1] = rs.getString("Prenda_valor");
-                    registro[2] = rs.getString("Detalles_PrecioTotal"); // Cambiado a Detalles_PrecioTotal
-                    registro[3] = String.valueOf(rs.getInt("Detalles_Cantidad")); // Cambiado a Detalles_Cantidad
+                    registro[2] = rs.getString("Detalles_PrecioTotal"); 
+                    registro[3] = String.valueOf(rs.getInt("Detalles_cantidad")); // dc.Detalles_cantidad en minúscula como en tu BD
                     
                     String rutaImg = rs.getString("Imagen_link");
                     if (rutaImg != null) {
-                        rutaImg = rutaImg.replace("\\", "\\\\"); // Escapa barras inclinadas para no romper el JSON
+                        rutaImg = rutaImg.replace("\\", "\\\\"); 
                     }
                     registro[4] = rutaImg;
                     
@@ -87,11 +108,14 @@ public class PedidosClienteDAO {
         return lista;
     }
     
-    // 3. DESGLOSE DE DETALLES PARA COMPRAS Hechas A MEDIDA
+    // ==========================================================================
+    // 3. DESGLOSE DE DETALLES PARA COMPRAS HECHAS A MEDIDA
+    // ==========================================================================
     public String[] obtenerDetallesPedidoMedida(int idPedido) {
         String[] detalles = null;
     
-        // Consulta corregida uniendo Pedidos -> DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
+        // 🔍 REVISIÓN: Esta consulta original tuya estaba perfecta y sigue los JOINs correctos 
+        // Pedidos -> DetallesPedidos -> CotizacionPedido -> DetallesPedidosMedida
         String sql = "SELECT dpm.Detalles_TPrenda, dpm.Detalles_Tela, cot.Cotizacion_Valor, cot.ComentarioAdmin " +
                      "FROM DetallesPedidos dp " +
                      "JOIN CotizacionPedido cot ON dp.CotizacionPedido_id = cot.CotizacionPedido_id " +
