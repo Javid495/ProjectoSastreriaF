@@ -29,12 +29,12 @@ create table Usuarios (
     
     
     -- Datos Opcionales que los clientes podran completar una vez ingresen a su perfil
-    Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png",
+    Usuario_imagen varchar(50) null default "images\Perfil\Ellipse14.png",
     foreign key (Registro_id) references Registro(Registro_id),
     foreign key (Permisos_Roles_id) references Permisos_Roles(Permisos_Roles_id)
 );
 
-alter table Usuarios modify column Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png";
+alter table Usuarios modify column Usuario_imagen varchar(50) null default "images\Perfil\Ellipse14.png";
 
 create table Categoria(
 	Categoria_id int auto_increment primary key not null,
