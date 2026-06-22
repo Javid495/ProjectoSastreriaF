@@ -170,6 +170,13 @@ function verificarPedidosPorCotizar() {
 
 // 🪟 Despliega el modal emergente de cotizaciones pendientes
 function abrirModalCotizaciones() {
+    // 🗓️ Obtenemos la fecha de hoy en formato local (Colombia) para restringir el input date
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const fechaMinima = `${yyyy}-${mm}-${dd}`; // Resultado: "2026-06-21"
+
     fetch(`${urlBase}/AdminCotizaciones?accion=listar`)
         .then(res => res.json())
         .then(pedidos => {
@@ -190,9 +197,12 @@ function abrirModalCotizaciones() {
                         ${p.imagen ? `<img src="${foto}" style="width:80px; height:80px; object-fit:cover; margin: 8px 0; border-radius:4px;">` : ''}
                         
                         <form class="form-enviar-cotizacion" data-id="${p.id}" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <input type="number" placeholder="Precio Cotizado ($)" required class="input-precio" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+                            <input type="number" placeholder="Precio Cotizado ($)" min="5000" required class="input-precio" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+                            
                             <label style="font-size:10px; display: flex; align-items: center;">Fecha Entrega:</label>
-                            <input type="date" required class="input-fecha" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;">
+                            
+                            <input type="date" min="${fechaMinima}" required class="input-fecha" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;">
+                            
                             <input type="text" placeholder="Comentario" required class="input-comentario" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 2;">
                             <button type="submit" style="background: #5d2b90; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Enviar</button>
                         </form>
@@ -235,20 +245,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// Escucha global para el envío de formularios de cotización
+// Escucha global para el envío de formularios de cotización con validaciones robustas
 document.addEventListener("submit", (evento) => {
     if (evento.target.matches(".form-enviar-cotizacion")) {
         evento.preventDefault();
         const formulario = evento.target;
         
         const idPedidoMedida = formulario.dataset.id;
-        const precio = formulario.querySelector(".input-precio").value;
+        const precioRaw = formulario.querySelector(".input-precio").value;
         const fechaLimite = formulario.querySelector(".input-fecha").value;
         const comentario = formulario.querySelector(".input-comentario").value;
 
+        // 🛑 1. Validación de campos vacíos obligatorios
+        if (!precioRaw.trim() || !fechaLimite.trim()) {
+            alert("⚠️ Error: El precio y la fecha de entrega son campos totalmente obligatorios.");
+            return;
+        }
+
+        // 🛑 2. Validación de valor mínimo real para confección en Colombia ($5.000 COP)
+        const precioValor = parseFloat(precioRaw);
+        if (isNaN(precioValor) || precioValor < 5000) {
+            alert("⚠️ Error: El precio de la cotización debe ser un número válido y comenzar desde los $5,000 pesos colombianos mínimos de mano de obra.");
+            return;
+        }
+
+        // 🛑 3. Validación estricta de fecha para evitar días pasados
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); // Limpiamos horas para comparar únicamente las fechas reales
+
+        // Dividimos la fecha del input (YYYY-MM-DD) para construir el objeto Date local sin desfases UTC
+        const [anio, mes, dia] = fechaLimite.split("-").map(Number);
+        const fechaSeleccionada = new Date(anio, mes - 1, dia); // Enero es 0 en JavaScript
+
+        if (fechaSeleccionada < hoy) {
+            alert("❌ Error crítico: No puedes asignar una fecha de entrega anterior al día de hoy.");
+            return;
+        }
+
+        // Si pasa todas las pruebas, preparamos el envío
         const datosCuerpo = new URLSearchParams();
         datosCuerpo.append("idPedidoMedida", idPedidoMedida);
-        datosCuerpo.append("precio", precio);
+        datosCuerpo.append("precio", precioValor);
         datosCuerpo.append("fechaLimite", fechaLimite);
         datosCuerpo.append("comentario", comentario);
 

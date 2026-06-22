@@ -1,0 +1,347 @@
+@import url(style.css);
+
+/* ==========================================================================
+   ESTRUCTURA PRINCIPAL (LAYOUT DOS COLUMNAS)
+   ========================================================================== */
+.usuario-container {
+    max-width: var(--ancho-maximo);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding-seccion);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .usuario-container {
+        grid-template-columns: 350px 1fr; /* Tarjeta fija a la izquierda, contenido flexible a la derecha */
+    }
+}
+
+/* Clases de utilidad para ocultar elementos controlados por JS */
+.profile-card--hidden, .avatar-modal--hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   COLUMNA IZQUIERDA: TARJETA DE PERFIL
+   ========================================================================== */
+.profile-card {
+    background-color: #e0e0e0; /* Color gris suave de fondo para el contenedor del mockup */
+    border-radius: var(--radio-card);
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-card__actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-gear {
+    width: 28px;
+    height: 28px;
+    transition: transform 0.3s ease;
+}
+
+.icon-gear:hover {
+    transform: rotate(45deg);
+}
+
+/* Avatar con el botón flotante de edición */
+.profile-card__avatar-wrapper {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 1.5rem auto;
+}
+
+.profile-card__avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #fff;
+    border: 3px solid #fff;
+}
+
+.profile-card__edit-avatar-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--color-salmon);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.profile-card__edit-avatar-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+/* Textos informativos */
+.profile-card__name {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-card__data-group p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+/* Formulario de Edición */
+.profile-card__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    padding: 0.6rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-FondoInputs);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.profile-card__form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Botones genéricos de la vista */
+.btn {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.btn--cancel {
+    background-color: var(--color-salmon);
+    color: #000;
+}
+
+.btn--save {
+    background-color: var(--color-verde-pedido);
+    color: #000;
+}
+
+/* ==========================================================================
+   COLUMNA DERECHA: SECCIONES DE ACTIVIDAD
+   ========================================================================== */
+.activity-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.activity-section__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.activity-section__header h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.arrow-indicator {
+    color: red;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Grid de prendas (Consultas recientes) */
+.products-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.mini-card {
+    background-color: #A9C5D3; /* --color-secundario aproximado de las cards */
+    border-radius: var(--radio-card);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.mini-card__img-container {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-bottom: 0.8rem;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.mini-card__img-container img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.mini-card h4 {
+    font-style: italic;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.mini-card__price {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.btn-detail {
+    background-color: #fff;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Bloque del historial de compras */
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-item {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    padding: 1.2rem;
+    max-width: 400px;
+}
+
+.order-item__status {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.order-item__date {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* ==========================================================================
+   VENTANA EMERGENTE (MODAL SELECCIÓN AVATAR)
+   ========================================================================== */
+.avatar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.avatar-modal__content {
+    background-color: var(--color-FondoVentEmergetes);
+    padding: 2rem;
+    border-radius: var(--radio-card);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.avatar-modal__content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-salmon);
+}
+
+.avatar-modal__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.avatar-option {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-option:hover, .avatar-option--selected {
+    border-color: var(--color-secundario);
+}
+
+.avatar-option--upload {
+    background-color: #d9d9d9;
+    font-size: 2rem;
+    color: #666;
+}
+
+.btn--select {
+    background-color: var(--color-salmon);
+    width: auto;
+    padding: 0.6rem 2rem;
+    display: inline-block;
+}

@@ -31,10 +31,11 @@
                     id="cajaComentario">
                 </textarea>
             </div>
-            <button class="product__button btn--resena btn--agrega">
-                Añadir Imagenes
-                <img src="../images/DetallesProducto/Vector (2).png" alt="Carrito">
-            </button>
+
+            <input type="file" id="inputImagen" accept="image/*" style="display: none;">
+            <button type="button" id="btnSeleccionarImagen">Añadir Imagen</button>
+            <span id="nombreArchivo" style="color: gray; font-size: 12px;"></span>
+            
             <button class="product__button btn--resena btn--publicar">
                 Publicar Reseña
             </button>

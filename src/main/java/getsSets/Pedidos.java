@@ -57,7 +57,5 @@ public class Pedidos {
 
     public void setTipoCompra(String TipoCompra) {
         this.TipoCompra = TipoCompra;
-    }
-    
-    
+    }   
 }

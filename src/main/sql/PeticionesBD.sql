@@ -4,6 +4,7 @@ use ModaS;
 SELECT * FROM Registro;
 SELECT * FROM Permisos_Roles;
 SELECT * FROM Usuarios;
+select * from Historial_PrendasRecientes;
 SELECT * FROM Categoria;
 SELECT * FROM Prendas;
 SELECT * FROM Populares;
@@ -14,6 +15,7 @@ SELECT * FROM DetallesPedidosMedida;
 SELECT * FROM CotizacionPedido;
 SELECT * FROM DetallesPedidos;
 SELECT * FROM Pedidos;
+select * from HistorialUsuario;
 
 -- Consulta de verificar el pedido de su usuario
 SELECT p.* FROM Pedidos p
@@ -158,3 +160,14 @@ LEFT JOIN DetallesPedidosMedida dpm ON cp.DetallesPedidosMedida_id = dpm.Detalle
 JOIN Usuarios u ON u.Usuarios_id = COALESCE(c.Usuarios_id, dpm.Usuario_id)
 JOIN Registro r ON u.Registro_id = r.Registro_id
 ORDER BY hp.Historial_Fecha DESC;
+
+
+
+SELECT p.*, MIN(i.Imagenes_link) AS Imagen_Link 
+                     FROM Prendas p
+                     JOIN Populares pop ON p.Prenda_id = pop.Prenda_id
+                     LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id
+                     WHERE p.Prenda_estado = 'activa'
+                     GROUP BY p.Prenda_id 
+                     ORDER BY MAX(CAST(pop.Populares_visitas AS UNSIGNED)) DESC
+                     LIMIT 3;

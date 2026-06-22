@@ -32,6 +32,8 @@ public class LoginDAO {
           ps.setString(2, identificador);
           ps.setString(3, contrasena);
           
+          
+          
           try (ResultSet result = ps.executeQuery()){
           
               if (result.next ()){
@@ -44,6 +46,17 @@ public class LoginDAO {
                   ver.setUsuario(result.getString("Registro_Usuario"));
                   ver.setRolUsuario(result.getInt("Permisos_roles_id"));
                   ver.setImagen(result.getString("Usuario_imagen"));
+                  
+                  
+                  HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
+          
+                    historialDAO.registrarAccion(
+                      ver.getId(), 
+                      "LOGIN", 
+                      "Usuarios", 
+                      ver.getId(), 
+                      "El usuario inició sesión en el sistema."
+                  );
                   
                   //añadir la manipulacion de los elementos cuando el usuario este activo
                   return ver;

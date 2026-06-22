@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Historial de Usuarios</title>
+    <link rel="stylesheet" href="../css/UsuariosAdmin.css">
+</head>
+    <body style="display: flex; flex-direction: row; min-height: 100vh; background-color: var(--color-fondo);">
+        
+        <aside class="sidebar"></aside>
+
+        <main class="main-content" style="flex: 1; padding: var(--padding-seccion);">
+            
+            <div class="buscador-container" style="margin-bottom: 40px; display: flex; justify-content: center; width: 100%;">
+                <div style="position: relative; width: 85%; max-width: 850px;">
+                    <input type="text" id="input-buscar-usuario" placeholder="Buscar usuarios por nombre, correo o teléfono..." 
+                        style="width: 100%; padding: 14px 25px; border-radius: 30px; border: var(--estilo-borde); background-color: var(--color-primario); font-size: 16px;">
+                </div>
+            </div>
+
+            <section id="tablero-usuarios" class="usuarios-lista-wrapper">
+                </section>
+            
+        </main>
+
+        <script type="module" src="../js/UsuariosAdmin.js"></script>
+    </body>
+</html>
