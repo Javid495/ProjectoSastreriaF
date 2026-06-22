@@ -104,18 +104,21 @@ public class UsuariosDAO {
         return lista;
     }
 
-    // 💾 4. ACTUALIZAR LOS DATOS (Sincronizado con el Formulario del Frontend)
-    public boolean actualizarPerfil(int usuarioId, String nombre, String telefono, String correo) {
+   // 💾 4. ACTUALIZAR LOS DATOS (Sincronizado con el Formulario e Imagen del Perfil)
+    public boolean actualizarPerfil(int usuarioId, String nombre, String telefono, String correo, String imagenAvatar) {
+        // 🌟 Añadimos u.Usuario_imagen al UPDATE integrado
         String sql = "UPDATE Registro r JOIN Usuarios u ON r.Registro_id = u.Registro_id " +
-                     "SET r.Registro_Usuario = ?, r.Registro_Telefono = ?, r.Registro_Email = ? WHERE u.Usuarios_id = ?";
+                     "SET r.Registro_Usuario = ?, r.Registro_Telefono = ?, r.Registro_Email = ?, u.Usuario_imagen = ? WHERE u.Usuarios_id = ?";
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre);
             ps.setString(2, telefono);
             ps.setString(3, correo);
-            ps.setInt(4, usuarioId);
+            ps.setString(4, imagenAvatar); 
+            ps.setInt(5, usuarioId);
+
             return ps.executeUpdate() > 0;
-        } 
+        }
         
         catch (SQLException e) {
             e.printStackTrace();
@@ -170,9 +173,14 @@ public class UsuariosDAO {
 
             lista.add(usuario);
         }
-    } catch (SQLException e) {
+    } 
+    
+    catch (SQLException e) {
         System.err.println("Error al listar usuarios con JOIN en UsuariosDAO: " + e.getMessage());
     }
-    return lista;
-}
+        return lista;
+    }
+   
+   
+   
 }

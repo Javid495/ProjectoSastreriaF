@@ -8,13 +8,12 @@ import { rederizarCarrito } from "../js/CarritoCompra.js";
  */
 export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = null) {
     
-    // 🌟 CORRECCIÓN: Detectar dinámicamente cuál contenedor está activo en el DOM actual
+    // Detectar dinámicamente cuál contenedor está activo en el DOM actual
     let contenedorCarrito = document.querySelector("#mostrarCompra");
     if (!contenedorCarrito) {
         contenedorCarrito = document.querySelector("#compraCarrito");
     }
 
-    // Si ninguno de los dos existe en la página actual, salimos de forma segura
     if (!contenedorCarrito) {
         console.warn("No se encontró ningún contenedor de compra válido (#mostrarCompra o #compraCarrito)");
         return; 
@@ -86,14 +85,24 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         nuevoBtnConfirmar.addEventListener("click", async (e) => {
             e.preventDefault();
 
+            // 🌟 VALIDACIÓN BLINDADA: Extraemos y limpiamos espacios vacíos inmediatamente
             const direccion = inputDireccion ? inputDireccion.value.trim() : "";
             const telefono = inputTelefono ? inputTelefono.value.trim() : "";
 
-            if (!direccion) return alert("Por favor, ingresa tu dirección de entrega.");
-            if (!metodoPagoSeleccionado) return alert("Debes seleccionar un método de pago antes de continuar.");
-            if (!telefono || telefono.length < 7) return alert("Por favor, ingresa un número de teléfono válido.");
+            if (!direccion || direccion === "") {
+                alert("Por favor, ingresa tu dirección de entrega.");
+                return; // Detiene la ejecución
+            }
+            if (!metodoPagoSeleccionado || metodoPagoSeleccionado === "") {
+                alert("Debes seleccionar un método de pago antes de continuar.");
+                return; // Detiene la ejecución
+            }
+            if (!telefono || telefono.length < 7 || isNaN(telefono)) {
+                alert("Por favor, ingresa un número de teléfono válido (mínimo 7 dígitos numéricos).");
+                return; // Detiene la ejecución
+            }
 
-            // 🌟 CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE
+            // CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE
             let datosCompra = {
                 accion: "confirmar", 
                 direccion: direccion,
@@ -103,7 +112,6 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
             };
 
             if (tipoPedido === "A Medida") {
-                // 🛡️ Filtro estricto: Eliminamos 'datosCotizacion.id' para evitar que use el ID del detalle por error
                 const idCotizacionReal = parseInt(
                     datosCotizacion.idCotizacion || 
                     datosCotizacion.CotizacionPedido_Id || 
@@ -111,34 +119,27 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                     0
                 );
 
-                // Si el ID final es 0 o no es un número válido, frenamos antes de ir al Servlet
                 if (idCotizacionReal === 0 || isNaN(idCotizacionReal)) {
                     console.error("❌ Error: Se intentó procesar una cotización sin un ID válido.", datosCotizacion);
                     return alert("Error crítico: No se detectó el ID real de la cotización. Revisa el botón de pago.");
                 }
 
                 datosCompra.CotizacionPedido_Id = idCotizacionReal;
-    
-                // Alerta de depuración en la consola del navegador para que verifiques el número antes de pagar
-                console.log("✅ ID de Cotización correcto asignado al Payload:", datosCompra.CotizacionPedido_Id);
-
                 datosCompra.totalLinea = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
-            }
-            
+            } 
             else {
                 const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
                 if (carrito.length === 0) return alert("El carrito está vacío.");
     
                 datosCompra.productos = carrito.map(item => ({
                     idPrenda: item.id,
-                    id: item.id, // Doble mapeo por precaución con el regex del backend
+                    id: item.id, 
                     cantidad: item.cantidad || 1,
                     totalLinea: item.precio * (item.cantidad || 1)
                 }));
             }
 
             try {
-                // Deshabilitar botón temporalmente para evitar doble envío masivo
                 nuevoBtnConfirmar.disabled = true;
                 nuevoBtnConfirmar.textContent = "Procesando...";
 
@@ -155,11 +156,25 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                         localStorage.removeItem("carritoSastreria"); 
                     }
                     
-                    // Limpiar el contenedor actual que contenga el formulario
-                    contenedorCarrito.innerHTML = ""; 
+                    // 🌟 SOLUCIÓN VISUAL: Ocultamos el contenedor principal de la compra por completo 
+                    // para que los paneles laterales del total no queden flotando detrás del modal.
+                    if (contenedorCarrito) {
+                        contenedorCarrito.style.display = "none";
+                    }
+                    
+                    // Si tienes un contenedor padre o una sección envolvente para toda la vista de checkout, 
+                    // la ocultamos para asegurar limpieza total en pantalla:
+                    const layoutCompraCompleto = document.querySelector(".seccion-compra") || document.querySelector(".checkout-container");
+                    if (layoutCompraCompleto) {
+                        layoutCompraCompleto.style.display = "none";
+                    }
                     
                     // Mostrar modal de éxito
                     await llamarComponente("#confirmacionPago", "../componentesWeb/VentanaComprobacion.html");
+                    
+                    // Forzar que aparezca el sombreado oscuro del modal si aplica
+                    if (sombreado) sombreado.classList.add("aparecerSombreado");
+
                 } else {
                     alert("Error en el servidor: " + resultado.mensaje);
                     nuevoBtnConfirmar.disabled = false;
@@ -174,18 +189,33 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         });
     }
 
+    // Escuchador global para cerrar el modal de éxito de pago
     document.addEventListener("click", (e) => {
         if (e.target.closest("#pagoConfirmado")) {
             if (sombreado) sombreado.classList.remove("aparecerSombreado");
             
-            const pagoConfirm = document.querySelector(".confirmacion__pago");
-            if (pagoConfirm) pagoConfirm.innerHTML = ""; 
+            // 🌟 SOLUCIÓN DE CIERRE: Vaciamos explícitamente el contenedor donde inyectaste el componente
+            const contenedorModal = document.querySelector("#confirmacionPago");
+            if (contenedorModal) {
+                contenedorModal.innerHTML = ""; 
+            }
             
-            // Solo renderizar el carrito si la función existe en el contexto actual
+            // También vaciamos la clase interna por si acaso estructural
+            const pagoConfirmClass = document.querySelector(".confirmacion__pago");
+            if (pagoConfirmClass) {
+                pagoConfirmClass.innerHTML = ""; 
+            }
+            
+            // Si es flujo de carrito, refrescamos el estado dinámico
             if (typeof rederizarCarrito === "function" && document.querySelector("#mostrarCompra")) {
+                // Volvemos a hacer visible el contenedor principal para que muestre el mensaje de "Carrito Vacío"
+                if (contenedorCarrito) {
+                    contenedorCarrito.style.display = "block";
+                    contenedorCarrito.innerHTML = "<div style='text-align:center; padding: 40px;'><h2>¡Gracias por tu compra!</h2><p>Tu pedido ha sido registrado con éxito en ModaS.</p></div>";
+                }
                 rederizarCarrito(); 
             } else {
-                // Si está en pedidos, recargar la vista para reflejar el nuevo estado
+                // En pedidos personalizados o fallas de contexto, recargar limpia todo perfectamente
                 window.location.reload();
             }
         }

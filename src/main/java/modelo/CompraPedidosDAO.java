@@ -25,7 +25,7 @@ public class CompraPedidosDAO {
             con = ClaseConexion.getConexion();
             con.setAutoCommit(false); 
 
-            // 1. Inserción en 'Carrito' (Conserva el Usuarios_id que tu tabla sí tiene)
+            // 1. Inserción en 'Carrito'
             String sqlCarrito = "INSERT INTO Carrito (Usuarios_id, Carrito_fechaCreacion) VALUES (?, CURDATE())";
             psCarrito = con.prepareStatement(sqlCarrito, Statement.RETURN_GENERATED_KEYS);
             psCarrito.setInt(1, idUsuario);
@@ -61,6 +61,8 @@ public class CompraPedidosDAO {
         catch (Exception e) {
             System.out.println("❌ Error al registrar el carrito temporal: " + e.getMessage());
             if (con != null) {
+                
+                
                 try { con.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             }
             return false;
@@ -90,13 +92,13 @@ public class CompraPedidosDAO {
         PreparedStatement psCerrarCarrito = null;
         ResultSet rsCar = null;
         ResultSet rsPed = null;
-        ResultSet rsDetId = null;
+        ResultSet rsDetId = null; // 🌟 Movido al bloque seguro para evitar fugas de memoria
 
         try {
             con = ClaseConexion.getConexion();
             con.setAutoCommit(false); 
 
-            // 1. Usamos el idUsuario de la sesión para buscar cuál es su carrito activo actual
+            // 1. Buscar cuál es su carrito activo actual
             String sqlGetCarrito = "SELECT Carrito_id FROM Carrito WHERE Usuarios_id = ? AND Carrito_Estado = 'activo' ORDER BY Carrito_id DESC LIMIT 1";
             psGetCarrito = con.prepareStatement(sqlGetCarrito);
             psGetCarrito.setInt(1, idUsuario);
@@ -115,7 +117,7 @@ public class CompraPedidosDAO {
                 totalCompra += prod[2]; 
             }
 
-            // 3. Inserción en 'Pedidos' (SE REMOVIÓ EL USUARIO DE AQUÍ)
+            // 3. Inserción en 'Pedidos'
             String sqlPedido = "INSERT INTO Pedidos (Pedido_TipoPedido, Pedido_MetodoPago, Pedido_FechaInicio, "
                              + "Pedido_TelefonoContacto, Pedido_Direccion, Pedido_Estado, Pedido_TotalCompra) "
                              + "VALUES (?, ?, CURDATE(), ?, ?, 'Pendiente', ?)";
@@ -141,17 +143,6 @@ public class CompraPedidosDAO {
 
             String sqlStock = "UPDATE Prendas SET Prenda_stock = Prenda_stock - ? WHERE Prenda_id = ?";
             psStock = con.prepareStatement(sqlStock);
-            
-            
-            HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
-            historialDAO.registrarAccion(
-                idUsuario,
-                "COMPRA_CATALOGO",
-                "Pedidos",
-                idPedidoGenerado, // El ID que recuperamos de las llaves generadas
-                "El usuario confirmó y pagó una compra de prendas desde el catálogo estándar."
-            );
-            
 
             String sqlGetDetalleId = "SELECT DetallesCarrito_Id FROM DetallesCarrito WHERE Carrito_id = ? AND Prendas_id = ?";
             psGetDetalleId = con.prepareStatement(sqlGetDetalleId);
@@ -169,7 +160,7 @@ public class CompraPedidosDAO {
                 if (rsDetId.next()) {
                     idDetalleCarrito = rsDetId.getInt("DetallesCarrito_Id");
                 }
-                rsDetId.close(); 
+                rsDetId.close(); // Se cierra tras su uso en ciclo
 
                 if (idDetalleCarrito > 0) {
                     psDetallePed.setInt(1, idPedidoGenerado);
@@ -185,26 +176,42 @@ public class CompraPedidosDAO {
             psDetallePed.executeBatch();
             psStock.executeBatch();
 
-            // 5. El carrito pasa a estar 'comprado', protegiendo los datos históricos
+            // 5. El carrito pasa a estar 'comprado'
             String sqlCerrarCarrito = "UPDATE Carrito SET Carrito_Estado = 'comprado' WHERE Carrito_id = ?";
             psCerrarCarrito = con.prepareStatement(sqlCerrarCarrito);
             psCerrarCarrito.setInt(1, idCarritoActivo);
             psCerrarCarrito.executeUpdate();
 
+            // 🌟 6. Escribir en el historial compartiendo de forma segura la misma transacción ('con')
+            HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
+            historialDAO.registrarAccion(
+                con, // 👈 Pasamos la conexión activa aquí
+                idUsuario,
+                "COMPRA_CATALOGO",
+                "Pedidos",
+                idPedidoGenerado, 
+                "El usuario confirmó y pagó una compra de prendas desde el catálogo estándar."
+            );
+
             con.commit(); 
             System.out.println("🚀 Pedido #" + idPedidoGenerado + " registrado con éxito usando relaciones normalizadas.");
             return true;
 
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             System.out.println("❌ Error al confirmar el pedido final: " + e.getMessage());
             if (con != null) {
                 try { con.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             }
             return false;
-        } finally {
+        } 
+        
+        finally {
             try {
                 if (rsCar != null) rsCar.close();
                 if (rsPed != null) rsPed.close();
+                if (rsDetId != null) rsDetId.close(); // 🌟 Cierre preventivo
                 if (psGetCarrito != null) psGetCarrito.close();
                 if (psPedido != null) psPedido.close();
                 if (psGetDetalleId != null) psGetDetalleId.close();
@@ -212,7 +219,9 @@ public class CompraPedidosDAO {
                 if (psStock != null) psStock.close(); 
                 if (psCerrarCarrito != null) psCerrarCarrito.close();
                 if (con != null) con.close();
-            } catch (Exception e) { e.printStackTrace(); }
+            } 
+            
+            catch (Exception e) { e.printStackTrace(); }
         }
     }
     
@@ -245,7 +254,7 @@ public class CompraPedidosDAO {
                 throw new Exception("La cotización proporcionada no existe.");
             }
 
-            // 2. Inserción en 'Pedidos' (SE REMOVIÓ EL USUARIO DE AQUÍ TAMBIÉN)
+            // 2. Inserción en 'Pedidos'
             String sqlPedido = "INSERT INTO Pedidos (Pedido_TipoPedido, Pedido_MetodoPago, Pedido_FechaInicio, "
                              + "Pedido_TelefonoContacto, Pedido_Direccion, Pedido_Estado, Pedido_TotalCompra) "
                              + "VALUES (?, ?, CURDATE(), ?, ?, 'Pendiente', ?)";
@@ -264,7 +273,7 @@ public class CompraPedidosDAO {
                 idPedidoGenerado = rsPed.getInt(1);
             }
 
-            // 3. Vincular el pedido con la cotización (A través de ella se llegará al usuario mediante JOINs)
+            // 3. Vincular el pedido con la cotización
             String sqlDetallePed = "INSERT INTO DetallesPedidos (Pedido_id, DetallesCarrito_id, CotizacionPedido_id, Detalles_PrecioTotal) "
                                  + "VALUES (?, NULL, ?, ?)";
             
@@ -274,8 +283,10 @@ public class CompraPedidosDAO {
             psDetallePed.setDouble(3, totalCompra);
             psDetallePed.executeUpdate();
             
+            // 🌟 4. Escribir en el historial compartiendo de forma segura la misma transacción ('con')
             HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
             historialDAO.registrarAccion(
+                con, // 👈 Pasamos la conexión activa aquí
                 idUsuario,
                 "COMPRA_MEDIDA",
                 "Pedidos",
@@ -287,13 +298,17 @@ public class CompraPedidosDAO {
             System.out.println("🧵 Éxito: Cotización #" + idCotizacion + " convertida en Pedido #" + idPedidoGenerado + " sin alterar el esquema.");
             return true;
 
-        } catch (Exception e) {
-            System.out.println("❌ Error en la confirmación del Pedido a Medida: " + e.getMessage());
+        } 
+        
+        catch (Exception e) {
+            System.out.println("❌ Error en la confirmation del Pedido a Medida: " + e.getMessage());
             if (con != null) {
                 try { con.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             }
             return false;
-        } finally {
+        } 
+        
+        finally {
             try {
                 if (rs != null) rs.close();
                 if (rsPed != null) rsPed.close();
@@ -305,9 +320,7 @@ public class CompraPedidosDAO {
         }
     }
 
-    // ==========================================================================
-    // 🚪 BORRADO LÓGICO: MARCAR CARRITOS ANTERIORES COMO ABANDONADOS
-    // ==========================================================================
+    //Cambiar estados de carrito como abandonados
     public boolean limpiarCarritoAbandono(int idUsuario) {
         Connection con = null;
         PreparedStatement psUpdateCarrito = null;

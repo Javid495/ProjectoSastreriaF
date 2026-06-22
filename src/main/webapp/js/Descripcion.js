@@ -64,10 +64,11 @@ function cargarResenasPrenda(prendaId) {
                 const card = document.createElement("article");
                 card.className = "resenas__card";
                 
-                // 🌟 Pintamos la imagen de la reseña de forma dinámica si el objeto la trae de la BD
+                // 🌟 CORRECCIÓN AQUÍ: Usamos 'imagenResena' que es el nombre que genera Gson
+                // Además, validamos que no sea la imagen por defecto para que no sature la interfaz
                 let htmlImagen = "";
-                if (r.rutaImagen && r.rutaImagen !== "") {
-                    htmlImagen = `<img src="${urlBase}/${r.rutaImagen}" alt="Imagen de reseña" class="resenas__img" style="max-width: 150px; display: block; margin-top: 10px; border-radius: 5px;">`;
+                if (r.imagenResena && r.imagenResena !== "" && r.imagenResena !== "images/Resenas/default.png") {
+                    htmlImagen = `<img src="${urlBase}/${r.imagenResena}" alt="Imagen de reseña" class="resenas__img" style="max-width: 150px; display: block; margin-top: 10px; border-radius: 5px;">`;
                 }
 
                 card.innerHTML = `
@@ -84,14 +85,18 @@ function cargarResenasPrenda(prendaId) {
 // Evento para enviar el comentario y la imagen al Servlet
 btnPublicar.addEventListener("click", (e) => {
     e.preventDefault();
+    
     const textoComentario = cajaComentario.value.trim();
 
-    if (!textoComentario) {
-        alert("Por favor, escribe un comentario antes de publicar.");
-        return;
+    // 🛡️ VALIDACIÓN DE CLIENTE ENREJADA: No permite enviar si el texto está vacío
+    // Da igual si seleccionaron una foto; sin texto la reseña es inválida.
+    if (!textoComentario || textoComentario === "") {
+        alert("Por favor, escribe un comentario descriptivo. La opinión de texto es obligatoria.");
+        cajaComentario.focus();
+        return; // 🚏 Frena el envío inmediatamente
     }
 
-    // 🌟 CAMBIO CLAVE: Usamos FormData en lugar de URLSearchParams para soportar archivos
+    // Usamos FormData para empaquetar de forma nativa datos mixtos (texto + binarios)
     const formData = new FormData();
     formData.append("prendaId", productoId);
     formData.append("comentario", textoComentario);
@@ -103,9 +108,7 @@ btnPublicar.addEventListener("click", (e) => {
 
     fetch(`${urlBase}/ResenasController`, {
         method: "POST",
-        // ⚠️ ¡CRÍTICO!: Eliminamos la cabecera 'Content-Type'. 
-        // Al enviar un FormData, el navegador configura automáticamente el Content-Type 
-        // correcto junto con el identificador boundary requerido por los Servlets.
+        // Recordatorio: NO agregues headers de Content-Type aquí, deja que FormData calcule su boundary.
         body: formData
     })
     .then(async res => {
@@ -115,16 +118,20 @@ btnPublicar.addEventListener("click", (e) => {
     })
     .then(data => {
         alert(data.message);
+        
+        // Limpieza de campos al finalizar con éxito
         cajaComentario.value = ""; 
-        if (inputImagen) inputImagen.value = ""; // Limpiamos el selector de archivos
-        if (nombreArchivo) nombreArchivo.textContent = ""; // Limpiamos el texto informativo
+        if (inputImagen) inputImagen.value = ""; 
+        if (nombreArchivo) nombreArchivo.textContent = ""; 
         
         sombreado.classList.remove("cuerpo--opaco");
         ventEmergent.classList.remove("mostrarResena");
         
+        // Recargar las opiniones actualizadas de la prenda
         cargarResenasPrenda(productoId);
     })
     .catch(err => {
+        console.error("Error al procesar la reseña:", err);
         alert(err.message); 
     });
 });

@@ -149,29 +149,56 @@ body{
 
 /* Estilos de reseñas */
 
-.product--resenas{
-  margin-top: 1em;
+.product--resenas {
+    margin-top: 2rem;
+}
+
+/* Contenedor donde se van a renderizar todas tus tarjetas */
+.resenas {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
 }
 
 .resenas__card {
-  background-color: var(--color-secundario);
-  padding: 1rem;
-  border-radius: var(--radio-card);
-  text-align: center;
-  width: 45vh;
-  height: 9rem;
-  max-height: 20em;
+    background-color: var(--color-secundario);
+    padding: 1.25rem;
+    border-radius: var(--radio-card);
+    text-align: left;      /* 🌟 Cambiado a 'left' para una lectura natural cuando hay fotos */
+    width: 100%;
+    max-width: 460px;      /* Controla el ancho máximo en pantallas grandes */
+    height: auto;          /* 🌟 SOLUCIÓN CRÍTICA: Cambiado de 9rem a 'auto' para que crezca según el contenido */
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Suaviza el diseño visual */
 }
 
-.resenas__user{
-  font-size: 0.95rem;
+.resenas__user {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--color-letra);
 }
 
-.resenas__comentario{
-  margin-top: 20px;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-  font-size: 15px;
+.resenas__comentario {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--color-letra);
+    margin: 0;             /* Limpiamos márgenes fijos que puedan empujar elementos fuera de tiempo */
+    word-break: break-word; /* Evita que palabras exageradamente largas rompan la tarjeta */
+}
+
+/* 🌟 NUEVA CLASE: Controla el diseño de la imagen integrada de manera responsiva */
+.resenas__img {
+    max-width: 180px;      /* Tamaño ideal para que no sature la tarjeta */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
 }
 
 

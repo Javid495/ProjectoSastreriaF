@@ -11,23 +11,23 @@ public class HistorialUsuarioDAO {
      * MÈTODO 1: Registrar una acción (Escritura)
      * Se invoca desde otros DAOs o Servlets tras una transacción exitosa.
      */
-    public boolean registrarAccion(int usuarioId, String accion, String tabla, int registroId, String descripcion) {
+    public boolean registrarAccion(Connection con, int usuarioId, String accion, String tabla, int registroId, String descripcion) {
         String sql = "INSERT INTO HistorialUsuario (Usuarios_id, HistorialAccion, HistoriaTablaAfectada, "
                    + "HistorialRegistroAfectado_id, HistorialDescripcion) VALUES (?, ?, ?, ?, ?)";
-        
-        try (Connection con = ClaseConexion.getConexion(); // Reemplaza por tu método de conexión
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
+        // porque si lo hacemos, cerraríamos la conexión del RegistroDAO antes de tiempo.
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, usuarioId);
             ps.setString(2, accion);
             ps.setString(3, tabla);
             ps.setInt(4, registroId);
             ps.setString(5, descripcion);
-            
+
             return ps.executeUpdate() > 0;
-            
+
         } catch (SQLException e) {
-            System.err.println("Error al escribir en HistorialUsuario: " + e.getMessage());
+            System.err.println("Error al escribir en HistorialUsuario con transacción: " + e.getMessage());
             return false;
         }
     }
@@ -66,4 +66,7 @@ public class HistorialUsuarioDAO {
         }
         return lista;
     }
+    
+    
+    
 }

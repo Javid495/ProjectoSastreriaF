@@ -9,7 +9,7 @@ public class Registro {
     private String email;
     private String usuario;
     private String contrasena;
-    private int telefono;
+    private long telefono;
     
     
     public Registro() {}
@@ -25,7 +25,7 @@ public class Registro {
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email=email; }
     
-    public int getTelefono() {return telefono;}
-    public void setTelefono(int telefono) {this.telefono= telefono; }
+    public long getTelefono() {return telefono;}
+    public void setTelefono(long telefono) {this.telefono= telefono; }
     
 }

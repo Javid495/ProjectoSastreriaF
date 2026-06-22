@@ -1,10 +1,11 @@
-use ModaS;
+use ModaSv1;
 
 -- Tablas Generales
 SELECT * FROM Registro;
 SELECT * FROM Permisos_Roles;
 SELECT * FROM Usuarios;
 select * from Historial_PrendasRecientes;
+select * from Resenas;
 SELECT * FROM Categoria;
 SELECT * FROM Prendas;
 SELECT * FROM Populares;

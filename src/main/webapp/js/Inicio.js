@@ -2,14 +2,9 @@ import { aparecerCont } from "../helpers/RelizarPeticion.js";
 import { comprobarSesion } from "../helpers/ComprobarSesion.js";
 import { crearCards } from "../helpers/Cards.js"; 
 
-// Agregamos 'async' a la función flecha para poder usar 'await' dentro
 document.addEventListener("DOMContentLoaded", async () => {
-    
-    // Corregido: Se eliminó e.preventDefault() ya que DOMContentLoaded no maneja eventos de envío o recarga.
     await aparecerCont("./");
-    
     comprobarSesion("./");
-    
     cargarPrendasPopulares();
 });
 
@@ -22,14 +17,12 @@ async function cargarPrendasPopulares() {
             throw new Error("Error al obtener los productos populares");
         }
         
-
         const prendas = await response.json();
         
         const contenedorCards = document.querySelector(".popular__cards");
         if (!contenedorCards) return;
 
-        // 🔥 ESTRATEGIA SEGURA: Eliminamos SOLO las tarjetas estáticas antiguas 
-        // para NO borrar por accidente el botón izquierdo (.button-left)
+        // ESTRATEGIA SEGURA: Eliminamos SOLO las tarjetas estáticas antiguas 
         const tarjetasAntiguas = contenedorCards.querySelectorAll(".card");
         tarjetasAntiguas.forEach(tarjeta => tarjeta.remove());
 
@@ -41,12 +34,14 @@ async function cargarPrendasPopulares() {
             return;
         }
 
-        // 1. Traemos el carrito actual para calcular existencias reales
+        // Traemos el carrito actual para calcular existencias reales
         const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
 
+        // 🌟 LA SOLUCIÓN: Un solo ciclo unificado para procesar y pintar cada tarjeta UNA VEZ
         prendas.forEach(prendaOriginal => {
-            // 2. Clonamos y calculamos el stock disponible en base al carrito
+            // Clonamos y calculamos el stock disponible en base al carrito
             let prendaModificada = { ...prendaOriginal };
+            
             const unidadesEnCarrito = carrito.reduce((sum, item) => {
                 return (item.idPrenda === prendaOriginal.id || item.nombre === prendaOriginal.nombre) ? sum + item.cantidad : sum;
             }, 0);
@@ -54,21 +49,12 @@ async function cargarPrendasPopulares() {
             const stockDisponibleReal = prendaOriginal.stock - unidadesEnCarrito;
             prendaModificada.stock = stockDisponibleReal < 0 ? 0 : stockDisponibleReal;
 
-            // 3. Pasamos la prenda con el stock corregido a tu módulo
+            // Pasamos la prenda con el stock corregido a tu módulo y la inyectamos
             const tarjetaElemento = crearCards(prendaModificada, true); 
             contenedorCards.appendChild(tarjetaElemento);
         });
 
-        // 2. Renderizado dinámico utilizando tu función helper adaptada
-        prendas.forEach(prenda => {
-            // Pasamos 'true' como segundo parámetro indicando que estamos en la RAÍZ del proyecto
-            const tarjetaElemento = crearCards(prenda, true);
-            
-            // Insertamos la tarjeta limpia dentro del riel
-            contenedorCards.appendChild(tarjetaElemento);
-        });
-
-        // 3. Activamos el movimiento físico del carrusel una vez los elementos ya existen
+        // Activamos el movimiento físico del carrusel una vez los elementos ya existen
         inicializarMovimientoCarrusel();
 
     } catch (error) {
@@ -81,10 +67,11 @@ async function cargarPrendasPopulares() {
  */
 function inicializarMovimientoCarrusel() {
     const btnIzquierdo = document.querySelector(".button-left");
-    const btnDerecho = document.querySelector(".button-right"); // 👈 Asegúrate de que tenga la 'd' final
+    const btnDerecho = document.querySelector(".button-right"); 
     const contenedorCards = document.querySelector(".popular__cards");
 
-    if (!btnIzquierdo || !btnDerecho || !contenedorCards) retur
+    // 🌟 Corregido: Se completó el 'return' que estaba cortado como 'retur'
+    if (!btnIzquierdo || !btnDerecho || !contenedorCards) return;
 
     // Calculamos dinámicamente cuánto scroll mover basándonos en el ancho de una tarjeta física
     const calcularDesplazamiento = () => {

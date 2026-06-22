@@ -47,6 +47,7 @@ function inicializarPerfil() {
     const userAvatar = document.getElementById("user-avatar");
 
     let avatarSeleccionadoRuta = "";
+    let avatarParaGuardar = ""; // 🌟 Almacenará la ruta limpia (sin "../") lista para ir a la BD
 
     // --- CARGAR DATOS DESDE EL SERVLET ---
     fetch("../PerfilUsuario")
@@ -55,18 +56,17 @@ function inicializarPerfil() {
             return res.json();
         })
         .then(perfil => {
-            // Sincronizamos la información del perfil del usuario con el DOM
             viewUsername.textContent = perfil.nombre || "Sin nombre";
             viewPhone.textContent = perfil.telefono || "XXXXXXXXXX";
             viewEmail.textContent = perfil.correo || "Sin correo";
 
-            // Validamos si el usuario posee un avatar personalizado guardado en BD
+            // Guardamos el estado inicial que viene del servidor
+            avatarParaGuardar = perfil.imagenAvatar || "images/Perfil/Ellipse 14.png";
+
             if (perfil.imagenAvatar && perfil.imagenAvatar.trim() !== "") {
-                // Si la ruta viene desde la raíz de BD, evaluamos si necesita anteponerse el "../"
                 userAvatar.src = perfil.imagenAvatar.startsWith("images") ? "../" + perfil.imagenAvatar : perfil.imagenAvatar;
             }
 
-            // Ejecutamos el renderizado dinámico con las listas reales enviadas por el DAO
             pintarProductosRecientes(perfil.productosRecientes);
             pintarHistorialPedidos(perfil.historialPedidos);
         })
@@ -99,6 +99,16 @@ function inicializarPerfil() {
                 </div>
             `;
             contenedor.innerHTML += cardHTML;
+        });
+
+        // 🌟 ADICIONAL SOLICITADO: Agregar redirección dinámica con el ID al dar click
+        contenedor.querySelectorAll(".btn-detail").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const card = e.target.closest(".mini-card");
+                const idPrenda = card.dataset.id;
+                // Al estar en perfil.html (dentro de vistas), llamamos directo a la descripción
+                window.location.href = `DescripcionProducto.html?id=${idPrenda}`;
+            });
         });
     }
 
@@ -143,7 +153,8 @@ function inicializarPerfil() {
         viewState.classList.remove("profile-card--hidden");
     });
 
-    // Envío del Formulario con persistencia en el Servidor
+    // Envío del Formulario con persistencia total en el Servidor
+    // Envío del Formulario con persistencia total en el Servidor y Validaciones estrictas
     formProfile.addEventListener("submit", (e) => {
         e.preventDefault(); 
 
@@ -151,33 +162,50 @@ function inicializarPerfil() {
         const telefono = inputPhone.value.trim();
         const correo = inputEmail.value.trim();
 
-        const regexTelefono = /^\d{10}$/; 
-        const regexCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
-
+        // 1. VALIDACIÓN: Campos vacíos (Reforzada)
         if (nombre === "" || telefono === "" || correo === "") {
-            mostrarError("Error: Todos los campos son obligatorios.");
+            mostrarError("Error: Todos los campos son obligatorios y no pueden contener solo espacios.");
             return;
         }
 
+        // 2. VALIDACIÓN: Teléfono (Exactamente 10 dígitos)
+        const regexTelefono = /^\d{10}$/; 
         if (!regexTelefono.test(telefono)) {
             mostrarError("Error: El teléfono debe tener exactamente 10 dígitos numéricos.");
             return;
         }
 
-        if (!regexCorreo.test(correo)) {
-            mostrarError("Error: Por favor ingresa un correo válido (Ej: usuario@gmail.com u outlook).");
+        // 3. VALIDACIÓN: Estructura base del correo
+        const regexCorreo Estructura = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
+        if (!regexCorreoEstructura.test(correo)) {
+            mostrarError("Error: Por favor ingresa una estructura de correo válida (ejemplo@dominio.com).");
             return;
         }
 
+        // 4. VALIDACIÓN: Proveedores y extensiones permitidas (Whitelisting)
+        const dominioCorreo = correo.split("@")[1].toLowerCase();
+        const dominiosPermitidos = [
+            "gmail.com", 
+            "outlook.com", 
+            "hotmail.com", 
+            "yahoo.com", 
+            "icloud.com"
+        ];
+
+        if (!dominiosPermitidos.includes(dominioCorreo)) {
+            mostrarError("Error: El dominio '" + dominioCorreo + "' no está permitido. Usa un proveedor válido (Gmail, Outlook, Hotmail, Yahoo o iCloud).");
+            return;
+        }
+
+        // Si pasa todos los filtros, limpiamos errores y procedemos
         formErrorMsg.style.display = "none";
 
-        // Preparar parámetros URLencoded para enviar de forma nativa al doPost del Servlet
         const datosFormulario = new URLSearchParams();
         datosFormulario.append("nombre", nombre);
         datosFormulario.append("telefono", telefono);
         datosFormulario.append("correo", correo);
+        datosFormulario.append("imagenAvatar", avatarParaGuardar); 
 
-        // Enviamos la petición POST para actualizar el registro en la BD
         fetch("../PerfilUsuario", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -189,7 +217,6 @@ function inicializarPerfil() {
         })
         .then(respuesta => {
             if (respuesta.status === "success") {
-                // Si la BD guardó los datos con éxito, actualizamos la vista
                 viewUsername.textContent = nombre;
                 viewPhone.textContent = telefono;
                 viewEmail.textContent = correo;
@@ -230,7 +257,18 @@ function inicializarPerfil() {
     });
 
     btnSelectAvatar.addEventListener("click", () => {
-        if (avatarSeleccionadoRuta) userAvatar.src = avatarSeleccionadoRuta;
+        if (avatarSeleccionadoRuta) {
+            userAvatar.src = avatarSeleccionadoRuta;
+            
+            // 🌟 PROCESAMIENTO: Si la imagen seleccionada tiene '../images/...', 
+            // le quitamos el '../' para que se guarde de forma estándar en tu base de datos.
+            avatarParaGuardar = avatarSeleccionadoRuta.startsWith("../") 
+                ? avatarSeleccionadoRuta.replace("../", "") 
+                : avatarSeleccionadoRuta;
+
+            // 📢 AVISO AL USUARIO: Informamos que el cambio aún es temporal
+            alert("¡Icono seleccionado! Recuerda que para guardar permanentemente tu nueva foto de perfil, debes ingresar a las configuraciones (icono de engranaje ⚙️) y hacer clic en el botón 'Hecho'.");
+        }
         avatarModal.classList.add("avatar-modal--hidden");
     });
 }

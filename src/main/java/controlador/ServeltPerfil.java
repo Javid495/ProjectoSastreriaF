@@ -68,33 +68,35 @@ public class ServeltPerfil extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
+
         HttpSession session = request.getSession(false);
-        
-        // Corregimos también la validación del POST
+
         if (session == null || session.getAttribute("PerfilUsuario") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             out.print("{\"status\":\"error\",\"message\":\"Sesión expirada o inválida\"}");
             out.flush();
             return;
         }
-        
-        // Recuperamos el objeto y extraemos su ID para procesar el UPDATE
+
         IniciarSesion usuarioLog = (IniciarSesion) session.getAttribute("PerfilUsuario");
         int usuarioId = usuarioLog.getId();
-        
+
         String nombre = request.getParameter("nombre");
         String telefono = request.getParameter("telefono");
         String correo = request.getParameter("correo");
-        
-        boolean modificado = usuarioDAO.actualizarPerfil(usuarioId, nombre, telefono, correo);
-        
+        String imagenAvatar = request.getParameter("imagenAvatar"); // 🌟 Atrapamos la ruta enviada por JS
+
+        // Enviamos el parámetro extra al DAO
+        boolean modificado = usuarioDAO.actualizarPerfil(usuarioId, nombre, telefono, correo, imagenAvatar);
+
         if (modificado) {
-            // Actualizamos los datos del objeto en sesión para que persistan los cambios en toda la app
+            
+            // Actualizamos de forma reactiva los datos en el objeto de sesión
             usuarioLog.setUsuario(nombre);
             usuarioLog.setEmail(correo);
             usuarioLog.setTelefono(telefono);
-            
+            usuarioLog.setImagen(imagenAvatar); // 🌟 Sincronizamos el nuevo avatar en sesión
+
             out.print("{\"status\":\"success\",\"message\":\"Información guardada con éxito\"}");
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

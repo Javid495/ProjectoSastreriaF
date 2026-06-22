@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement; // 👈 Asegúrate de importar esto
+import java.sql.Statement; 
 import getsSets.Registro;
 
 public class RegistroDAO {
@@ -18,14 +18,16 @@ public class RegistroDAO {
         
         try {
             con = ClaseConexion.getConexion();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Iniciamos la burbuja transaccional
             
             // 1. Insertar en la tabla Registro
             try(PreparedStatement psReg = con.prepareStatement(sqlRegistro, Statement.RETURN_GENERATED_KEYS)){
                 psReg.setString(1, user.getUsuario());
                 psReg.setString(2, user.getContrasena());
                 psReg.setString(3, user.getEmail());
-                psReg.setString(4, String.valueOf(user.getTelefono())); // Si teléfono es String o int conviértelo según corresponda
+                
+                // 🌟 CORREGIDO: Usamos setLong directo para que sea compatible con el BIGINT de la BD
+                psReg.setLong(4, user.getTelefono()); 
             
                 int filasReg = psReg.executeUpdate(); 
             
@@ -33,9 +35,9 @@ public class RegistroDAO {
                     ResultSet rs = psReg.getGeneratedKeys();
                 
                     if (rs.next()){
-                        int lastRegistroId = rs.getInt(1); // ID de la tabla Registro
+                        int lastRegistroId = rs.getInt(1); 
                         
-                        // 2. Insertar en la tabla Usuarios obteniendo SU PROPIO ID GENERADO 👈 (Cambio Crítico)
+                        // 2. Insertar en la tabla Usuarios obteniendo SU PROPIO ID GENERADO
                         try(PreparedStatement psUser = con.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)){
                         
                             psUser.setInt(1, lastRegistroId);
@@ -45,11 +47,13 @@ public class RegistroDAO {
                             if (filasUser > 0) {
                                 ResultSet rsUser = psUser.getGeneratedKeys();
                                 if (rsUser.next()) {
-                                    int idUsuarioVerdadero = rsUser.getInt(1); // 🌟 ¡Este es el Usuarios_id real!
+                                    int idUsuarioVerdadero = rsUser.getInt(1); 
                                     
-                                    // 3. Registrar en la bitácora con privacidad e IDs correctos
+                                    // 3. Registrar en la bitácora compartiendo la MISMA CONEXIÓN
                                     HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
+                                    // 🌟 ¡Aquí está la magia! Le pasamos 'con' como primer parámetro
                                     historialDAO.registrarAccion(
+                                        con, 
                                         idUsuarioVerdadero, 
                                         "REGISTRO", 
                                         "Registro", 
@@ -62,16 +66,27 @@ public class RegistroDAO {
                     }
                 }
                 
+                // Si todo se ejecutó perfectamente dentro de la misma conexión, hacemos oficial la transacción
                 con.commit();
                 return true;
             }
   
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
+            // Si cualquiera de los 3 pasos falla, el rollback cancelará absolutamente todo
             if (con != null) {
                 try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
             System.err.println("Error en la transacción de registro: " + e.getMessage());
             return false;
         } 
+        
+        finally {
+            // Cerramos la conexión principal de manera segura al terminar
+            if (con != null) {
+                try { con.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
+        }
     }
 }

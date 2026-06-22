@@ -135,48 +135,117 @@ BtnRealizarP.addEventListener("click", async () => {
     await llamarComponente("#MostraPedido" , "../componentesWeb/FormularioPedidos.html");
 });
 
-// 🚀 ESCUCHADOR DE SUBMIT: Registro de solicitudes personalizadas
+// 🚀 ESCUCHADOR DE SUBMIT: Registro de solicitudes personalizadas con validaciones estrictas
 document.addEventListener("submit", async (evento) => {
     if (evento.target.matches("#form-solicitud-personalizada")) {
         evento.preventDefault();
         
         const formulario = evento.target;
-        const formData = new FormData();
 
-        formData.append("tipoPrenda", document.querySelector("#tipo-prenda").value);
-        formData.append("telas", document.querySelector("#sugerencia-telas").value);
-        formData.append("talla", document.querySelector("#talla-prenda").value);
-        formData.append("descripcion", document.querySelector("#desc-pedido").value);
+        // 1. CAPTURA DE VALORES Y ELIMINACIÓN DE ESPACIOS
+        const tipoPrenda = document.querySelector("#tipo-prenda").value.trim();
+        const telas = document.querySelector("#sugerencia-telas").value.trim();
+        const talla = document.querySelector("#talla-prenda").value.trim();
+        const descripcion = document.querySelector("#desc-pedido").value.trim();
 
-        const inputsMedidas = document.querySelectorAll(".medidas-inputs .input-dark");
-        const arrayMedidas = [];
-        inputsMedidas.forEach(input => {
-            if(input.value) arrayMedidas.push(input.value);
-        });
-        formData.append("medidas", arrayMedidas.join(","));
-
-        const inputFile = document.querySelector("#file-upload");
-        if (inputFile.files.length > 0) {
-            formData.append("fotoReferencia", inputFile.files[0]);
+        // 2. VALIDACIÓN: Campos Generales Vacíos
+        if (tipoPrenda === "" || telas === "" || talla === "" || descripcion === "") {
+            alert("❌ Todos los campos principales (Tipo de prenda, Telas, Categoría/Talla y Descripción) son obligatorios.");
+            return;
         }
 
-        fotosReferenciaArr.forEach(archivo => {
-            if (archivo !== null) {
-                formData.append("fotoReferencia", archivo); 
+        // 3. VALIDACIÓN: Mínimo de caracteres para Tipo de Prenda
+        if (tipoPrenda.length < 5) {
+            alert("❌ El tipo de prenda es demasiado corto. Debe tener al menos 5 caracteres.");
+            return;
+        }
+
+        // 4. VALIDACIÓN: Mínimo de caracteres para la Tela (Igual que el tipo de prenda)
+        if (telas.length < 5) {
+            alert("❌ El campo de tela/material debe tener al menos 5 caracteres.");
+            return;
+        }
+
+        // 5. VALIDACIÓN: No saltarse la categoría/talla (Control de placeholders por defecto)
+        if (talla.toLowerCase() === "seleccionar" || talla === "0" || talla === "") {
+            alert("❌ Por favor, selecciona una categoría o talla válida de la lista.");
+            return;
+        }
+
+        // 6. VALIDACIÓN: Descripción con letras reales
+        const regexLetras = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/;
+        if (!regexLetras.test(descripcion)) {
+            alert("❌ La descripción no es válida. Debe contener letras explicativas sobre el diseño.");
+            return;
+        }
+
+        // 7. VALIDACIÓN: Medidas numéricas estrictas entre 30 y 200
+        const inputsMedidas = document.querySelectorAll(".medidas-inputs .input-dark");
+        const arrayMedidas = [];
+        let medidasValidas = true;
+
+        if (inputsMedidas.length === 0) {
+            alert("❌ No se encontraron campos de medidas configurados en el formulario.");
+            return;
+        }
+
+        for (let input of inputsMedidas) {
+            const valorMedida = input.value.trim();
+            
+            // Verificar que no se envíen vacías
+            if (valorMedida === "") {
+                alert("❌ Todas las casillas de medidas son obligatorias.");
+                medidasValidas = false;
+                break;
             }
+
+            const numero = Number(valorMedida);
+
+            // Verificar que sea un número real y esté en el rango de 30 a 200
+            if (isNaN(numero) || numero < 30 || numero > 200) {
+                alert(`❌ Medida inválida (${valorMedida}). Recuerda que las medidas deben ser únicamente números enteros entre 30 y 200 cm.`);
+                medidasValidas = false;
+                break;
+            }
+
+            arrayMedidas.push(numero);
+        }
+
+        if (!medidasValidas) return; // Frena el envío si alguna medida falló
+
+        // 8. VALIDACIÓN: Imagen de referencia obligatoria (Que no pase sin foto)
+        // Filtramos las fotos reales que no sean 'null' dentro del almacén temporal
+        const fotosReales = fotosReferenciaArr.filter(archivo => archivo !== null);
+        
+        if (fotosReales.length === 0) {
+            alert("❌ La imagen de referencia es obligatoria. Por favor, sube al menos una foto o boceto de tu diseño.");
+            return;
+        }
+
+        // --- SI PASA TODAS LAS VALIDACIONES, SE CREA EL FORMDATA Y SE ENVÍA ---
+        const formData = new FormData();
+        formData.append("tipoPrenda", tipoPrenda);
+        formData.append("telas", telas);
+        formData.append("talla", talla);
+        formData.append("descripcion", descripcion);
+        formData.append("medidas", arrayMedidas.join(","));
+
+        // Adjuntamos las fotos validadas al FormData
+        fotosReales.forEach(archivo => {
+            formData.append("fotoReferencia", archivo); 
         });
 
         fetch(`${urlBase}/RegistrarPedidoMedida`, {
             method: "POST",
             body: formData
         })
-// ... (El resto del fetch e interacciones se mantienen igual) ...
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert("¡Tu solicitud de diseño ha sido enviada con éxito!");
                 document.querySelector("#MostraPedido").innerHTML = ""; 
                 MostrarPedidosUser(); 
+                fotosReferenciaArr = []; // Vaciamos el array para el próximo pedido
             } else {
                 alert("Error al procesar la solicitud: " + data.mensaje);
             }

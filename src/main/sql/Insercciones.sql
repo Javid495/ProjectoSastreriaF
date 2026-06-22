@@ -1,4 +1,4 @@
-USE ModaS;
+USE ModaSv1;
 
 -- Usuarios y roles
 INSERT INTO Registro(Registro_id, Registro_Usuario, Registro_Contraseña, Registro_Email, Registro_Telefono) VALUES 

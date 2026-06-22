@@ -1,16 +1,16 @@
 -- creacion de la base de datos de proyecto llamado moda suescun
-create database ModaS;
+create database ModaSv1;
 
 -- uso de la base de datos ModaS
-use ModaS;
+use ModaSv1;
 
 -- Creacion de tabla de registros usuarios : Solicitar la informacion de nuevos clientes 
 create table Registro(
 	Registro_id int auto_increment not null primary key,
-    Registro_Usuario char(10) not null,
-    Registro_Contraseña char(10) not null,
+    Registro_Usuario varchar(50) not null,
+    Registro_Contraseña varchar(50) not null,
     Registro_Email varchar(50) not null,
-    Registro_Telefono char(10) not null
+    Registro_Telefono bigint not null
 );
 
 -- Tabla de permisos de usuarios : Administar y asignar los permisos segun el tipo de uusario
@@ -26,6 +26,8 @@ create table Usuarios (
 	Usuarios_id int primary key auto_increment,
     Registro_id int, 
     Permisos_roles_id int,
+    
+    
     -- Datos Opcionales que los clientes podran completar una vez ingresen a su perfil
     Usuario_imagen varchar(50) null default "images\Perfil\Ellipse 14.png",
     foreign key (Registro_id) references Registro(Registro_id),
@@ -82,8 +84,8 @@ create table Resenas(
 	Resena_id int auto_increment primary key not null,
 	Usuarios_id int not null,
     Prenda_id int not null,
-    Resena_descripcion text null,
-    Reseña_Imagen text not null,
+    Resena_descripcion text not null,
+    Reseña_Imagen text null,
     foreign key (Usuarios_id) references Usuarios(Usuarios_id),
     foreign key (Prenda_id) references Prendas(Prenda_id)
 );

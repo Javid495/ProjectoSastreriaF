@@ -4,22 +4,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import getsSets.DetallesPedidoMedida;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import getsSets.DetallesPedidoMedida;
 
+// DAO que maneja los pedidos a medida de los usuarios hecho desde cero
+public class PedidosMedidaDao {
 
-//Dao que maneja los pedidos a medida de los usuarios
-
-public class PedidosMedidaDao{
-
-public boolean registrarSolicitudMedida(DetallesPedidoMedida solicitud) {
+    // ==========================================================================
+    // 🧵 REGISTRAR SOLICITUD DESDE CERO CON BITÁCORA TRANSACCIONAL
+    // ==========================================================================
+    public boolean registrarSolicitudMedida(DetallesPedidoMedida solicitud) {
         String sql = "INSERT INTO DetallesPedidosMedida (Usuario_id, Detalles_medidas, Detalles_TPrenda, Detalles_Tela, Detalles_Descripcion, Detalles_ImagenReferencia) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
         
-        // Agregamos Statement.RETURN_GENERATED_KEYS para capturar el ID del Pedido a Medida
-        try (Connection con = ClaseConexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            con = ClaseConexion.getConexion();
+            con.setAutoCommit(false); // 🌟 Iniciamos la transacción para asegurar ambos inserts
             
+            ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, solicitud.getIdUsuario());
             ps.setString(2, solicitud.getMedidas());
             ps.setString(3, solicitud.getTipoPrenda());
@@ -30,47 +38,61 @@ public boolean registrarSolicitudMedida(DetallesPedidoMedida solicitud) {
             int filasAfectadas = ps.executeUpdate();
             
             if (filasAfectadas > 0) {
-                // Obtenemos el ID asignado a esta solicitud hecha desde cero
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        int idPedidoMedidaGenerado = rs.getInt(1);
-                        
-                        // Instanciamos el DAO de historial y registramos respetando la privacidad
-                        HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
-                        historialDAO.registrarAccion(
-                            solicitud.getIdUsuario(), 
-                            "PEDIDO_MEDIDA", 
-                            "DetallesPedidosMedida", 
-                            idPedidoMedidaGenerado, 
-                            "El usuario solicitó una cotización para un diseño personalizado hecho desde cero."
-                        );
-                    }
+                rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int idPedidoMedidaGenerado = rs.getInt(1);
+                    
+                    // 🌟 Reutilizamos la misma conexión activa 'con' para escribir en la bitácora
+                    HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
+                    historialDAO.registrarAccion(
+                        con, // 👈 Pasamos la conexión activa
+                        solicitud.getIdUsuario(), 
+                        "PEDIDO_MEDIDA", 
+                        "DetallesPedidosMedida", 
+                        idPedidoMedidaGenerado, 
+                        "El usuario solicitó una cotización para un diseño personalizado hecho desde cero."
+                    );
                 }
+                
+                // Si ambos pasos fueron exitosos, consolidamos los cambios en la BD
+                con.commit();
                 return true;
             }
+            
             return false;
            
         } catch (SQLException e) {
-            System.out.println("Error insertando pedido personalizado en ModaS: " + e.getMessage());
+            System.out.println("❌ Error insertando pedido personalizado en ModaS: " + e.getMessage());
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
             return false;
+        } finally {
+            // Cerramos de forma segura todos los recursos abiertos
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            } catch (SQLException e) { e.printStackTrace(); }
         }
     }
     
-    // Listar las cotizaciones listas y aprobadas por el sastre para un usuario específico
-    public java.util.List<String[]> listarCotizacionesUsuario(int idUsuario) {
-    java.util.List<String[]> lista = new java.util.ArrayList<>();
-    
-    // 🔑 Unimos la solicitud con su cotización correspondiente mediante INNER JOIN
+    // ==========================================================================
+    // 🔑 LISTAR LAS COTIZACIONES LISTAS Y APROBADAS POR EL SASTRE
+    // ==========================================================================
+    public List<String[]> listarCotizacionesUsuario(int idUsuario) {
+        List<String[]> lista = new ArrayList<>();
+        
         String sql = "SELECT dpm.Detalles_PedidoMedida_id, dpm.Detalles_TPrenda, dpm.Detalles_Tela, " +
-                    "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
-                    "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
-                    "FROM DetallesPedidosMedida dpm " +
-                    "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
-                    "WHERE dpm.Usuario_id = ? " +
-                    "ORDER BY cp.CotizacionPedido_Id DESC";
+                     "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
+                     "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
+                     "FROM DetallesPedidosMedida dpm " +
+                     "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
+                     "WHERE dpm.Usuario_id = ? " +
+                     "ORDER BY cp.CotizacionPedido_Id DESC";
 
         try (Connection con = ClaseConexion.getConexion();
-            PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
         
             ps.setInt(1, idUsuario);
             try (ResultSet rs = ps.executeQuery()) {
@@ -95,11 +117,9 @@ public boolean registrarSolicitudMedida(DetallesPedidoMedida solicitud) {
                     lista.add(fila);
                 }
             }
-        }   
-        catch (SQLException e) {
-            System.out.println("Error al listar cotizaciones del usuario: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("❌ Error al listar cotizaciones del usuario: " + e.getMessage());
         }
         return lista;
     }
-    
 }
