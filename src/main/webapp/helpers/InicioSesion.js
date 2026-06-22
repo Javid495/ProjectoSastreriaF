@@ -95,7 +95,7 @@ formulario.addEventListener("submit", async (e) => {
 
     } catch (error) {
         console.error("Error crítico en el proceso de Login:", error);
-        mostrarAlerta("📡 No se pudo conectar con el servidor de autenticación. Inténtalo más tarde.", "error");
+        mostrarAlerta("Nombre de usuario (Correo) o Contraseña incorrectos intentemos nuevamente ", "error");
         
         // Reactivamos el botón en caso de error de red para permitir reintentos
         if (botonSubmit) {

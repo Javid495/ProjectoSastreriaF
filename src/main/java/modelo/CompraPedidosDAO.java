@@ -283,7 +283,7 @@ public class CompraPedidosDAO {
             psDetallePed.setDouble(3, totalCompra);
             psDetallePed.executeUpdate();
             
-            // 🌟 4. Escribir en el historial compartiendo de forma segura la misma transacción ('con')
+            //4. Escribir en el historial compartiendo de forma segura la misma transacción ('con')
             HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
             historialDAO.registrarAccion(
                 con, // 👈 Pasamos la conexión activa aquí

@@ -176,7 +176,7 @@ function inicializarPerfil() {
         }
 
         // 3. VALIDACIÓN: Estructura base del correo
-        const regexCorreo Estructura = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
+        const regexCorreoEstructura = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
         if (!regexCorreoEstructura.test(correo)) {
             mostrarError("Error: Por favor ingresa una estructura de correo válida (ejemplo@dominio.com).");
             return;

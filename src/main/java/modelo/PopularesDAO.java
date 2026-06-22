@@ -68,6 +68,8 @@ public class PopularesDAO {
                      "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_descripcion, p.Prenda_estado " +
                      "ORDER BY visitas_totales DESC " +
                      "LIMIT ?";
+        
+        //Define  la tabla principal de prendas apartir del from prendsa
 
         try (Connection conn = ClaseConexion.getConexion()) {
             if (conn == null) return listaPopulares;
