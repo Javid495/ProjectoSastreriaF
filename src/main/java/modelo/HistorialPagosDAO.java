@@ -52,7 +52,7 @@ public class HistorialPagosDAO {
         
         // Revisa el nombre en el Camino A; si es NULL, 
         // toma el del Camino B. 
-            .
+            
         // MAX() asegura que la consulta sea compatible con las reglas estrictas de MySQL.
         "IFNULL(MAX(COALESCE(r_cat.Registro_Usuario, r_med.Registro_Usuario)), 'Cliente Temporal') AS usuario, " +
         
