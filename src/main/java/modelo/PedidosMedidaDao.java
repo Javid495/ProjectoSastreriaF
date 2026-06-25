@@ -83,15 +83,21 @@ public class PedidosMedidaDao {
     public List<String[]> listarCotizacionesUsuario(int idUsuario) {
         List<String[]> lista = new ArrayList<>();
         
+        //Consulta que me trae la infomacion de la prenda presonalizada de parte del usuario 
         String sql = "SELECT dpm.Detalles_PedidoMedida_id, dpm.Detalles_TPrenda, dpm.Detalles_Tela, " +
              "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
              "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
              "FROM DetallesPedidosMedida dpm " +
              "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
              "WHERE dpm.Usuario_id = ? " +
+             
+             //Si la Cotizacion ya fue aceptada no me las trae
+               
              "AND cp.CotizacionPedido_Id NOT IN ( " +
              "    SELECT dp.CotizacionPedido_id " +
              "    FROM DetallesPedidos dp " +
+                
+             // Esto indica que me traiga unicamente los detalles que sean a medida
              "    WHERE dp.CotizacionPedido_id IS NOT NULL " +
              ") " +
              "ORDER BY cp.CotizacionPedido_Id DESC";

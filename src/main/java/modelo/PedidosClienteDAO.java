@@ -86,6 +86,8 @@ public class PedidosClienteDAO {
             ps.setInt(1, idPedido);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    
+                    //Organiza los datos que me retorna la consulta anteriror
                     String[] registro = new String[5];
                     registro[0] = rs.getString("Prenda_nombre");
                     registro[1] = rs.getString("Prenda_valor");

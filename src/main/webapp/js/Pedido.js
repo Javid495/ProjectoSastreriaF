@@ -141,10 +141,17 @@ const CONFIG_PRENDAS = {
         medidas: ["Contorno de Cuello", "Contorno de Pecho", "Largo de Manga"],
         telas: ["Algodón Oxford", "Lino", "Popelina", "Fil-a-Fil"]
     },
+
+    saco: {
+        medidas: ["Contorno de Cuello", "Contorno de Pecho", "Largo de Manga"],
+        telas: ["Algodón Oxford", "Lino", "Popelina", "Fil-a-Fil"]
+    },
+
     pantalon: { // Captura 'pantalon' o 'pantalones'
         medidas: ["Contorno de Cintura", "Contorno de Cadera", "Largo de Entrepierna"],
         telas: ["Dril", "Denim (Jean)", "Gabardina", "Paño de Lana"]
     },
+    
     vestido: {
         medidas: ["Contorno de Busto", "Contorno de Cintura", "Contorno de Cadera", "Largo Total del Vestido"],
         telas: ["Seda", "Satín", "Chifón", "Crepé", "Terciopelo"]

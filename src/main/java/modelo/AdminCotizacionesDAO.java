@@ -119,6 +119,8 @@ public class AdminCotizacionesDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
+                
+                //Organiza la estrutura de la consulta hecha anteriromente
                 String[] fila = new String[7];
                 fila[0] = String.valueOf(rs.getInt("Detalles_PedidoMedida_id"));
                 fila[1] = rs.getString("Registro_Email");
