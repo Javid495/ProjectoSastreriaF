@@ -87,10 +87,14 @@ public class ServeltAgregarprendas extends HttpServlet {
                 response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"No se pudo insertar el lote de prendas en la transacción.\"}");
             }
 
-        } catch (IllegalArgumentException e) {
+        } 
+        
+        catch (IllegalArgumentException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"" + e.getMessage() + "\"}");
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             System.out.println("Error crítico en ServeltAgregarprendas: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error interno en el servidor.\"}");

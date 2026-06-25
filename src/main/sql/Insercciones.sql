@@ -10,8 +10,9 @@ INSERT INTO Permisos_Roles(Permisos_Roles_id, Permisos_Rol, Permisos_Descripcion
 (2, "Administrador", "permisos para acceder a la interfaz principal de administrador", "admin");
 
 INSERT INTO Usuarios (Registro_id, Permisos_roles_id, Usuario_imagen) VALUES 
-(1, 2, "images/Perfil/Ellipse 14.png"), 
-(2, 1, "images/Perfil/Ellipse 14.png");
+(1, 2, "images/Perfil/Ellipse14.png"), 
+(2, 1, "images/Perfil/Ellipse14.png"),
+(3, 1, "images/Perfil/Ellipse14.png");
 
 -- Inserciones de Catalogo / Poulares / Imagenes
 INSERT INTO Categoria(Categoria_nombre, Categoria_Descripcion) VALUES 
@@ -31,7 +32,7 @@ INSERT INTO Populares(Prenda_id, Populares_visitas) VALUES
 (1, 30), (2, 20), (3, 25), (4, 20), (5, 25); -- 🔥 Corregido: Valores numéricos reales sin comillas
 
 INSERT INTO imagenes(Prenda_id, Imagenes_link) VALUES 
-(1, "/images/Rectangle38.png"), -- 🔥 Recomendado: Rutas relativas sin / inicial si manejas urlBase en JS
+(1, "/images/Rectangle38.png"), 
 (2, "/images/Rectangle38.png"), 
 (3, "/images/Rectangle35.png"),
 (4, "/images/Rectangle38.png"), 

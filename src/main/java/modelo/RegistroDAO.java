@@ -12,7 +12,9 @@ public class RegistroDAO {
     public boolean registrar(Registro user, int RolCliente){
     
         String sqlRegistro = "insert into Registro(Registro_Usuario ,Registro_Contraseña, Registro_Email, Registro_Telefono) values(?, ?, ?, ?)";
-        String sqlUsuario = "insert into Usuarios(Registro_id, Permisos_Roles_id) values (?, ?)";
+        
+        // 🛠️ MODIFICADO: Añadimos la columna Usuario_imagen a la consulta
+        String sqlUsuario = "insert into Usuarios(Registro_id, Permisos_Roles_id, Usuario_imagen) values (?, ?, ?)";
         
         Connection con = null;
         
@@ -26,7 +28,7 @@ public class RegistroDAO {
                 psReg.setString(2, user.getContrasena());
                 psReg.setString(3, user.getEmail());
                 
-                // 🌟 CORREGIDO: Usamos setLong directo para que sea compatible con el BIGINT de la BD
+                // Usamos setLong directo para que sea compatible con el BIGINT de la BD
                 psReg.setLong(4, user.getTelefono()); 
             
                 int filasReg = psReg.executeUpdate(); 
@@ -42,6 +44,10 @@ public class RegistroDAO {
                         
                             psUser.setInt(1, lastRegistroId);
                             psUser.setInt(2, RolCliente);
+                            
+                            // 🌟 NUEVO: Asignamos la ruta por defecto usando "/" para entorno Web seguro
+                            psUser.setString(3, "images/Perfil/Ellipse14.png");
+                            
                             int filasUser = psUser.executeUpdate();
                             
                             if (filasUser > 0) {
@@ -51,7 +57,6 @@ public class RegistroDAO {
                                     
                                     // 3. Registrar en la bitácora compartiendo la MISMA CONEXIÓN
                                     HistorialUsuarioDAO historialDAO = new HistorialUsuarioDAO();
-                                    // 🌟 ¡Aquí está la magia! Le pasamos 'con' como primer parámetro
                                     historialDAO.registrarAccion(
                                         con, 
                                         idUsuarioVerdadero, 

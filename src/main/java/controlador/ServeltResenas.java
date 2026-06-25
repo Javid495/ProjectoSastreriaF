@@ -79,16 +79,18 @@ public class ServeltResenas extends HttpServlet {
         }
 
         int idPrenda = 0;
+        
         try {
             idPrenda = Integer.parseInt(strPrendaId);
-        } catch (NumberFormatException e) {
+        } 
+        
+        catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"status\":\"error\",\"message\":\"El ID de la prenda es inválido.\"}");
             out.flush();
             return;
         }
         
-        // 🌟 PROCESAMIENTO REAL DE LA IMAGEN OPCIONAL
         String rutaImagenResena = "images/Resenas/default.png"; // Ruta por defecto
         
         try {
@@ -99,12 +101,15 @@ public class ServeltResenas extends HttpServlet {
                 // Define la ruta en tu servidor físico donde se guardarán las fotos
                 String uploadPath = getServletContext().getRealPath("") + File.separator + "images" + File.separator + "Resenas";
                 File uploadDir = new File(uploadPath);
+                
                 if (!uploadDir.exists()) uploadDir.mkdirs();
                 
                 filePart.write(uploadPath + File.separator + fileName);
                 rutaImagenResena = "images/Resenas/" + fileName; // Reemplazamos por la imagen real subida
             }
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             System.err.println("Aviso: No se subió imagen personalizada o falló su lectura, usando default. " + e.getMessage());
         }
 

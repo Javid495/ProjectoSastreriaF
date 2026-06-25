@@ -41,7 +41,9 @@ public class ServeltAdminCotizaciones extends HttpServlet {
             out.print("{\"cantidad\":" + cotizar + ", \"pedidosCotizar\":" + cotizar + ", \"nuevosPedidos\":" + nuevos + "}");
           
         // LISTAR COTIZACIONES PENDIENTES (A MEDIDA)
-        } else if ("listar".equals(accion)) {
+        } 
+        
+        else if ("listar".equals(accion)) {
             List<String[]> pendientes = dao.listarPedidosPorCotizar();
             StringBuilder json = new StringBuilder("[");
             
@@ -63,7 +65,9 @@ public class ServeltAdminCotizaciones extends HttpServlet {
             out.print(json.toString());
             
         // Verifica los productos que se encuentran bajos de stock
-        } else if ("bajoStock".equals(accion)) {
+        } 
+        
+        else if ("bajoStock".equals(accion)) {
             // Revisa en la tabla prendas todo lo que sea menor o igual a 5 unidades
             List<Prendas> bajoStock = dao.listarPrendasBajasStock(5);
             StringBuilder json = new StringBuilder("[");
@@ -74,7 +78,8 @@ public class ServeltAdminCotizaciones extends HttpServlet {
                 json.append("\"id\":").append(item.getId()).append(",");
                 json.append("\"nombre\":\"").append(escaparJSON(item.getNombre())).append("\",");
                 json.append("\"precio\":").append(item.getValor()).append(","); 
-                json.append("\"stock\":").append(item.getStock()).append(",");   
+                json.append("\"stock\":").append(item.getStock()).append(",");
+                json.append("\"talla\":\"").append(item.getTalla()).append("\",");
                 json.append("\"imagen\":\"").append(escaparJSON(item.getImagen())).append("\""); 
                 json.append("}");
                 

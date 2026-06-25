@@ -17,7 +17,7 @@
 }
 
 .btn--edicion{
-    position: absolute;
+    position: sticky;
     bottom: 5%;
     display: flex;
     gap: 90vh;

@@ -1,25 +1,19 @@
 import { llamarComponente } from "../helpers/CompHtml.js";
 import { rederizarCarrito } from "../js/CarritoCompra.js";
 
-/**
- * Procesa la confirmación de pago tanto para productos del catálogo como para cotizaciones personalizadas.
- * @param {string} tipoPedido - "Catalogo" o "A Medida"
- * @param {Object|null} datosCotizacion - { idCotizacion: number, precio: number } (Solo si es 'A Medida')
- */
 export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = null) {
     
-    // Detectar dinámicamente cuál contenedor está activo en el DOM actual
-    let contenedorCarrito = document.querySelector("#mostrarCompra");
-    if (!contenedorCarrito) {
-        contenedorCarrito = document.querySelector("#compraCarrito");
-    }
+    // 🌟 SEPARACIÓN DE SELECTORES: Ahora controlamos con precisión quirúrgica cada contenedor
+    const panelProductos = document.querySelector("#mostrarCompra"); // El fondo con las cards
+    const panelFormularioCompra = document.querySelector("#compraCarrito"); // El formulario flotante de pago
+    const contenedorConfirmacion = document.querySelector("#confirmacionPago"); // El modal de éxito
 
-    if (!contenedorCarrito) {
-        console.warn("No se encontró ningún contenedor de compra válido (#mostrarCompra o #compraCarrito)");
+    if (!panelFormularioCompra) {
+        console.warn("No se encontró el contenedor del formulario (#compraCarrito)");
         return; 
     }
 
-    // Elementos del DOM
+    // Elementos del DOM internos del formulario
     const txtTotal = document.querySelector("#MostrarTotal");
     const contenedorTelefono = document.querySelector("#contenedorTelefono");
     const inputTelefono = document.querySelector("#inputTelefono");
@@ -28,7 +22,6 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
     const btnNequi = document.querySelector("#btnNequi");
     const btnDaviplata = document.querySelector("#btnDaviplata");
     const btnConfirmar = document.querySelector("#ConfirmarCompra");
-
     const sombreado = document.querySelector(".sombreado");
 
     let metodoPagoSeleccionado = "";
@@ -50,8 +43,6 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                 }
             }
             txtTotal.textContent = "$ 0 (Error precio)";
-            console.warn("datosCotizacion no contiene un precio válido:", datosCotizacion);
-
         } else {
             const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
             const granTotal = carrito.reduce((acumulado, item) => {
@@ -85,24 +76,15 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         nuevoBtnConfirmar.addEventListener("click", async (e) => {
             e.preventDefault();
 
-            // 🌟 VALIDACIÓN BLINDADA: Extraemos y limpiamos espacios vacíos inmediatamente
             const direccion = inputDireccion ? inputDireccion.value.trim() : "";
             const telefono = inputTelefono ? inputTelefono.value.trim() : "";
 
-            if (!direccion || direccion === "") {
-                alert("Por favor, ingresa tu dirección de entrega.");
-                return; // Detiene la ejecución
-            }
-            if (!metodoPagoSeleccionado || metodoPagoSeleccionado === "") {
-                alert("Debes seleccionar un método de pago antes de continuar.");
-                return; // Detiene la ejecución
-            }
+            if (!direccion) return alert("Por favor, ingresa tu dirección de entrega.");
+            if (!metodoPagoSeleccionado) return alert("Debes seleccionar un método de pago antes de continuar.");
             if (!telefono || telefono.length < 7 || isNaN(telefono)) {
-                alert("Por favor, ingresa un número de teléfono válido (mínimo 7 dígitos numéricos).");
-                return; // Detiene la ejecución
+                return alert("Por favor, ingresa un número de teléfono válido.");
             }
 
-            // CONSTRUCCIÓN DEL PAYLOAD ADAPTABLE
             let datosCompra = {
                 accion: "confirmar", 
                 direccion: direccion,
@@ -112,28 +94,18 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
             };
 
             if (tipoPedido === "A Medida") {
-                const idCotizacionReal = parseInt(
-                    datosCotizacion.idCotizacion || 
-                    datosCotizacion.CotizacionPedido_Id || 
-                    datosCotizacion.CotizacionPedido_id || 
-                    0
-                );
-
+                const idCotizacionReal = parseInt(datosCotizacion.idCotizacion || datosCotizacion.CotizacionPedido_Id || datosCotizacion.CotizacionPedido_id || 0);
                 if (idCotizacionReal === 0 || isNaN(idCotizacionReal)) {
-                    console.error("❌ Error: Se intentó procesar una cotización sin un ID válido.", datosCotizacion);
-                    return alert("Error crítico: No se detectó el ID real de la cotización. Revisa el botón de pago.");
+                    return alert("Error crítico: No se detectó el ID real de la cotización.");
                 }
-
                 datosCompra.CotizacionPedido_Id = idCotizacionReal;
                 datosCompra.totalLinea = datosCotizacion.precio || datosCotizacion.Cotizacion_Precio;
-            } 
-            else {
+            } else {
                 const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
                 if (carrito.length === 0) return alert("El carrito está vacío.");
     
                 datosCompra.productos = carrito.map(item => ({
                     idPrenda: item.id,
-                    id: item.id, 
                     cantidad: item.cantidad || 1,
                     totalLinea: item.precio * (item.cantidad || 1)
                 }));
@@ -156,23 +128,15 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
                         localStorage.removeItem("carritoSastreria"); 
                     }
                     
-                    // 🌟 SOLUCIÓN VISUAL: Ocultamos el contenedor principal de la compra por completo 
-                    // para que los paneles laterales del total no queden flotando detrás del modal.
-                    if (contenedorCarrito) {
-                        contenedorCarrito.style.display = "none";
-                    }
+                    // 🌟 AQUÍ OCULTAMOS EL FORMULARIO DE PAGO PARA QUE NO QUEDE POR DETRÁS
+                    panelFormularioCompra.innerHTML = ""; 
+                    panelFormularioCompra.style.display = "none";
                     
-                    // Si tienes un contenedor padre o una sección envolvente para toda la vista de checkout, 
-                    // la ocultamos para asegurar limpieza total en pantalla:
                     const layoutCompraCompleto = document.querySelector(".seccion-compra") || document.querySelector(".checkout-container");
-                    if (layoutCompraCompleto) {
-                        layoutCompraCompleto.style.display = "none";
-                    }
+                    if (layoutCompraCompleto) layoutCompraCompleto.style.display = "none";
                     
                     // Mostrar modal de éxito
                     await llamarComponente("#confirmacionPago", "../componentesWeb/VentanaComprobacion.html");
-                    
-                    // Forzar que aparezca el sombreado oscuro del modal si aplica
                     if (sombreado) sombreado.classList.add("aparecerSombreado");
 
                 } else {
@@ -194,28 +158,22 @@ export async function RealizarCompra(tipoPedido = "Catalogo", datosCotizacion = 
         if (e.target.closest("#pagoConfirmado")) {
             if (sombreado) sombreado.classList.remove("aparecerSombreado");
             
-            // 🌟 SOLUCIÓN DE CIERRE: Vaciamos explícitamente el contenedor donde inyectaste el componente
-            const contenedorModal = document.querySelector("#confirmacionPago");
-            if (contenedorModal) {
-                contenedorModal.innerHTML = ""; 
+            // Vaciamos el contenedor del modal de éxito
+            if (contenedorConfirmacion) contenedorConfirmacion.innerHTML = ""; 
+            
+            // 🌟 AQUÍ NOS ASEGURAMOS DE LIMPIAR POR COMPLETO EL FORMULARIO DE PAGO SIEMPRE
+            if (panelFormularioCompra) {
+                panelFormularioCompra.innerHTML = "";
+                panelFormularioCompra.style.display = "none";
             }
             
-            // También vaciamos la clase interna por si acaso estructural
-            const pagoConfirmClass = document.querySelector(".confirmacion__pago");
-            if (pagoConfirmClass) {
-                pagoConfirmClass.innerHTML = ""; 
-            }
-            
-            // Si es flujo de carrito, refrescamos el estado dinámico
-            if (typeof rederizarCarrito === "function" && document.querySelector("#mostrarCompra")) {
-                // Volvemos a hacer visible el contenedor principal para que muestre el mensaje de "Carrito Vacío"
-                if (contenedorCarrito) {
-                    contenedorCarrito.style.display = "block";
-                    contenedorCarrito.innerHTML = "<div style='text-align:center; padding: 40px;'><h2>¡Gracias por tu compra!</h2><p>Tu pedido ha sido registrado con éxito en ModaS.</p></div>";
-                }
-                rederizarCarrito(); 
+            // Si es flujo de catálogo, refrescamos la vista principal
+            if (tipoPedido === "Catalogo" && panelProductos) {
+                panelProductos.style.display = "block";
+                panelProductos.innerHTML = "<div style='text-align:center; padding: 40px;'><h2>¡Gracias por tu compra!</h2><p>Tu pedido ha sido registrado con éxito en ModaS.</p></div>";
+                if (typeof rederizarCarrito === "function") rederizarCarrito(); 
             } else {
-                // En pedidos personalizados o fallas de contexto, recargar limpia todo perfectamente
+                // Para pedidos personalizados, recargar limpia el DOM de forma impecable
                 window.location.reload();
             }
         }

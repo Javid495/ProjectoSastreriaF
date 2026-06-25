@@ -75,6 +75,7 @@ function cargarPrendasBajoStock() {
                     <div class="info-prenda">
                         <p><strong>${prenda.nombre}</strong></p>
                         <p>Precio: $${prenda.precio.toLocaleString()}</p>
+                        <p>Talla: ${prenda.talla}</p>
                         <p class="stock-alerta">Stock: ${prenda.stock}</p>
                     </div>
 

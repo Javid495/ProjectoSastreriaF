@@ -29,7 +29,7 @@ export function ModificarPrendas(id) {
 
         filasVariantes.forEach(fila => {
             const idVariante = fila.getAttribute("data-id-variante");
-            const tallaInput = fila.querySelector(".var-talla").value.trim();
+            const tallaInput = fila.querySelector(".var-talla").value.trim().toUpperCase();
             const stockInput = fila.querySelector(".var-stock").value.trim();
             const precioInput = fila.querySelector(".var-precio").value.trim();
 

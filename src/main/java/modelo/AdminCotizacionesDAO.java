@@ -51,14 +51,22 @@ public class AdminCotizacionesDAO {
     
     public List<Prendas> listarPrendasBajasStock(int limiteStock) {
     List<Prendas> lista = new ArrayList<>();
-    String sql = "SELECT p.Prenda_id, p.Prenda_nombre, c.Categoria_nombre, p.Prenda_talla, "
-               + "p.Prenda_valor, p.Prenda_stock, p.Prenda_estado, MIN(i.Imagenes_link) AS Prenda_imagen "
-               + "FROM Prendas p "
-               + "INNER JOIN Categoria c ON p.Categoria_id = c.Categoria_id "
-               + "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id "
-               + "WHERE p.Prenda_stock <= ? AND p.Prenda_estado = 'activa' "
-               + "GROUP BY p.Prenda_id, c.Categoria_nombre "
-               + "ORDER BY p.Prenda_stock ASC";
+   String sql = "SELECT p.Prenda_id, p.Prenda_nombre, c.Categoria_nombre, p.Prenda_talla, "
+           + "p.Prenda_valor, p.Prenda_stock, p.Prenda_estado, "
+           //Observacion el coalesce heredara la imagen de una prenda que tenda un nombre y categoria similar
+           + "COALESCE("
+           + "  MIN(i.Imagenes_link), "
+           + "  (SELECT MIN(img.Imagenes_link) FROM imagenes img "
+           + "   INNER JOIN Prendas p2 ON img.Prenda_id = p2.Prenda_id "
+           + "   WHERE p2.Prenda_nombre = p.Prenda_nombre AND p2.Categoria_id = p.Categoria_id) "
+           + ") AS Prenda_imagen "
+           
+           + "FROM Prendas p "
+           + "INNER JOIN Categoria c ON p.Categoria_id = c.Categoria_id "
+           + "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id "
+           + "WHERE p.Prenda_stock <= ? AND p.Prenda_estado = 'activa' "
+           + "GROUP BY p.Prenda_id, c.Categoria_nombre "
+           + "ORDER BY p.Prenda_stock ASC";
                
     // La consulta anterior verifica las prendas que se encuentran activas y que tenga bajo stock 
     // el inner join de categoria me permite traerme el nombre de categoria de la tabla de categorias

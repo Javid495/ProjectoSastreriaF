@@ -26,10 +26,8 @@ create table Usuarios (
 	Usuarios_id int primary key auto_increment,
     Registro_id int, 
     Permisos_roles_id int,
-    
-    
     -- Datos Opcionales que los clientes podran completar una vez ingresen a su perfil
-    Usuario_imagen varchar(50) null default "images\Perfil\Ellipse14.png",
+    Usuario_imagen varchar(50) null,
     foreign key (Registro_id) references Registro(Registro_id),
     foreign key (Permisos_Roles_id) references Permisos_Roles(Permisos_Roles_id)
 );

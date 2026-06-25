@@ -63,7 +63,9 @@ public class ServeltObtenerDetallesProd extends HttpServlet {
                     // Instanciamos el DAO de usuarios para guardar el registro
                     UsuariosDAO usuarioDAO = new UsuariosDAO();
                     usuarioDAO.registrarPrendaReciente(usuarioId, id);
-                } else {
+                } 
+                
+                else {
                     System.out.println("ℹ️ [ServletDetalle] Un usuario invitado vio la prenda " + id + ". No se guarda historial.");
                 }
                 

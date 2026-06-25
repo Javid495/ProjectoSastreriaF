@@ -69,7 +69,7 @@ export function RegistrarPrendas() {
         formData.append("nombreProducto", nombre);
         formData.append("categoria", categoria);
         formData.append("descripcion", descripcion);
-        formData.append("tipoProducto", "General"); 
+        formData.append("tipoProducto", "Prenda"); 
         formData.append("estado", "activa");        
 
         // Empaquetamos el array completo de mapas en un único String JSON

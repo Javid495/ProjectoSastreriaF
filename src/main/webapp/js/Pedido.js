@@ -20,7 +20,7 @@ window.cambiarTipoPedido = function(tipo, elemento) {
     document.querySelectorAll(".tab-tipo").forEach(btn => btn.classList.remove("active"));
     elemento.classList.add("active");
 
-    contPedidos.innerHTML = ""; // Limpieza al cambiar de pestaña
+    contPedidos.innerHTML = ""; 
 
     if (tipo === 'catalogo') {
         if (filtroEstadoContainer) filtroEstadoContainer.style.display = "block";
@@ -81,7 +81,6 @@ function cargarMisCotizaciones() {
             return res.json();
         })
         .then(cotizaciones => {
-            // 🔍 DIAGNÓSTICO: Abre la consola para ver si el Backend envía CotizacionPedido_Id
             console.log("👉 Datos crudos recibidos de /MisCotizaciones:", cotizaciones);
 
             if (cotizaciones.length === 0) {
@@ -150,25 +149,36 @@ document.addEventListener("submit", async (evento) => {
 
         // 2. VALIDACIÓN: Campos Generales Vacíos
         if (tipoPrenda === "" || telas === "" || talla === "" || descripcion === "") {
-            alert("❌ Todos los campos principales (Tipo de prenda, Telas, Categoría/Talla y Descripción) son obligatorios.");
+            alert("❌ Todos los campos principales (Tipo de prenda, Telas, Talla y Descripción) son obligatorios.");
             return;
         }
 
         // 3. VALIDACIÓN: Mínimo de caracteres para Tipo de Prenda
-        if (tipoPrenda.length < 5) {
-            alert("❌ El tipo de prenda es demasiado corto. Debe tener al menos 5 caracteres.");
+        if (tipoPrenda.length < 4) {
+            alert("❌ El tipo de prenda es demasiado corto. Debe tener al menos 4 caracteres.");
             return;
         }
 
-        // 4. VALIDACIÓN: Mínimo de caracteres para la Tela (Igual que el tipo de prenda)
-        if (telas.length < 5) {
-            alert("❌ El campo de tela/material debe tener al menos 5 caracteres.");
+        // 4. VALIDACIÓN: Mínimo de caracteres para la Tela
+        if (telas.length < 4) {
+            alert("❌ El campo de tela/material debe tener al menos 4 caracteres.");
             return;
         }
 
-        // 5. VALIDACIÓN: No saltarse la categoría/talla (Control de placeholders por defecto)
-        if (talla.toLowerCase() === "seleccionar" || talla === "0" || talla === "") {
-            alert("❌ Por favor, selecciona una categoría o talla válida de la lista.");
+        // 5. VALIDACIÓN CONTROLADA DE TALLAJE (Sacos, Camisas, Pantalones)
+        if (talla.toLowerCase() === "seleccionar" || talla === "0") {
+            alert("❌ Por favor, selecciona o ingresa una talla válida.");
+            return;
+        }
+
+        const tallasLetrasValidas = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "3XL", "4XL"];
+        const tallaUpper = talla.toUpperCase();
+        const numTalla = Number(tallaUpper);
+        // Rango numérico estándar para pantalones/jeans (ej. 26 a 48)
+        const esTallaNumericaValida = !isNaN(numTalla) && numTalla >= 26 && numTalla <= 48;
+
+        if (!tallasLetrasValidas.includes(tallaUpper) && !esTallaNumericaValida) {
+            alert("❌ La talla ingresada no es válida.\nUsa formatos estándar de letras (XS, S, M, L, XL, XXL) o numéricos de pantalón (28, 30, 32, 34...).");
             return;
         }
 
@@ -192,7 +202,6 @@ document.addEventListener("submit", async (evento) => {
         for (let input of inputsMedidas) {
             const valorMedida = input.value.trim();
             
-            // Verificar que no se envíen vacías
             if (valorMedida === "") {
                 alert("❌ Todas las casillas de medidas son obligatorias.");
                 medidasValidas = false;
@@ -201,7 +210,6 @@ document.addEventListener("submit", async (evento) => {
 
             const numero = Number(valorMedida);
 
-            // Verificar que sea un número real y esté en el rango de 30 a 200
             if (isNaN(numero) || numero < 30 || numero > 200) {
                 alert(`❌ Medida inválida (${valorMedida}). Recuerda que las medidas deben ser únicamente números enteros entre 30 y 200 cm.`);
                 medidasValidas = false;
@@ -211,29 +219,24 @@ document.addEventListener("submit", async (evento) => {
             arrayMedidas.push(numero);
         }
 
-        if (!medidasValidas) return; // Frena el envío si alguna medida falló
+        if (!medidasValidas) return; 
 
-        // 8. VALIDACIÓN: Imagen de referencia obligatoria (Que no pase sin foto)
-        // Filtramos las fotos reales que no sean 'null' dentro del almacén temporal
+        // 8. VALIDACIÓN: Imagen única de referencia obligatoria
         const fotosReales = fotosReferenciaArr.filter(archivo => archivo !== null);
         
         if (fotosReales.length === 0) {
-            alert("❌ La imagen de referencia es obligatoria. Por favor, sube al menos una foto o boceto de tu diseño.");
+            alert("❌ La imagen de referencia es obligatoria. Por favor, sube una foto o boceto de tu diseño.");
             return;
         }
 
-        // --- SI PASA TODAS LAS VALIDACIONES, SE CREA EL FORMDATA Y SE ENVÍA ---
+        // --- ENVÍO DE DATOS ---
         const formData = new FormData();
         formData.append("tipoPrenda", tipoPrenda);
         formData.append("telas", telas);
-        formData.append("talla", talla);
+        formData.append("talla", tallaUpper); // Mandamos estandarizado en mayúsculas
         formData.append("descripcion", descripcion);
         formData.append("medidas", arrayMedidas.join(","));
-
-        // Adjuntamos las fotos validadas al FormData
-        fotosReales.forEach(archivo => {
-            formData.append("fotoReferencia", archivo); 
-        });
+        formData.append("fotoReferencia", fotosReales[0]); // Solo mandamos la primera para asegurar consistencia backend
 
         fetch(`${urlBase}/RegistrarPedidoMedida`, {
             method: "POST",
@@ -245,7 +248,7 @@ document.addEventListener("submit", async (evento) => {
                 alert("¡Tu solicitud de diseño ha sido enviada con éxito!");
                 document.querySelector("#MostraPedido").innerHTML = ""; 
                 MostrarPedidosUser(); 
-                fotosReferenciaArr = []; // Vaciamos el array para el próximo pedido
+                fotosReferenciaArr = []; 
             } else {
                 alert("Error al procesar la solicitud: " + data.mensaje);
             }
@@ -254,23 +257,29 @@ document.addEventListener("submit", async (evento) => {
     }
 });
 
-// 🖼️ ESCUCHADOR DE CAMBIO: Captura la imagen y genera la miniatura dinámicamente
+// 🖼️ ESCUCHADOR DE CAMBIO: Captura una ÚNICA imagen y gestiona la UI del botón
 document.addEventListener("change", (evento) => {
     if (evento.target.matches("#file-upload")) {
         const input = evento.target;
         
+        // Comprobar si ya existe una imagen cargada activamente
+        const fotosReales = fotosReferenciaArr.filter(archivo => archivo !== null);
+        if (fotosReales.length >= 1) {
+            alert("❌ Solo está permitido subir una (1) foto de referencia por diseño.");
+            input.value = "";
+            return;
+        }
+
         if (input.files && input.files[0]) {
             const archivo = input.files[0];
-            fotosReferenciaArr.push(archivo); // Guardamos en nuestro array global
+            fotosReferenciaArr.push(archivo); 
 
             const uploadZone = input.closest(".upload-zone");
             const lector = new FileReader();
 
             lector.onload = function(e) {
-                // Creamos el contenedor de la miniatura
                 const divMiniatura = document.createElement("div");
                 divMiniatura.className = "preview-thumb";
-                // Guardamos el índice actual para saber cuál remover luego
                 divMiniatura.dataset.index = fotosReferenciaArr.length - 1; 
 
                 divMiniatura.innerHTML = `
@@ -278,32 +287,38 @@ document.addEventListener("change", (evento) => {
                     <button type="button" class="btn-remove-thumb">&times;</button>
                 `;
 
-                // Lo insertamos en la zona de carga justo antes del botón (+)
                 const plusBox = uploadZone.querySelector(".plus-box");
                 uploadZone.insertBefore(divMiniatura, plusBox);
+                
+                // 🚫 Deshabilitar visualmente el botón de añadir más ocultándolo
+                if (plusBox) plusBox.style.display = "none";
             };
 
             lector.readAsDataURL(archivo);
-            
-            // Limpiamos el valor del input para que permita volver a seleccionar la misma foto si se desea
             input.value = "";
         }
     }
 });
 
-// 🗑️ ESCUCHADOR PARA QUITAR FOTOS: Remueve la miniatura de la vista y del array
+// 🗑️ ESCUCHADOR PARA QUITAR FOTOS: Remueve la miniatura y reactiva el botón de añadir
 document.addEventListener("click", (evento) => {
     if (evento.target.matches(".btn-remove-thumb")) {
         const boton = evento.target;
         const miniatura = boton.closest(".preview-thumb");
+        const uploadZone = miniatura.closest(".upload-zone");
         const indice = parseInt(miniatura.dataset.index);
 
-        // Marcamos como null para no alterar los índices de los demás elementos visibles
         fotosReferenciaArr[indice] = null; 
         miniatura.remove();
+
+        // 🔄 Si ya no quedan fotos reales en el arreglo, volvemos a mostrar la caja del botón (+)
+        const fotosReales = fotosReferenciaArr.filter(archivo => archivo !== null);
+        if (fotosReales.length === 0) {
+            const plusBox = uploadZone.querySelector(".plus-box");
+            if (plusBox) plusBox.style.display = "flex";
+        }
     }
 });
-
 
 // 🗑️ Escucha global de eventos para RECHAZAR y ELIMINAR cotizaciones
 document.addEventListener("click", async (e) => {
@@ -423,7 +438,6 @@ document.addEventListener("click", async (e) => {
     if (e.target.matches(".btn-cotizacion--aceptar")) {
         const boton = e.target;
         
-        // 🔄 CORRECCIÓN: Capturamos 'idCotizacion' desde el dataset específico
         const idCotizacion = boton.dataset.idCotizacion; 
         const precio = boton.dataset.precio;
 
@@ -432,7 +446,6 @@ document.addEventListener("click", async (e) => {
 
         await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
 
-        // 🔍 DIAGNÓSTICO: Confirmar en la consola del navegador qué ID se va a enviar
         console.log("✈️ Pasando a RealizarCompra -> ID Cotización:", idCotizacion, "Precio:", precio);
 
         RealizarCompra("A Medida", {

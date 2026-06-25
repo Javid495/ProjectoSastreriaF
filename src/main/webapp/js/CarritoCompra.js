@@ -148,14 +148,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         rederizarCarrito();
     }
 });
-// Cerrar ventana de Pago Confirmado
-// pagoConfirm.addEventListener("click", (e) => {
-//     if (e.target.closest("#pagoConfirmado")) {
-//         sombreado.classList.remove("aparecerSombreado");
-//         pagoConfirm.innerHTML = "";
-//         rederizarCarrito(); // Recargamos la vista (ahora saldrá vacía)
-//     }
-// });
 
+
+const btnCancelar = document.querySelector("#cancelarCompra");
+if (btnCancelar) {
+    btnCancelar.addEventListener("click", () => {
+        if (panelFormularioCompra) {
+            panelFormularioCompra.innerHTML = "";
+            panelFormularioCompra.style.display = "none";
+        }
+        if (sombreado) sombreado.classList.remove("aparecerSombreado");
+    });
+}
 
 

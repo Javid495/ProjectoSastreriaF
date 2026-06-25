@@ -92,7 +92,7 @@ public class CompraPedidosDAO {
         PreparedStatement psCerrarCarrito = null;
         ResultSet rsCar = null;
         ResultSet rsPed = null;
-        ResultSet rsDetId = null; // 🌟 Movido al bloque seguro para evitar fugas de memoria
+        ResultSet rsDetId = null;
 
         try {
             con = ClaseConexion.getConexion();
@@ -211,7 +211,7 @@ public class CompraPedidosDAO {
             try {
                 if (rsCar != null) rsCar.close();
                 if (rsPed != null) rsPed.close();
-                if (rsDetId != null) rsDetId.close(); // 🌟 Cierre preventivo
+                if (rsDetId != null) rsDetId.close(); 
                 if (psGetCarrito != null) psGetCarrito.close();
                 if (psPedido != null) psPedido.close();
                 if (psGetDetalleId != null) psGetDetalleId.close();

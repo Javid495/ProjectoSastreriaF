@@ -84,7 +84,7 @@ public class ServeltPerfil extends HttpServlet {
         String nombre = request.getParameter("nombre");
         String telefono = request.getParameter("telefono");
         String correo = request.getParameter("correo");
-        String imagenAvatar = request.getParameter("imagenAvatar"); // 🌟 Atrapamos la ruta enviada por JS
+        String imagenAvatar = request.getParameter("imagenAvatar"); // Atrapamos la ruta enviada por JS
 
         // Enviamos el parámetro extra al DAO
         boolean modificado = usuarioDAO.actualizarPerfil(usuarioId, nombre, telefono, correo, imagenAvatar);
