@@ -48,6 +48,7 @@ public class RegistroDAO {
                             // 🌟 NUEVO: Asignamos la ruta por defecto usando "/" para entorno Web seguro
                             psUser.setString(3, "images/Perfil/Ellipse14.png");
                             
+                            //Este parte del codigo me confirma si se realizo correctamente la insercion en la tabla usuarios
                             int filasUser = psUser.executeUpdate();
                             
                             if (filasUser > 0) {

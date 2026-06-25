@@ -30,12 +30,19 @@ public class PrendasDAO {
                      "  MAX(i.Imagenes_link) as Imagenes_link, " + 
                      "  SUM(IFNULL(pop.Populares_visitas, 0)) as visitas, " + 
                      "  GROUP_CONCAT(DISTINCT p.Prenda_talla ORDER BY p.Prenda_talla SEPARATOR ', ') as Prenda_talla " + 
+                     //La tabla base de donde hago la consulta datos de la consulta de la prenda 
                      "FROM Prendas p " +
+                     // Que me junte o verifique si la prenda tiene un categoria asociada
                      "JOIN Categoria c ON p.Categoria_id = c.Categoria_id " +
+                     //Se hace un left join por seguridad si una prenda es nueva pero no tiene imagen o visitas
+                     //el producto sale en el catalogo
                      "LEFT JOIN imagenes i ON p.Prenda_id = i.Prenda_id " +
                      "LEFT JOIN Populares pop ON p.Prenda_id = pop.Prenda_id " +
+                     // que me haga la consulta para prendas que tengan un stock superior a 0 y que esten activas
                      "WHERE p.Prenda_stock > 0 AND p.Prenda_estado = 'activa' " +
+                     //En dado caso compratan el nombre. tipo, estado y categoria me lo agurpa en una fila
                      "GROUP BY p.Prenda_nombre, p.Prenda_tipo, p.Prenda_estado, c.Categoria_nombre " +
+                     //Y las ordena de manera decendente
                      "ORDER BY visitas DESC";
         
         //Preparamos la conexion con la base de datos
