@@ -84,12 +84,17 @@ public class PedidosMedidaDao {
         List<String[]> lista = new ArrayList<>();
         
         String sql = "SELECT dpm.Detalles_PedidoMedida_id, dpm.Detalles_TPrenda, dpm.Detalles_Tela, " +
-                     "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
-                     "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
-                     "FROM DetallesPedidosMedida dpm " +
-                     "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
-                     "WHERE dpm.Usuario_id = ? " +
-                     "ORDER BY cp.CotizacionPedido_Id DESC";
+             "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
+             "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
+             "FROM DetallesPedidosMedida dpm " +
+             "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
+             "WHERE dpm.Usuario_id = ? " +
+             "AND cp.CotizacionPedido_Id NOT IN ( " +
+             "    SELECT dp.CotizacionPedido_id " +
+             "    FROM DetallesPedidos dp " +
+             "    WHERE dp.CotizacionPedido_id IS NOT NULL " +
+             ") " +
+             "ORDER BY cp.CotizacionPedido_Id DESC";
 
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {

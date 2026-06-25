@@ -134,6 +134,77 @@ BtnRealizarP.addEventListener("click", async () => {
     await llamarComponente("#MostraPedido" , "../componentesWeb/FormularioPedidos.html");
 });
 
+
+// 📊 Diccionario de Configuración para el Comportamiento Dinámico del Sastre
+const CONFIG_PRENDAS = {
+    camisa: {
+        medidas: ["Contorno de Cuello", "Contorno de Pecho", "Largo de Manga"],
+        telas: ["Algodón Oxford", "Lino", "Popelina", "Fil-a-Fil"]
+    },
+    pantalon: { // Captura 'pantalon' o 'pantalones'
+        medidas: ["Contorno de Cintura", "Contorno de Cadera", "Largo de Entrepierna"],
+        telas: ["Dril", "Denim (Jean)", "Gabardina", "Paño de Lana"]
+    },
+    vestido: {
+        medidas: ["Contorno de Busto", "Contorno de Cintura", "Contorno de Cadera", "Largo Total del Vestido"],
+        telas: ["Seda", "Satín", "Chifón", "Crepé", "Terciopelo"]
+    }
+};
+
+// 🔍 Escuchador en tiempo real para detectar qué está escribiendo el usuario
+document.addEventListener("input", (evento) => {
+    if (evento.target.matches("#tipo-prenda")) {
+        const textoUsuario = evento.target.value.toLowerCase().trim();
+        
+        const contenedorMedidas = document.querySelector("#contenedor-medidas-dinamicas");
+        const datalistTelas = document.querySelector("#sugerencias-telas-list");
+        
+        if (!contenedorMedidas || !datalistTelas) return;
+
+        let claveEncontrada = null;
+
+        // Buscar coincidencia por palabra clave básica
+        if (textoUsuario.includes("camisa")) {
+            claveEncontrada = "camisa";
+        } else if (textoUsuario.includes("pantalon")) {
+            claveEncontrada = "pantalon";
+        } else if (textoUsuario.includes("vestido")) {
+            claveEncontrada = "vestido";
+        }
+
+        // Si hay una coincidencia clara, renderizamos sus campos y sugerencias específicas
+        if (claveEncontrada) {
+            const config = CONFIG_PRENDAS[claveEncontrada];
+
+            // 1. Inyectar las medidas correspondientes manteniendo la clase '.input-dark'
+            let htmlMedidas = `<label style="display:block; width:100%; margin-bottom: 8px;">Medidas requeridas (en cm):</label>`;
+            config.medidas.forEach(medida => {
+                htmlMedidas += `
+                    <p style="margin: 4px 0 2px 0; font-weight: 500;">${medida}:</p>
+                    <input type="number" class="input-dark" min="30" max="200" placeholder="30 - 200">
+                `;
+            });
+            contenedorMedidas.innerHTML = htmlMedidas;
+
+            // 2. Actualizar el listado de telas sugeridas en el datalist
+            let htmlTelas = "";
+            config.telas.forEach(tela => {
+                htmlTelas += `<option value="${tela}"></option>`;
+            });
+            datalistTelas.innerHTML = htmlTelas;
+
+        } else {
+            // Estado por defecto si borra o escribe algo que no rastreamos todavía
+            contenedorMedidas.innerHTML = `
+                <label style="display:block; width:100%; margin-bottom: 8px;">Medidas requeridas:</label>
+                <p style="color: #888; font-size: 13px;">Escribe 'Camisa', 'Pantalón' o 'Vestido' para cargar sus medidas...</p>
+            `;
+            datalistTelas.innerHTML = "";
+        }
+    }
+});
+
+
 // 🚀 ESCUCHADOR DE SUBMIT: Registro de solicitudes personalizadas con validaciones estrictas
 document.addEventListener("submit", async (evento) => {
     if (evento.target.matches("#form-solicitud-personalizada")) {

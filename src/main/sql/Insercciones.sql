@@ -11,8 +11,7 @@ INSERT INTO Permisos_Roles(Permisos_Roles_id, Permisos_Rol, Permisos_Descripcion
 
 INSERT INTO Usuarios (Registro_id, Permisos_roles_id, Usuario_imagen) VALUES 
 (1, 2, "images/Perfil/Ellipse14.png"), 
-(2, 1, "images/Perfil/Ellipse14.png"),
-(3, 1, "images/Perfil/Ellipse14.png");
+(2, 1, "images/Perfil/Ellipse14.png");
 
 -- Inserciones de Catalogo / Poulares / Imagenes
 INSERT INTO Categoria(Categoria_nombre, Categoria_Descripcion) VALUES 
@@ -38,12 +37,7 @@ INSERT INTO imagenes(Prenda_id, Imagenes_link) VALUES
 (4, "/images/Rectangle38.png"), 
 (5, "/images/Rectangle35.png");
 
-USE ModaSv1;
 
--- ====================================================================
--- 1. CREACIÓN DEL NUEVO USUARIO CLIENTE
--- ====================================================================
--- Insertamos las credenciales en Registro (ID: 3)
 INSERT INTO Registro(Registro_Usuario, Registro_Contraseña, Registro_Email, Registro_Telefono) VALUES 
 ("ElenaUser", "Elena789", "elena.gomez@gmail.com", "3219876543");
 

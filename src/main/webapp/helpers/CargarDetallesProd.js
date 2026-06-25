@@ -4,9 +4,14 @@ export async function CargarDetallesProd(id) {
     const selectTalla = document.querySelector("#selectTalla");
     const hiddenIdInput = document.querySelector("#prendaIdSeleccionada");
     const txtPrecio = document.querySelector("#detallePrecio");
-    // AGREGADO: Capturamos el nuevo input de cantidad
     const inputCantidad = document.querySelector("#inputCantidad"); 
     const txtStock = document.querySelector("#detalleStock");
+    
+    // CAPTURAS DE LA GALERÍA
+    const imgPrincipal = document.querySelector(".product__image img");
+    const contenedorDots = document.querySelector(".product__dots");
+    const btnIzquierda = document.querySelector(".product__arrow--left");
+    const btnDerecha = document.querySelector(".product__arrow--right");
 
     try {
         const respuesta = await fetch(`../ObtenerProductosDetalle?id=${id}`);
@@ -18,103 +23,147 @@ export async function CargarDetallesProd(id) {
         document.querySelector("#detalleNombre").textContent = producto.nombre;
         document.querySelector(".product__text").textContent = producto.descripcion;
         
-        // 1. Mostrar UNA imagen en concreto
-        const imgPrincipal = document.querySelector(".product__image img");
-        if (imgPrincipal && producto.listaImagenes && producto.listaImagenes.length > 0) {
-            const primeraImagen = producto.listaImagenes[0];
-            if (primeraImagen.startsWith("http://") || primeraImagen.startsWith("https://") || primeraImagen.startsWith("data:")) {
-                imgPrincipal.src = primeraImagen;
+        // =========================================================================
+        // 🔄 NUEVA LÓGICA DE LA GALERÍA INTERACTIVA (CARRUSEL)
+        // =========================================================================
+        let indiceActual = 0;
+        const imagenes = producto.listaImagenes || [];
+
+        // Función reutilizable para refrescar la imagen y los dots activos
+        const cambiarImagen = (nuevoIndice) => {
+            if (imagenes.length === 0) return;
+
+            // Bucle infinito: si sobrepasa el máximo vuelve a 0, si baja de 0 va al último
+            if (nuevoIndice >= imagenes.length) indiceActual = 0;
+            else if (nuevoIndice < 0) indiceActual = imagenes.length - 1;
+            else indiceActual = nuevoIndice;
+
+            const urlImagen = imagenes[indiceActual];
+            let rutaFinal = "";
+            if (urlImagen.startsWith("http://") || urlImagen.startsWith("https://") || urlImagen.startsWith("data:")) {
+                rutaFinal = urlImagen;
             } else {
-                imgPrincipal.src = ".." + primeraImagen;
+                rutaFinal = ".." + urlImagen;
             }
-            imgPrincipal.alt = producto.nombre;
+
+            if (imgPrincipal) {
+                imgPrincipal.src = rutaFinal;
+                imgPrincipal.alt = `${producto.nombre} - Imagen ${indiceActual + 1}`;
+            }
+
+            // Actualizar visualmente qué puntito está activo
+            const todosLosDots = contenedorDots.querySelectorAll(".product__dot");
+            todosLosDots.forEach((dot, idx) => {
+                if (idx === indiceActual) {
+                    dot.classList.add("product__dot--active");
+                } else {
+                    dot.classList.remove("product__dot--active");
+                }
+            });
+        };
+
+        // 1. Renderizar la primera imagen de forma inicial
+        if (imagenes.length > 0) {
+            cambiarImagen(0);
+        } else {
+            if (imgPrincipal) imgPrincipal.src = "../images/Rectangle 11.png"; // Imagen por defecto por si no hay
         }
 
-        //Funciton que me permite actualizar el stock en tiempo real en el frontend
+        // 2. Crear dinámicamente los indicadores (Dots) y asignarles su clic
+        contenedorDots.innerHTML = ""; 
+        imagenes.forEach((urlImagen, indice) => {
+            const dot = document.createElement("span");
+            dot.classList.add("product__dot");
+            if (indice === 0) dot.classList.add("product__dot--active"); 
+            
+            // Evento click directo a cada puntito
+            dot.addEventListener("click", () => {
+                cambiarImagen(indice);
+            });
+
+            contenedorDots.appendChild(dot);
+        });
+
+        // 3. Asignar los eventos de clic a las flechas de navegación
+        if (btnIzquierda) {
+            btnIzquierda.onclick = () => {
+                cambiarImagen(indiceActual - 1);
+            };
+        }
+
+        if (btnDerecha) {
+            btnDerecha.onclick = () => {
+                cambiarImagen(indiceActual + 1);
+            };
+        }
+
+        // Ocultar flechas si solo hay una imagen (mejora de UX)
+        if (imagenes.length <= 1) {
+            if (btnIzquierda) btnIzquierda.style.display = "none";
+            if (btnDerecha) btnDerecha.style.display = "none";
+        } else {
+            if (btnIzquierda) btnIzquierda.style.display = "block";
+            if (btnDerecha) btnDerecha.style.display = "block";
+        }
+        // =========================================================================
+
+        // Función que permite calcular el stock neto en el frontend
         const obtenerStockDisponible = (variante) => {
             const carrito = JSON.parse(localStorage.getItem("carritoSastreria")) || [];
             const enCarrito = carrito.find(item => item.id === variante.id);
             const cantidadEnCarrito = enCarrito ? enCarrito.cantidad : 0;
             return variante.stock - cantidadEnCarrito;
         };
-        
-        // 2. Mostrar TODAS las imágenes en los indicadores
-        const contenedorDots = document.querySelector(".product__dots");
-        contenedorDots.innerHTML = ""; 
-        if (producto.listaImagenes) {
-            producto.listaImagenes.forEach((urlImagen, indice) => {
-                const dot = document.createElement("span");
-                dot.classList.add("product__dot");
-                if (indice === 0) dot.classList.add("product__dot--active"); 
-        
-                let rutaFinal = "";
-                if (urlImagen.startsWith("http://") || urlImagen.startsWith("https://") || urlImagen.startsWith("data:")) {
-                    rutaFinal = urlImagen;
-                } else {
-                    rutaFinal = ".." + urlImagen;
+
+        if (selectTalla && producto.variantes && producto.variantes.length > 0) {
+            selectTalla.innerHTML = ""; // Limpiamos opciones estáticas
+
+            producto.variantes.forEach(variante => {
+                const option = document.createElement("option");
+                option.value = variante.id; 
+                option.textContent = variante.talla; 
+                selectTalla.appendChild(option);
+            });
+
+            // Inicializamos la interfaz con los datos de la primera variante
+            const primeraVariante = producto.variantes[0];
+            hiddenIdInput.value = primeraVariante.id;
+            txtPrecio.textContent = `Precio: $${primeraVariante.valor.toFixed(2)}`;
+            
+            let stockDisponibleInicial = obtenerStockDisponible(primeraVariante);
+            if (txtStock) txtStock.textContent = `Stock disponible: ${stockDisponibleInicial}`;
+            if (inputCantidad) {
+                inputCantidad.max = stockDisponibleInicial;
+                inputCantidad.value = stockDisponibleInicial > 0 ? 1 : 0; 
+            }
+
+            // Evento para cuando el cliente cambie de talla en el select
+            selectTalla.addEventListener("change", (e) => {
+                const idSeleccionado = parseInt(e.target.value);
+                const varianteSeleccionada = producto.variantes.find(v => v.id === idSeleccionado);
+                
+                if (varianteSeleccionada) {
+                    hiddenIdInput.value = varianteSeleccionada.id;
+                    txtPrecio.textContent = `Precio: $${varianteSeleccionada.valor.toFixed(2)}`;
+                    
+                    let stockDisponible = obtenerStockDisponible(varianteSeleccionada);
+                    if (txtStock) txtStock.textContent = `Stock disponible: ${stockDisponible}`;
+                        
+                    if (inputCantidad) {
+                        inputCantidad.max = stockDisponible;
+                        if (stockDisponible === 0) {
+                            inputCantidad.value = 0;
+                        } else if (parseInt(inputCantidad.value) > stockDisponible || parseInt(inputCantidad.value) === 0) {
+                            inputCantidad.value = 1; 
+                        }
+                    }
                 }
-        
-                dot.dataset.ruta = rutaFinal; 
-                contenedorDots.appendChild(dot);
             });
         }
 
-
-    if (selectTalla && producto.variantes && producto.variantes.length > 0) {
-        selectTalla.innerHTML = ""; // Limpiamos opciones estáticas
-
-        producto.variantes.forEach(variante => {
-            const option = document.createElement("option");
-            option.value = variante.id; 
-            option.textContent = variante.talla; // CORREGIDO: Ahora solo muestra la Talla pura (S, M, L)
-            selectTalla.appendChild(option);
-        });
-
-        // Inicializamos la interfaz con los datos de la primera variante
-        const primeraVariante = producto.variantes[0];
-        hiddenIdInput.value = primeraVariante.id;
-        txtPrecio.textContent = `Precio: $${primeraVariante.valor.toFixed(2)}`;
-        
-        
-        // CORREGIDO: Calculamos el stock disponible real (DB - Carrito)
-        let stockDisponibleInicial = obtenerStockDisponible(primeraVariante);
-        if (txtStock) txtStock.textContent = `Stock disponible: ${stockDisponibleInicial}`;
-            if (inputCantidad) {
-                inputCantidad.max = stockDisponibleInicial;
-                inputCantidad.value = stockDisponibleInicial > 0 ? 1 : 0; // Si no hay stock, ponemos 0
-            }
-
-        // Ajustamos el valor máximo inicial del input según el stock de la primera variante
-        if (inputCantidad) inputCantidad.max = primeraVariante.stock;
-
-        // Evento para cuando el cliente cambie de talla en el select
-        selectTalla.addEventListener("change", (e) => {
-            const idSeleccionado = parseInt(e.target.value);
-            const varianteSeleccionada = producto.variantes.find(v => v.id === idSeleccionado);
-            
-            if (varianteSeleccionada) {
-                hiddenIdInput.value = varianteSeleccionada.id;
-                txtPrecio.textContent = `Precio: $${varianteSeleccionada.valor.toFixed(2)}`;
-                
-                //Al cambiar de talla, recalculamos el stock disponible neto
-                let stockDisponible = obtenerStockDisponible(varianteSeleccionada);
-                if (txtStock) txtStock.textContent = `Stock disponible: ${stockDisponible}`;
-                    
-                if (inputCantidad) {
-                    inputCantidad.max = stockDisponible;
-                    if (stockDisponible === 0) {
-                        inputCantidad.value = 0;
-                    } else if (parseInt(inputCantidad.value) > stockDisponible || parseInt(inputCantidad.value) === 0) {
-                        inputCantidad.value = 1; // Reseteamos a 1 si el valor viejo era inválido para esta talla
-                    }
-                }
-            }
-        });
-    }
-
         // 4. Asignamos el evento click al botón añadir al carrito
         if (btnAgregarCarrito && producto.variantes) {
-            btnAgregarCarrito.addEventListener("click", (e) => {
+            btnAgregarCarrito.addEventListener("click", () => {
                 
                 const idVarianteActual = parseInt(hiddenIdInput.value);
                 const varianteSeleccionada = producto.variantes.find(v => v.id === idVarianteActual);
@@ -124,7 +173,6 @@ export async function CargarDetallesProd(id) {
                     return;
                 }
 
-                // CORREGIDO: Leemos cuántas unidades quiere llevar el usuario realmente
                 const cantidadAAgregar = inputCantidad ? parseInt(inputCantidad.value) : 1;
 
                 if (isNaN(cantidadAAgregar) || cantidadAAgregar <= 0) {
@@ -137,7 +185,6 @@ export async function CargarDetallesProd(id) {
                 const cantidadPrevia = productoActual ? productoActual.cantidad : 0;
     
                 if (productoActual) {
-                    // VALIDACIÓN MULTI-UNIDAD: Sumamos lo que ya tiene en el carrito + lo que quiere agregar ahora
                     const cantidadTotalProyectada = productoActual.cantidad + cantidadAAgregar;
 
                     if (cantidadTotalProyectada <= varianteSeleccionada.stock) {
@@ -148,7 +195,6 @@ export async function CargarDetallesProd(id) {
                         return;
                     }
                 } else {
-                    // VALIDACIÓN NUEVA: Validamos que la cantidad inicial pedida no supere el stock
                     if (cantidadAAgregar <= varianteSeleccionada.stock) {
                         carrito.push({
                             id: varianteSeleccionada.id, 
@@ -156,7 +202,7 @@ export async function CargarDetallesProd(id) {
                             precio: varianteSeleccionada.valor,
                             imagen: (producto.listaImagenes && producto.listaImagenes[0]) || "../images/Rectangle 11.png",
                             talla: varianteSeleccionada.talla, 
-                            cantidad: cantidadAAgregar // Guardamos la cantidad seleccionada
+                            cantidad: cantidadAAgregar 
                         });
                     } else {
                         alert(`Lo sentimos, no hay suficiente stock. Máximo disponible: ${varianteSeleccionada.stock}`);

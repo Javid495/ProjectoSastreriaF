@@ -93,7 +93,9 @@ formulario.addEventListener("submit", async (e) => {
             }
         }
 
-    } catch (error) {
+    } 
+    
+    catch (error) {
         console.error("Error crítico en el proceso de Login:", error);
         mostrarAlerta("Nombre de usuario (Correo) o Contraseña incorrectos intentemos nuevamente ", "error");
         

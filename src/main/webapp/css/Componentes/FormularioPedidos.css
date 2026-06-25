@@ -21,7 +21,7 @@
 .modal-container {
     background-color: white;
     width: 90%;
-    max-width: 820px;
+    max-width: 1200px;
     padding: 30px 40px; /* Un poco más compacto para optimizar espacio */
     border-radius: 20px;
     position: relative; 
@@ -102,26 +102,34 @@
 /* FILA EN LÍNEA (Talla y Medidas) */
 .inline-row {
     display: flex;
-    align-items: center;
-    gap: 40px;
+    flex-wrap: wrap;         /* 🌟 CRÍTICO: Permite que los elementos bajen de fila si no caben en el ancho actual */
+    align-items: flex-start; /* 🌟 CAMBIO: Alineación al inicio para evitar deformaciones verticales al envolver */
+    gap: 20px;               /* Reducido un poco (de 40px) para maximizar el espacio utilizable */
     margin-bottom: 25px;
+    width: 100%;
 }
 
+/* CONTENEDOR DE CADA GRUPO (Label + Input) */
 .form-group--row {
+    display: flex;
     flex-direction: row !important;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 0;
+    flex-shrink: 0;          /* 🌟 CRÍTICO: Impide que Flexbox comprima este contenedor y encime las letras */
 }
 
-.input-talla {
-    width: 90px;
+/* AJUSTE REFINADO PARA LAS ETIQUETAS DE MEDIDAS */
+.form-group--row label {
+    font-size: 0.9rem;       /* Ajuste sutil de tamaño para que respire mejor el diseño */
+    white-space: nowrap;     /* 🌟 NUEVO: Evita que el texto de la etiqueta se rompa en líneas raras */
 }
 
-/* INPUTS OSCUROS (Medidas) */
+/* INTERFAZ DE MEDIDAS (Contenedor general de los inputs oscuros) */
 .medidas-inputs {
     display: flex;
-    gap: 8px;
+    gap: 15px;
+    flex-wrap: wrap;         /* 🌟 NUEVO: Si las 4 medidas están juntas aquí, fluirán hacia abajo elegantemente en pantallas compactas */
 }
 
 .input-dark {
@@ -129,12 +137,14 @@
     color: white;
     border: none;
     border-radius: 8px;
-    width: 55px;
+    width: 60px;             /* Un toque más de ancho por si se ingresan números de 3 dígitos con decimales */
     padding: 8px;
     text-align: center;
     font-size: 0.95rem;
     outline: none;
+    flex-shrink: 0;          /* Evita que el input se vuelva invisible o diminuto */
 }
+
 
 /* TEXTAREA */
 .textarea-full {
