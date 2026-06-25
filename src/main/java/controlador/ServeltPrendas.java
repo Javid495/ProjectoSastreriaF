@@ -29,7 +29,7 @@ public class ServeltPrendas extends HttpServlet {
             PrendasDAO dao = new PrendasDAO();
             List<Prendas> listaPrendas;
             
-            // 🌟 [INTEGRACIÓN] Detectamos quién solicita los datos
+            // Detectamos quién solicita los datos
             String rol = solicitud.getParameter("rol");
             
             if ("admin".equals(rol)) {
