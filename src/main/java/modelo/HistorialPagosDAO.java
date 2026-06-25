@@ -29,11 +29,15 @@ public class HistorialPagosDAO {
                 //De la tabla de pedidos
                 "FROM Pedidos";
         
+        //Prepara o crea un canal de comunicacion para ejecutar y traer la consulta
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
+                //En este caso la consulta retornaria 3 valores, el total diario, semanal y mensual
                 return new MetricasDTO(rs.getDouble("diario"), rs.getDouble("semanal"), rs.getDouble("mensual"));
             }
         }
+        
+        //En dato caso las metricas no retornan algun resultado por defecto se pondra 0 al resultado
         return new MetricasDTO(0, 0, 0);
     }
 
