@@ -37,12 +37,12 @@ public class ServeltMostrarCotizaciones extends HttpServlet {
         PedidosMedidaDao dao = new PedidosMedidaDao();
         List<String[]> cotizaciones = dao.listarCotizacionesUsuario(user.getId());
         
-        // Construcción manual del JSON (Siguiendo tu estándar del proyecto)
+        // Construcción manual del JSON (Mapeando el nuevo índice de la cotización)
         StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < cotizaciones.size(); i++) {
             String[] item = cotizaciones.get(i);
             json.append("{");
-            json.append("\"id\":").append(item[0]).append(",");
+            json.append("\"id\":").append(item[0]).append(","); // ID de la Solicitud de Medida
             json.append("\"tipo\":\"").append(item[1]).append("\",");
             json.append("\"tela\":\"").append(item[2]).append("\",");
             json.append("\"medidas\":\"").append(item[3]).append("\",");
@@ -50,7 +50,11 @@ public class ServeltMostrarCotizaciones extends HttpServlet {
             json.append("\"imagen\":\"").append(item[5]).append("\",");
             json.append("\"precio\":").append(item[6]).append(",");
             json.append("\"comentario\":\"").append(item[7]).append("\",");
-            json.append("\"fechaLimite\":\"").append(item[8]).append("\"");
+            json.append("\"fechaLimite\":\"").append(item[8]).append("\","); // 🌟 Cambiado a coma
+            
+            //Inyectamos el ID real de la cotización (índice 9) para el JS
+            json.append("\"CotizacionPedido_Id\":").append(item[9]); 
+            
             json.append("}");
             if (i < cotizaciones.size() - 1) json.append(",");
         }

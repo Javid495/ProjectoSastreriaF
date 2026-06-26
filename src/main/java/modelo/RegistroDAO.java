@@ -20,7 +20,9 @@ public class RegistroDAO {
         
         try {
             con = ClaseConexion.getConexion();
-            con.setAutoCommit(false); // Iniciamos la burbuja transaccional
+            
+            //En caso de algun error en las inserciones no me las guarde si no me retorne a este punto
+            con.setAutoCommit(false); // Iniciamos la burbuja transaccional o un checkpoint
             
             // 1. Insertar en la tabla Registro
             try(PreparedStatement psReg = con.prepareStatement(sqlRegistro, Statement.RETURN_GENERATED_KEYS)){
@@ -34,8 +36,12 @@ public class RegistroDAO {
                 int filasReg = psReg.executeUpdate(); 
             
                 if(filasReg > 0 ){
+                    //El resultSet me guarda un objecto y se guarda una tabla o estrutura temporal
                     ResultSet rs = psReg.getGeneratedKeys();
-                
+                    
+                    // . next inicia desde una fila 0 o si datos si hay un conjunto de eleemntos en la siguiente fila 
+                    // Retorna true caso ccontrario false
+                    //.next = Retorna un valor booleando si hay mas de un array de datos
                     if (rs.next()){
                         int lastRegistroId = rs.getInt(1); 
                         
@@ -53,6 +59,8 @@ public class RegistroDAO {
                             
                             if (filasUser > 0) {
                                 ResultSet rsUser = psUser.getGeneratedKeys();
+                                
+                                //El .next() pregunta o verifica si hay fila 1
                                 if (rsUser.next()) {
                                     int idUsuarioVerdadero = rsUser.getInt(1); 
                                     

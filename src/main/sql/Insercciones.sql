@@ -90,7 +90,7 @@ INSERT INTO Pedidos(Pedido_id, Pedido_TipoPedido, Pedido_MetodoPago, Pedido_Fech
 (2, 'A Medida', 'Daviplata', '2026-06-22', '3155746387', 'Calle 10 #5-20, Giron', 'En proceso', 150000.00),
 -- Pedidos de ElenaUser
 (3, 'Catalogo', 'Efectivo', '2026-06-21', '3219876543', 'Av. Central #12-45, Bucaramanga', 'Pendiente', 30000.00),
-(4, 'A Medida', 'Nequi', '2026-06-22', '3219876543', 'Av. Central #12-45, Bucaramanga', 'Aceptado y Pagado', 110000.00);
+(4, 'A Medida', 'Nequi', '2026-06-22', '3219876543', 'Av. Central #12-45, Bucaramanga', 'Pendiente', 110000.00);
 
 
 -- ====================================================================

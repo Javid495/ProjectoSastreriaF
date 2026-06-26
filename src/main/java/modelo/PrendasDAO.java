@@ -29,6 +29,7 @@ public class PrendasDAO {
                      "  c.Categoria_nombre, " +
                      "  MAX(i.Imagenes_link) as Imagenes_link, " + 
                      "  SUM(IFNULL(pop.Populares_visitas, 0)) as visitas, " + 
+                     //Revisa tallas repetidas
                      "  GROUP_CONCAT(DISTINCT p.Prenda_talla ORDER BY p.Prenda_talla SEPARATOR ', ') as Prenda_talla " + 
                      //La tabla base de donde hago la consulta datos de la consulta de la prenda 
                      "FROM Prendas p " +
@@ -70,6 +71,7 @@ public class PrendasDAO {
         
         //En caso de que suceda algun error en la base de datos
         catch (SQLException e) {
+            //Verifica los errores de la consulta sql
             e.printStackTrace();
         }
         

@@ -34,12 +34,20 @@ public class ServeltProcesoCompra extends HttpServlet {
         }
         
         try {
+            
+            //obtiene la sesion por la sesion activa por el usuario
             IniciarSesion cuentaUsuario = (IniciarSesion) session.getAttribute("PerfilUsuario");
+            
+            //asigno el id de lo obtenido anterirormente
             int idUsuario = cuentaUsuario.getId(); 
 
             StringBuilder buffer = new StringBuilder();
             BufferedReader reader = request.getReader();
+            
+            
             String linea;
+            
+            
             while ((linea = reader.readLine()) != null) {
                 buffer.append(linea);
             }
@@ -175,16 +183,33 @@ public class ServeltProcesoCompra extends HttpServlet {
         return listaProductos;
     }
 
-    // Métodos utilitarios de análisis de cadenas JSON
     private String extraerValorJson(String json, String llave) {
-        Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"([^\"]+)\"");
-        Matcher m = p.matcher(json);
-        return m.find() ? m.group(1) : "";
+    // Construir y compilar la expresión regular dinámicamente
+    // Si la llave es "direccion", Java compila el patrón: "direccion"\s*:\s*"([^"]+)"
+    Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"([^\"]+)\"");
+
+    // PAsociar el patrón con el texto JSON crudo que llegó del frontend
+    Matcher m = p.matcher(json);
+
+    // PASO 3: Evaluar si hubo coincidencia y extraer el resultado
+    // Es un IF/ELSE resumido (operador ternario):
+    // ¿Se encontró el patrón? -> SÍ: Dame lo que capturaste en el paréntesis grupo(1)
+    //                          -> NO: Devuelve un texto vacío "" para evitar errores
+    return m.find() ? m.group(1) : "";
     }
 
     private int extraerIntJson(String json, String llave) {
-        Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"?(\\d+)\"?");
-        Matcher m = p.matcher(json);
-        return m.find() ? Integer.parseInt(m.group(1)) : 0;
+    // PASO 1: Compilar la expresión regular con soporte de comillas opcionales
+    // El signo "?" hace que la comilla doble sea totalmente opcional
+    Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"?(\\d+)\"?");
+
+    // PASO 2: Vincular el patrón con el JSON crudo
+    Matcher m = p.matcher(json);
+
+    // PASO 3: Buscar, extraer y transformar el tipo de dato
+    // Si m.find() es verdadero, m.group(1) nos dará un String como "7".
+    // Integer.parseInt() lo transforma obligatoriamente a un número tipo 'int'.
+    // Si no lo encuentra, devuelve 0 por seguridad.
+    return m.find() ? Integer.parseInt(m.group(1)) : 0;
     }
 }

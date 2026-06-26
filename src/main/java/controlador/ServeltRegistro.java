@@ -20,7 +20,7 @@ public class ServeltRegistro extends HttpServlet {
         String email = request.getParameter("correo");
         String tel = request.getParameter("tel");
         
-        // 🌟 LA SOLUCIÓN: Cambiamos 'int' por 'long' para soportar los 10 dígitos
+        //Cambiamos 'int' por 'long' para soportar los 10 dígitos
         long telefonoFinal = 0; 
 
         if (tel != null && !tel.trim().isEmpty()) {
@@ -33,12 +33,12 @@ public class ServeltRegistro extends HttpServlet {
             }
         }
         
-        // Se llenan los datos en el modelo
+        // Se llenan los datos en el dto de registro
         Registro prueb = new Registro();
         prueb.setUsuario(user);
         prueb.setContrasena(contra);
         prueb.setEmail(email);  
-        prueb.setTelefono(telefonoFinal); // ⚠️ Recuerda cambiar este método en tu clase Registro
+        prueb.setTelefono(telefonoFinal); 
         
         // Se guardan a través del DAO
         RegistroDAO dao = new RegistroDAO();
@@ -47,7 +47,9 @@ public class ServeltRegistro extends HttpServlet {
         // Entregar una respuesta al fetch de JS
         if (exitoInsert) {
             response.getWriter().write("ok");
-        } else {
+        }
+        
+        else {
             response.setStatus(500);
             response.getWriter().write("Error al ingresar en la base de datos");
         }

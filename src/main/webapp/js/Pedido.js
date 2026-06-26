@@ -62,7 +62,7 @@ function MostrarPedidosUser() {
             <article class="card">
                 <div class="card__status-tag text-uppercase">${pedido.estado}</div>
                 <h3 class="card__title" style="margin-top: 10px;">${tituloDiferenciador}</h3>
-                <p class="card__estado"><strong>Fecha de Solicitud:</strong> ${pedido.fecha}</p>
+                <p class="card__estado"><strong>Fecha de Realizacion Pedido:</strong> ${pedido.fecha}</p>
                 <p class="card__tipocompra"><strong>Modalidad:</strong> ${pedido.tipo}</p>
                 <button class="card__button" data-id="${pedido.id}">Ver detalles del pedido</button>
             </article> `;
@@ -173,9 +173,17 @@ document.addEventListener("input", (evento) => {
         // Buscar coincidencia por palabra clave básica
         if (textoUsuario.includes("camisa")) {
             claveEncontrada = "camisa";
-        } else if (textoUsuario.includes("pantalon")) {
+        } 
+        
+        else if (textoUsuario.includes("pantalon")) {
             claveEncontrada = "pantalon";
-        } else if (textoUsuario.includes("vestido")) {
+        }
+        
+        else if (textoUsuario.includes("saco")) {
+            claveEncontrada = "saco";
+        } 
+
+        else if (textoUsuario.includes("vestido")) {
             claveEncontrada = "vestido";
         }
 
@@ -191,6 +199,7 @@ document.addEventListener("input", (evento) => {
                     <input type="number" class="input-dark" min="30" max="200" placeholder="30 - 200">
                 `;
             });
+
             contenedorMedidas.innerHTML = htmlMedidas;
 
             // 2. Actualizar el listado de telas sugeridas en el datalist
@@ -198,9 +207,12 @@ document.addEventListener("input", (evento) => {
             config.telas.forEach(tela => {
                 htmlTelas += `<option value="${tela}"></option>`;
             });
+
             datalistTelas.innerHTML = htmlTelas;
 
-        } else {
+        } 
+        
+        else {
             // Estado por defecto si borra o escribe algo que no rastreamos todavía
             contenedorMedidas.innerHTML = `
                 <label style="display:block; width:100%; margin-bottom: 8px;">Medidas requeridas:</label>
@@ -511,32 +523,56 @@ contPedidos.addEventListener("click", async (evento) => {
     }
 });
 
+
 // 🚀 ESCUCHADOR DE CLICK PARA ACEPTAR Y EMPEZAR PASARELA DE COMPRA
 document.addEventListener("click", async (e) => {
-    if (e.target.matches(".btn-cotizacion--aceptar")) {
-        const boton = e.target;
-        
+    // Usamos .closest para asegurar la captura correcta del botón y sus datos
+    const boton = e.target.closest(".btn-cotizacion--aceptar");
+    
+    if (boton) {
+        // 1. Evitar duplicidad deshabilitando el botón inmediatamente
+        if (boton.disabled) return; 
+        boton.disabled = true;
+        const textoOriginal = boton.innerHTML;
+        boton.innerHTML = "Cargando...";
+
+        // 2. Extraer los datos de manera segura
         const idCotizacion = boton.dataset.idCotizacion; 
         const precio = boton.dataset.precio;
+
+        // Imprime esto en tu consola web para verificar qué ID viaja realmente antes de ir al backend
+        console.log("🔍 Diagnóstico JS -> idCotizacion capturado:", idCotizacion);
 
         const capaSombreado = document.querySelector(".sombreado");
         if (capaSombreado) capaSombreado.classList.add("aparecerSombreado");
 
-        await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
+        try {
+            // Esperamos a que cargue el componente del formulario
+            await llamarComponente("#compraCarrito", "../componentesWeb/FormulairoCompra.html");
 
-        console.log("✈️ Pasando a RealizarCompra -> ID Cotización:", idCotizacion, "Precio:", precio);
+            console.log("✈️ Pasando a RealizarCompra -> ID Cotización:", idCotizacion, "Precio:", precio);
 
-        RealizarCompra("A Medida", {
-            idCotizacion: parseInt(idCotizacion),
-            precio: precio
-        });
-
-        const btnCancelar = document.querySelector("#cancelarCompra");
-        if (btnCancelar) {
-            btnCancelar.addEventListener("click", () => {
-                document.querySelector("#compraCarrito").innerHTML = ""; 
-                if (capaSombreado) capaSombreado.classList.remove("aparecerSombreado"); 
+            // Pasamos los datos limpios al proceso de compra
+            RealizarCompra("A Medida", {
+                idCotizacion: parseInt(idCotizacion),
+                precio: precio
             });
+
+            const btnCancelar = document.querySelector("#cancelarCompra");
+            if (btnCancelar) {
+                btnCancelar.addEventListener("click", () => {
+                    document.querySelector("#compraCarrito").innerHTML = ""; 
+                    if (capaSombreado) capaSombreado.classList.remove("aparecerSombreado"); 
+                    // Si cancela, volvemos a habilitar el botón de la tarjeta
+                    boton.disabled = false;
+                    boton.innerHTML = textoOriginal;
+                });
+            }
+
+        } catch (error) {
+            console.error("Error al cargar el formulario de compra:", error);
+            boton.disabled = false;
+            boton.innerHTML = textoOriginal;
         }
     }
 });

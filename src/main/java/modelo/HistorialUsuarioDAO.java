@@ -26,7 +26,9 @@ public class HistorialUsuarioDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             System.err.println("Error al escribir en HistorialUsuario con transacción: " + e.getMessage());
             return false;
         }
@@ -61,9 +63,12 @@ public class HistorialUsuarioDAO {
                     lista.add(log);
                 }
             }
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             System.err.println("Error al leer HistorialUsuario: " + e.getMessage());
         }
+        
         return lista;
     }
     

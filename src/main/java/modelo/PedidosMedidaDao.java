@@ -77,54 +77,54 @@ public class PedidosMedidaDao {
         }
     }
     
-    // ==========================================================================
-    // 🔑 LISTAR LAS COTIZACIONES LISTAS Y APROBADAS POR EL SASTRE
-    // ==========================================================================
+    //Metodo que lita las cotizaciones que ya han sido aprobadas por el administrador segunel susuario
+
     public List<String[]> listarCotizacionesUsuario(int idUsuario) {
         List<String[]> lista = new ArrayList<>();
-        
-        //Consulta que me trae la infomacion de la prenda presonalizada de parte del usuario 
+
+        // Consulta corregida incluyendo el ID real de la cotización al final
         String sql = "SELECT dpm.Detalles_PedidoMedida_id, dpm.Detalles_TPrenda, dpm.Detalles_Tela, " +
-             "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
-             "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite " +
-             "FROM DetallesPedidosMedida dpm " +
-             "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
-             "WHERE dpm.Usuario_id = ? " +
-             
-             //Si la Cotizacion ya fue aceptada no me las trae
-               
-             "AND cp.CotizacionPedido_Id NOT IN ( " +
-             "    SELECT dp.CotizacionPedido_id " +
-             "    FROM DetallesPedidos dp " +
-                
-             // Esto indica que me traiga unicamente los detalles que sean a medida
-             "    WHERE dp.CotizacionPedido_id IS NOT NULL " +
-             ") " +
-             "ORDER BY cp.CotizacionPedido_Id DESC";
+                     "dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
+                     "cp.Cotizacion_Valor, cp.ComentarioAdmin, cp.Cotizacion_FechaLimite, " +
+                     "cp.CotizacionPedido_Id " + // 🌟 Agregado aquí
+                     "FROM DetallesPedidosMedida dpm " +
+                     "INNER JOIN CotizacionPedido cp ON dpm.Detalles_PedidoMedida_id = cp.DetallesPedidosMedida_id " +
+                     "WHERE dpm.Usuario_id = ? " +
+                     "AND cp.CotizacionPedido_Id NOT IN ( " +
+                     "    SELECT dp.CotizacionPedido_id " +
+                     "    FROM DetallesPedidos dp " +
+                     "    WHERE dp.CotizacionPedido_id IS NOT NULL " +
+                     ") " +
+                     "ORDER BY cp.CotizacionPedido_Id DESC";
 
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-        
+
             ps.setInt(1, idUsuario);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    String[] fila = new String[9];
+                    // 🌟 Aumentamos el tamaño a 10 para no alterar tus índices del 0 al 8
+                    String[] fila = new String[10]; 
+
                     fila[0] = String.valueOf(rs.getInt("Detalles_PedidoMedida_id"));
                     fila[1] = rs.getString("Detalles_TPrenda");
                     fila[2] = rs.getString("Detalles_Tela");
                     fila[3] = rs.getString("Detalles_medidas");
                     fila[4] = rs.getString("Detalles_Descripcion");
-                
+
                     String img = rs.getString("Detalles_ImagenReferencia");
                     fila[5] = (img != null) ? img.replace("\\", "\\\\") : "";
-                
+
                     fila[6] = String.valueOf(rs.getDouble("Cotizacion_Valor"));
-                
+
                     String com = rs.getString("ComentarioAdmin");
                     fila[7] = (com != null) ? com : "Sin comentarios adicionales.";
-                
+
                     fila[8] = String.valueOf(rs.getDate("Cotizacion_FechaLimite"));
-                
+
+                    // 🌟 Guardamos el ID real de la cotización en la última posición
+                    fila[9] = String.valueOf(rs.getInt("CotizacionPedido_Id")); 
+
                     lista.add(fila);
                 }
             }
