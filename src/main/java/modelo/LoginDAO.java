@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import getsSets.IniciarSesion;
+import Dtos.IniciarSesion;
 
 // DAO que gestiona el proceso de iniciar sesión
 public class LoginDAO {

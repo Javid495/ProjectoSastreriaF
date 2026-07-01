@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.DetallesPedidoMedida;
+import Dtos.DetallesPedidoMedida;
 
 // DAO que maneja los pedidos a medida de los usuarios hecho desde cero
 public class PedidosMedidaDao {
@@ -61,13 +61,17 @@ public class PedidosMedidaDao {
             
             return false;
            
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             System.out.println("❌ Error insertando pedido personalizado en ModaS: " + e.getMessage());
             if (con != null) {
                 try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
             return false;
-        } finally {
+        } 
+        
+        finally {
             // Cerramos de forma segura todos los recursos abiertos
             try {
                 if (rs != null) rs.close();
@@ -75,6 +79,8 @@ public class PedidosMedidaDao {
                 if (con != null) con.close();
             } catch (SQLException e) { e.printStackTrace(); }
         }
+        
+        //Devuelve el resultado a ServeltRegistroPedidosMedida
     }
     
     //Metodo que lita las cotizaciones que ya han sido aprobadas por el administrador segunel susuario
@@ -131,6 +137,8 @@ public class PedidosMedidaDao {
         } catch (SQLException e) {
             System.out.println("❌ Error al listar cotizaciones del usuario: " + e.getMessage());
         }
+        
+        //Retrona la lista de datos al servelt MostrarCotizaciones.
         return lista;
     }
 }

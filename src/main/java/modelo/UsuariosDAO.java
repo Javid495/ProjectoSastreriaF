@@ -3,9 +3,9 @@ package modelo;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.IniciarSesion;
-import getsSets.PrendasRecientes;
-import getsSets.Pedidos;
+import Dtos.IniciarSesion;
+import Dtos.PrendasRecientes;
+import Dtos.Pedidos;
 
 public class UsuariosDAO {
 
@@ -62,7 +62,9 @@ public class UsuariosDAO {
                     ));
                 }
             }
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return lista;

@@ -32,6 +32,8 @@ public class EliminarPrendasDAO {
             System.out.println("DAO Error en eliminación lógica individual: " + e.getMessage());
             return false;
         }
+        
+         //Este metodo Retorna una respuesta a Servelt EliminarVarios
     }
 
     // ============================================================================
@@ -76,4 +78,6 @@ public class EliminarPrendasDAO {
             return false;
         }
     }
+    
+    //Este metodo Retorna una respuesta a Servelt EliminarIndividual
 }

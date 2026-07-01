@@ -64,7 +64,7 @@ public class MostrarPedidosAdminDAO {
             System.out.println("❌ Error listando pedidos en AdminPedidosDAO: " + e.getMessage());
             e.printStackTrace();
         }
-        return lista;
+        return lista; //Retorna al serveltAdminPedidos
     }
 
     // ==========================================================================
@@ -80,20 +80,26 @@ public class MostrarPedidosAdminDAO {
             ps.setInt(2, idPedido);
             
             return ps.executeUpdate() > 0;
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             System.out.println("❌ Error al modificar estado del pedido #" + idPedido + " en AdminPedidosDAO: " + e.getMessage());
             return false;
         }
+        
+        //Retorna el resultado de la actualizacion al servelt de AdminPedidos.
     }
     
+    //Los siguientes metodos retornan sus resultados a ServeltDetallesPedidosAdminDAO
+    
     // ==========================================================================
-    // 🛒 3. OBTENER DETALLES DE UN PEDIDO DE CATÁLOGO
+    // Obtener detalles de pedidos del catalogo 
     // ==========================================================================
     public Map<String, Object> obtenerDetalleCatalogo(int idPedido) {
         Map<String, Object> resultado = new HashMap<>();
         List<Map<String, String>> prendas = new ArrayList<>();
         
-        // 💡 CORRECCIÓN CRÍTICA: Reestructurada la ruta de JOINS para encontrar el correo del cliente sin usar pe.Usuario_id
+        // Consulta que busca la informacion acerca del usairo
         String sqlInfoGeneral = "SELECT pe.Pedido_FechaInicio, reg.Registro_Email, pe.Pedido_TipoPedido, pe.Pedido_TotalCompra " +
                                 "FROM Pedidos pe " +
                                 "JOIN DetallesPedidos dp ON pe.Pedido_id = dp.Pedido_id " +
@@ -117,6 +123,8 @@ public class MostrarPedidosAdminDAO {
                 ps.setInt(1, idPedido);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
+                        //REsultado.put lo que hace es incluir el dato a la array o lista de resultado para devolver al controlador
+                        //Detalles pedidos a medida.
                         resultado.put("fecha", rs.getString("Pedido_FechaInicio"));
                         resultado.put("email", rs.getString("Registro_Email"));
                         resultado.put("tipo", rs.getString("Pedido_TipoPedido"));
@@ -150,13 +158,13 @@ public class MostrarPedidosAdminDAO {
     }
 
     // ==========================================================================
-    // 🧵 4. OBTENER LOS DETALLES DE UN PEDIDO HECHO A MEDIDA
+    // 4. Obtener detalles de pedidos a medida
     // ==========================================================================
+    
     public Map<String, Object> obtenerDetalleAMedida(int idPedido) {
         Map<String, Object> resultado = new HashMap<>();
-        
-        // 💡 CORRECCIÓN CRÍTICA: Cambiado "JOIN Usuarios u ON pe.Usuario_id = u.Usuarios_id" 
-        // por "JOIN Usuarios u ON dpm.Usuario_id = u.Usuarios_id" ya que el cliente está vinculado a la solicitud de medida.
+         
+        //"JOIN Usuarios u ON dpm.Usuario_id = u.Usuarios_id" ya que el cliente está vinculado a la solicitud de medida.
         String sql = "SELECT pe.Pedido_TipoPedido, pe.Pedido_FechaInicio, reg.Registro_Email, " +
                      "dpm.Detalles_TPrenda, dpm.Detalles_Tela, dpm.Detalles_medidas, dpm.Detalles_Descripcion, dpm.Detalles_ImagenReferencia, " +
                      "cot.Cotizacion_Valor " +

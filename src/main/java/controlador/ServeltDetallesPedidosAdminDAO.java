@@ -81,6 +81,7 @@
                             .append("\"nombre\":\"").append(pr.get("nombre")).append("\",")
                             .append("\"precio\":\"").append(pr.get("precio")).append("\",")
                             .append("\"talla\":\"").append(pr.get("talla")).append("\",")
+                            .append("\"cantidad\":\"").append(pr.get("cantidad")).append("\",")
                             .append("\"imagen\":\"").append(pr.get("imagen")).append("\"")
                             .append("}");
                         if (i < prendas.size() - 1) json.append(",");

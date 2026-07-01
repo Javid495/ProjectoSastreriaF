@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import modelo.PedidosMedidaDao;
-import getsSets.IniciarSesion;
-import getsSets.DetallesPedidoMedida;
+import Dtos.IniciarSesion;
+import Dtos.DetallesPedidoMedida;
 
 //Servelt quien registra nuevos pedidos a medida
 

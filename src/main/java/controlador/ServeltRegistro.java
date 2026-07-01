@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import getsSets.Registro;
+import Dtos.Registro;
 import modelo.RegistroDAO;
 
 // Servlet que registra nuevos usuarios

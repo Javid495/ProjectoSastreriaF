@@ -1,5 +1,5 @@
 
-package getsSets;
+package Dtos;
 
 
 public class DetallesPedidoMedida {

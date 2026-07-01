@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import getsSets.IniciarSesion;
-import getsSets.HistorialUsuario;
+import Dtos.IniciarSesion;
+import Dtos.HistorialUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

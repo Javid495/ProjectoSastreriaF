@@ -37,25 +37,30 @@ public class ServeltAgregarprendas extends HttpServlet {
         try {
             // 1. Captura de parámetros base comunes de la prenda
             String nombre = request.getParameter("nombreProducto");
-            String tipo = request.getParameter("tipoProducto"); // Asegúrate de enviarlo desde el JS
+            String tipo = request.getParameter("tipoProducto");
             int idCategoria = Integer.parseInt(request.getParameter("categoria")); 
             String descripcion = request.getParameter("descripcion");
             String estado = request.getParameter("estado"); // Recibido desde la validación JS
 
             // 2. EXTRAER LAS VARIANTES DINÁMICAS (Enviadas como string JSON dentro del FormData)
             String variantesJson = request.getParameter("variantes");
+            
             if (variantesJson == null || variantesJson.trim().isEmpty()) {
                 throw new IllegalArgumentException("Debe incluir al menos una variante de talla y stock.");
             }
             
             Gson gson = new Gson();
+            
             // Deserializamos el texto plano JSON a una Lista de Mapas amigable para el nuevo DAO
             Type listaTipo = new TypeToken<List<Map<String, Object>>>(){}.getType();
+            
             List<Map<String, Object>> variantes = gson.fromJson(variantesJson, listaTipo);
 
             // 3. Preparar el directorio físico para las imágenes
             List<String> rutasImagenes = new ArrayList<>();
+            
             String rutaDestinoServer = request.getServletContext().getRealPath("/images/Prendas");
+            
             File carpeta = new File(rutaDestinoServer);
             if (!carpeta.exists()) {
                 carpeta.mkdirs();
@@ -82,7 +87,9 @@ public class ServeltAgregarprendas extends HttpServlet {
 
             if (registradoExitoso) {
                 response.getWriter().write("{\"status\": \"Exito\", \"mensaje\": \"Producto con variantes registrado correctamente.\"}");
-            } else {
+            } 
+            
+            else {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"No se pudo insertar el lote de prendas en la transacción.\"}");
             }

@@ -3,7 +3,7 @@ package modelo;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.Dtos.*; 
+import Dtos.Dtos.*; 
 
 //DAO que solicita y genera el historial de pagos del local
 
@@ -14,6 +14,8 @@ public class HistorialPagosDAO {
         MetricasDTO metricas = obtenerMetricas(conn);
         List<PagoDTO> listaPagos = obtenerListaPagos(conn);
         return new ReporteCajaDTO(metricas, listaPagos);
+        
+        //Este retorna al servelt Historial pagos
     }
 
     // ?se Calcula directamente desde el total y la fecha de la tabla Pedidos

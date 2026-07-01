@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.Pedidos;
+import Dtos.Pedidos;
 
 // DAO encargado de consultar las compras y pedidos históricos del cliente
 public class PedidosClienteDAO {
@@ -60,6 +60,8 @@ public class PedidosClienteDAO {
         catch (SQLException e){
             System.out.println("❌ Error en obtenerPedidosUsuario (" + idUsuario + "): " + e.getMessage());
         }
+        
+        //Retorna el Resultado a ServeltObtenerPedidosUser
         return lista;
     }
     
@@ -107,7 +109,9 @@ public class PedidosClienteDAO {
         catch (Exception e) {
             System.out.println("❌ Error consultando desglose de catálogo (obtenerProductosPorPedido): " + e.getMessage());
         }
+        //Retorna el Resultado a ServeltObservarDetallesPedidos
         return lista;
+        
     }
     
     // ==========================================================================
@@ -143,6 +147,7 @@ public class PedidosClienteDAO {
             System.out.println("❌ Error consultando detalles del pedido a medida: " + e.getMessage());
         }
         
+        //Retorna el Resultado a ServeltObservarDetallesPedidos
         return detalles; 
     }
 }

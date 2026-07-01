@@ -2,9 +2,9 @@ package controlador;
 
 import com.google.gson.Gson;
 import modelo.UsuariosDAO;
-import getsSets.IniciarSesion;
-import getsSets.PrendasRecientes;
-import getsSets.Pedidos;
+import Dtos.IniciarSesion;
+import Dtos.PrendasRecientes;
+import Dtos.Pedidos;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

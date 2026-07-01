@@ -104,7 +104,7 @@ function cargarMisCotizaciones() {
                         <div class="card__propuesta-economica">
                             <span class="cotizacion__precio">$${precioFormateado}</span>
                             <p class="cotizacion__nota">"${c.comentario}"</p>
-                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #cc0000; font-weight: bold;">Oferta válida hasta: ${c.fechaLimite}</p>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #cc0000; font-weight: bold;">Cotizacion vigente hasta: ${c.fechaLimite}</p>
                         </div>
                         
                         <div class="card__cotizacion-acciones">
@@ -335,7 +335,7 @@ document.addEventListener("submit", async (evento) => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert("¡Tu solicitud de diseño ha sido enviada con éxito!");
+                alert("¡Tu solicitud de diseño ha sido enviada con éxito, Espera la cotizacion del Sastre Por favor!");
                 document.querySelector("#MostraPedido").innerHTML = ""; 
                 MostrarPedidosUser(); 
                 fotosReferenciaArr = []; 

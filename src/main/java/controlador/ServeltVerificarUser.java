@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import getsSets.IniciarSesion;
+import Dtos.IniciarSesion;
 
 //Servelt quien me verifica el usuario que tiene abierta la sesion
 

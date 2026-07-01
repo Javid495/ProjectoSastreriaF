@@ -10,7 +10,7 @@ public class ClaseConexion {
     private static final String NOMBRE_BD = "ModaSv1";
     private static final String URL = "jdbc:mysql://localhost:3306/" + NOMBRE_BD+ "?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
-    private static final String CLAVE = "#Aprendiz2024"; // Tu contraseña de MySQL contra en el sena: , en Casa: admin
+    private static final String CLAVE = "admin"; // Tu contraseña de MySQL contra en el sena: #Aprendiz2024 , en Casa: 
 
     // El método debe ser 'static' para poder usarlo sin crear copias de la clase
     public static Connection getConexion() {

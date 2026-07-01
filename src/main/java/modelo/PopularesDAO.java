@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.Prendas;
+import Dtos.Prendas;
 
 public class PopularesDAO {
 
@@ -95,6 +95,8 @@ public class PopularesDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        //Retorna la lista de elementos al servetlPopulares
         return listaPopulares;
     }
 }

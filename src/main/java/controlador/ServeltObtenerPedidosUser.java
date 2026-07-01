@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import modelo.PedidosClienteDAO;
-import getsSets.IniciarSesion;
-import getsSets.Pedidos;
+import Dtos.IniciarSesion;
+import Dtos.Pedidos;
 
 //Servelt encargado de solicitar y mostrar los pedidos de los usuarios.
 
@@ -48,6 +48,7 @@ public class ServeltObtenerPedidosUser extends HttpServlet {
                 String tipoCompra = p.getTipoCompra() != null ? p.getTipoCompra().toLowerCase() : "";
                 
                 if (tipoCompra.contains("medida")) {
+                    
                     // Caso A: Es un pedido hecho a medida desde cero
                     String[] deMedida = dao.obtenerDetallesPedidoMedida(p.getIdPedido());
                     

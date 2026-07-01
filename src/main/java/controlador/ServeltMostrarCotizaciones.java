@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import modelo.PedidosMedidaDao;
-import getsSets.IniciarSesion;
+import Dtos.IniciarSesion;
 
 //Servelt encargado de mostrar las cotizaciones por el administrador
 

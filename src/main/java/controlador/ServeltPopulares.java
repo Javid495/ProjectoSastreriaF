@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
-import getsSets.Prendas;
+import Dtos.Prendas;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

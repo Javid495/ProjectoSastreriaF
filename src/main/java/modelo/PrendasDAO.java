@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import getsSets.Prendas;
+import Dtos.Prendas;
 
 public class PrendasDAO {
 
@@ -85,6 +85,9 @@ public class PrendasDAO {
        List<Prendas> listaProductos = new ArrayList<>();
 
        // Agrupamos por nombre/tipo/estado y consolidamos las variantes (IDs, stocks y tallas)
+       // OBSV: aunque tecnicamente esta haciendo la misma funcion que el metodo listar prendas
+       // La onsulta cambia en un par de factores siendo que no se tiene en cuenta los populares y 
+       // Se muestran las prendas que tengan stock en 0.
        String sql = "SELECT " +
                     "  MIN(p.Prenda_id) as Prenda_id, " +
                     "  p.Prenda_nombre, " +
@@ -322,6 +325,7 @@ public class PrendasDAO {
         } 
         
         finally {
+            
             if (con != null) {
                 try { con.close(); } 
                 catch (SQLException e) { e.printStackTrace(); }

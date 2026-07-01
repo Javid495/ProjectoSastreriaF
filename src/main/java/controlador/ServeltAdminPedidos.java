@@ -47,12 +47,18 @@ public class ServeltAdminPedidos extends HttpServlet {
             json.append("]");
             out.write(json.toString());
             
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } 
+        
+        catch (ArrayIndexOutOfBoundsException e) {
             // Captura si el array del DAO se quedó corto en columnas (evita el Error 500 de Tomcat)
             out.write("{\"status\": 500, \"success\": false, \"mensaje\": \"Error de índices: Tu consulta SQL en el DAO aún no devuelve los campos de usuario y prenda (p[5] y p[6]).\"}");
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             out.write("{\"status\": 500, \"success\": false, \"mensaje\": \"Error inesperado en el servidor: " + e.getMessage() + "\"}");
-        } finally {
+        } 
+        
+        finally {
             out.flush();
         }
     }
@@ -86,11 +92,17 @@ public class ServeltAdminPedidos extends HttpServlet {
 
             out.print("{\"success\": " + exito + "}");
             
-        } catch (NumberFormatException e) {
+        } 
+        
+        catch (NumberFormatException e) {
             out.print("{\"success\": false, \"mensaje\": \"ID de pedido inválido.\"}");
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             out.print("{\"success\": false, \"mensaje\": \"Error en el servidor: " + e.getMessage() + "\"}");
-        } finally {
+        } 
+        
+        finally {
             out.flush();
         }
     }

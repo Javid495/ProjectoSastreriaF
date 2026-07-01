@@ -10,8 +10,8 @@ import jakarta.servlet.annotation.MultipartConfig; // 🌟 IMPORTANTE
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import getsSets.IniciarSesion;
-import getsSets.Resenas;
+import Dtos.IniciarSesion;
+import Dtos.Resenas;
 import modelo.ResenaDAO;
 
 @WebServlet("/ResenasController")
@@ -124,7 +124,9 @@ public class ServeltResenas extends HttpServlet {
 
         if (exito) {
             out.print("{\"status\":\"success\",\"message\":\"¡Reseña publicada con éxito!\"}");
-        } else {
+        } 
+        
+        else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"status\":\"error\",\"message\":\"No se pudo guardar la reseña en la base de datos.\"}");
         }

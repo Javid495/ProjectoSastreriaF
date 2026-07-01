@@ -9,10 +9,9 @@ import java.util.List;
 // DAO que maneja el proceso y el flujo de compra respetando el diseño original de la BD
 public class CompraPedidosDAO {
 
-    // ==========================================================================
-    // 🛒 OPERACIÓN TEMPORAL: REGISTRAR O ACTUALIZAR CARRITO
-    // ==========================================================================
+    //Registro o actualizacion del carrito
     public boolean registrarCarritoTemporal(int idUsuario, List<int[]> listaProductos) {
+        
         Connection con = null; 
         PreparedStatement psCarrito = null; 
         PreparedStatement psDetalleCar = null;
@@ -54,7 +53,7 @@ public class CompraPedidosDAO {
             psDetalleCar.executeBatch(); 
             con.commit(); 
             System.out.println("📌 [CompraDAO] Carrito activo creado con ID: " + idCarritoGenerado);
-            return true;
+            return true; //REtorna una resupesta al serveltProcesoCompra
 
         } 
         
@@ -69,6 +68,7 @@ public class CompraPedidosDAO {
         } 
         
         finally {
+            
             try {
                 if (rs != null) rs.close();
                 if (psCarrito != null) psCarrito.close();
@@ -78,9 +78,7 @@ public class CompraPedidosDAO {
         }
     }
     
-    // ==========================================================================
-    // 🛍️ FLUJO 1: REGISTRAR COMPRA DESDE EL CARRITO DE CATÁLOGO
-    // ==========================================================================
+    //Confirmacion de compra de pedidos de manera definitiva
     public boolean confirmarPedidoDefinitivo(int idUsuario, String direccion, String telefono, 
                                              String metodoPago, String tipoPedido, List<int[]> listaProductos) {
         Connection con = null; 
@@ -145,6 +143,7 @@ public class CompraPedidosDAO {
             psStock = con.prepareStatement(sqlStock);
 
             String sqlGetDetalleId = "SELECT DetallesCarrito_Id FROM DetallesCarrito WHERE Carrito_id = ? AND Prendas_id = ?";
+
             psGetDetalleId = con.prepareStatement(sqlGetDetalleId);
 
             for (int[] prod : listaProductos) {
@@ -157,9 +156,11 @@ public class CompraPedidosDAO {
                 rsDetId = psGetDetalleId.executeQuery();
                 
                 int idDetalleCarrito = 0;
+                
                 if (rsDetId.next()) {
                     idDetalleCarrito = rsDetId.getInt("DetallesCarrito_Id");
                 }
+                
                 rsDetId.close(); // Se cierra tras su uso en ciclo
 
                 if (idDetalleCarrito > 0) {
@@ -178,6 +179,7 @@ public class CompraPedidosDAO {
 
             // 5. El carrito pasa a estar 'comprado'
             String sqlCerrarCarrito = "UPDATE Carrito SET Carrito_Estado = 'comprado' WHERE Carrito_id = ?";
+            
             psCerrarCarrito = con.prepareStatement(sqlCerrarCarrito);
             psCerrarCarrito.setInt(1, idCarritoActivo);
             psCerrarCarrito.executeUpdate();
@@ -195,7 +197,7 @@ public class CompraPedidosDAO {
 
             con.commit(); 
             System.out.println("🚀 Pedido #" + idPedidoGenerado + " registrado con éxito usando relaciones normalizadas.");
-            return true;
+            return true; //REtorna una resupesta al serveltProcesoCompra
 
         } 
         
@@ -316,8 +318,12 @@ public class CompraPedidosDAO {
                 if (psPedido != null) psPedido.close();
                 if (psDetallePed != null) psDetallePed.close();
                 if (con != null) con.close();
-            } catch (Exception e) { e.printStackTrace(); }
+            } 
+            
+            catch (Exception e) { e.printStackTrace(); }
         }
+        
+        //Al finalizar retorna una respuesta en el serveltProcesoCompcra
     }
 
     //Cambiar estados de carrito como abandonados

@@ -1,6 +1,6 @@
 package modelo;
 
-import getsSets.HistorialUsuario;
+import Dtos.HistorialUsuario;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class HistorialUsuarioDAO {
             System.err.println("Error al leer HistorialUsuario: " + e.getMessage());
         }
         
-        return lista;
+        return lista; //REtorna los datos de la consulta al servelt de HistorialUsuario
     }
     
     

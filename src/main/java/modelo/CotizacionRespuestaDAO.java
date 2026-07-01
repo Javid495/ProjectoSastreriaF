@@ -96,7 +96,9 @@ public class CotizacionRespuestaDAO {
             conn.commit();
             exito = true;
 
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             if (conn != null) {
                 try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
@@ -115,6 +117,6 @@ public class CotizacionRespuestaDAO {
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
 
-        return exito;
+        return exito; //Retorna la respuesta al servelRespuestaEliminacionPedidoMedida
     }
 }

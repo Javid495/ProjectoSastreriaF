@@ -53,10 +53,13 @@ public class ServeltGuardarCotizaciones extends HttpServlet {
 
         } catch (NumberFormatException e) {
             out.print("{\"success\": false, \"mensaje\": \"El precio o el identificador del pedido no tienen un formato numérico válido.\"}");
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             out.print("{\"success\": false, \"mensaje\": \"Error crítico en el controlador: " + e.getMessage() + "\"}");
         }
         
+        //Limpia el canal de datos o de red con el fontend
         out.flush();
     }
 }

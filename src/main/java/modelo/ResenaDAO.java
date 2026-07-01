@@ -3,7 +3,7 @@ package modelo;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import getsSets.Resenas;
+import Dtos.Resenas;
 
 public class ResenaDAO {
 

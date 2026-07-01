@@ -1,7 +1,7 @@
 package controlador;
 
 import modelo.CompraPedidosDAO;
-import getsSets.IniciarSesion;
+import Dtos.IniciarSesion;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +27,7 @@ public class ServeltProcesoCompra extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        //Verificamos si la session del usuario esta activa
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("PerfilUsuario") == null) {
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Sesión inválida.\"}");
@@ -43,8 +44,7 @@ public class ServeltProcesoCompra extends HttpServlet {
 
             StringBuilder buffer = new StringBuilder();
             BufferedReader reader = request.getReader();
-            
-            
+                
             String linea;
             
             
@@ -59,13 +59,13 @@ public class ServeltProcesoCompra extends HttpServlet {
             CompraPedidosDAO dao = new CompraPedidosDAO();
             boolean exito = false;
 
-            // =================================================================
-            // 🛒 CASO 1: REGISTRO TEMPORAL (Al hacer clic en "Realizar Compra")
-            // =================================================================
+            //En caso de que el registro del carrito se de manera temporal
             if ("temporal".equalsIgnoreCase(accion)) {
                 
+                //Nos traemos la lista de productos
                 List<int[]> listaProductos = parsearProductosDesdeJson(jsonRaw);
-
+                
+                //SI esta lista llega a entrar vacia
                 if (listaProductos.isEmpty()) {
                     System.out.println("⚠️ ALERTA: No se encontraron productos para el carrito temporal.");
                     response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El carrito no contiene productos válidos.\"}");
@@ -75,9 +75,7 @@ public class ServeltProcesoCompra extends HttpServlet {
                 // Invoca al método temporal que limpia registros previos e inserta en Carrito y DetallesCarrito
                 exito = dao.registrarCarritoTemporal(idUsuario, listaProductos);
 
-            // =================================================================
-            // 🚀 CASO 2: PROCESAR COMPRA DEFINITIVA (Al enviar el Formulario)
-            // =================================================================
+            //Si la compra ya es definitica
             } else {
                 
                 // Extraemos los campos comunes del formulario final
@@ -170,9 +168,13 @@ public class ServeltProcesoCompra extends HttpServlet {
 
             if (totalLineaJson != -1) {
                 totalLinea = totalLineaJson;
-            } else if (precioUnitario != -1) {
+            } 
+            
+            else if (precioUnitario != -1) {
                 totalLinea = precioUnitario * cantidad;
-            } else {
+            } 
+            
+            else {
                 totalLinea = 0; 
             }
             

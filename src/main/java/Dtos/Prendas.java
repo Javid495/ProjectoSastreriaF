@@ -1,6 +1,6 @@
 
 //getter y setter que hacen referencia a la tabla o campos de prenda
-package getsSets;
+package Dtos;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package getsSets;
+package Dtos;
 
 public class Resenas {
     private int id;
