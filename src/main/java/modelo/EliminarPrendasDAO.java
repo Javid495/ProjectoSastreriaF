@@ -28,7 +28,9 @@ public class EliminarPrendasDAO {
             }
             return false;
 
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             System.out.println("DAO Error en eliminación lógica individual: " + e.getMessage());
             return false;
         }
