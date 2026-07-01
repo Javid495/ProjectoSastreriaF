@@ -45,6 +45,7 @@ public class SeverltObtenerCategorias extends HttpServlet {
             response.getWriter().write(json.toString());
             
         } 
+        
         catch (Exception e) {
             System.out.println("Error al obtener categorías: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

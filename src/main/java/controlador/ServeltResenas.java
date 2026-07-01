@@ -141,6 +141,7 @@ public class ServeltResenas extends HttpServlet {
                 return fileName.substring(fileName.lastIndexOf('/') + 1).substring(fileName.lastIndexOf('\\') + 1);
             }
         }
+        
         return "archivo_desconocido.png";
     }
 }

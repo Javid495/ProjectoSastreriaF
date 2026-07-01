@@ -90,7 +90,14 @@ public class RegistroDAO {
         catch (SQLException e) {
             // Si cualquiera de los 3 pasos falla, el rollback cancelará absolutamente todo
             if (con != null) {
-                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+                
+                try { 
+                    con.rollback(); 
+                } 
+                
+                catch (SQLException ex) { 
+                    ex.printStackTrace(); 
+                }
             }
             System.err.println("Error en la transacción de registro: " + e.getMessage());
             return false;

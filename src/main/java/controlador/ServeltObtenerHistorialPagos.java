@@ -31,7 +31,9 @@ public class ServeltObtenerHistorialPagos extends HttpServlet {
             out.print(jsonRespuesta);
             out.flush();
             
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().print("{\"error\":\"" + e.getMessage() + "\"}");
         }

@@ -167,11 +167,19 @@ public class PrendasDAO {
     /**
      * Trae la información unificada de una prenda base y desglosa sus variantes.
      */
+    
     public Map<String, Object> obtenerDetallesPrendaConVariantes(int idReferencia) {
+        
+        //Contnedor de elementos que tendra el resultado final de la consulta
         Map<String, Object> resultado = new java.util.LinkedHashMap<>();
+        
+        //Contenedor que listara las imagenes asegurandose de que no hayan repetidas
         java.util.Set<String> listaImagenes = new java.util.LinkedHashSet<>();
+        
+        //Un mapeo temporal de los datos de tallejes de la prenda
         java.util.Map<Integer, Map<String, Object>> variantesMap = new java.util.LinkedHashMap<>();
         
+        //Consulta sql para consultar los variantes de las prendas
         String sql = "SELECT p2.Prenda_id, p2.Prenda_nombre, p2.Prenda_descripcion, p2.Prenda_tipo, " +
                      "       p2.Prenda_talla, p2.Prenda_stock, p2.Prenda_valor, p2.Categoria_id, i.Imagenes_link " +
                      "FROM Prendas p1 " +
@@ -183,26 +191,33 @@ public class PrendasDAO {
                 
              PreparedStatement ps = con.prepareStatement(sql)) {
             
-            //Id o referencia con la cual ejecuto la consulta (es decir el dato que ocupa el ?)
+            //Id o referencia con la cual ejecuto la consulta (es decir el dato que ocupa el ?) o id cabeza de la prenda
             ps.setInt(1, idReferencia);
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    
                     if (!resultado.containsKey("nombre")) {
+                        
                         resultado.put("nombre", rs.getString("Prenda_nombre"));
-                        resultado.put("descripcion", rs.getString("Prenda_descripcion")); // Mapea la primera que encuentre sin problemas
+                        resultado.put("descripcion", rs.getString("Prenda_descripcion")); // Mapea la primera prenda sin problema
                         resultado.put("tipo", rs.getString("Prenda_tipo"));
                         resultado.put("categoriaId", rs.getInt("Categoria_id"));
                     }
                     
                     String imgLink = rs.getString("Imagenes_link");
+                    
                     if (imgLink != null && !imgLink.isEmpty()) {
                         listaImagenes.add(imgLink);
                     }
                     
                     int varianteId = rs.getInt("Prenda_id");
+                    
+                    //Validacion que evita la duplicidad de elementos
                     if (!variantesMap.containsKey(varianteId)) {
+                        
                         Map<String, Object> variante = new java.util.LinkedHashMap<>();
+                        
                         variante.put("id", varianteId);
                         variante.put("talla", rs.getString("Prenda_talla"));
                         variante.put("stock", rs.getInt("Prenda_stock"));
@@ -212,7 +227,9 @@ public class PrendasDAO {
                 }
             }
             
+            //Etruturamos las imagenes y variantes(Tallajes en la lista principal)
             if (!resultado.isEmpty()) {
+                
                 resultado.put("listaImagenes", new java.util.ArrayList<>(listaImagenes));
                 resultado.put("variantes", new java.util.ArrayList<>(variantesMap.values()));
             }
@@ -248,9 +265,7 @@ public class PrendasDAO {
         }
     }
 
-    // =========================================================================
-    // 3. OPERACIONES DEL ADMINISTRADOR (Adaptadas a Variantes/Tallajes)
-    // =========================================================================
+    //Operaciones de Administrador de agregar prendas y tallajes
 
     //Clase de registrar productos con variantes, recibe los datos que vienen del frontend
     public boolean registrarProductoConVariantes(String nombre, String tipo, int idCategoria, String estado, String descripcion, List<Map<String, Object>> variantes, List<String> listaRutas) {
@@ -333,14 +348,20 @@ public class PrendasDAO {
         }
     }
 
+    // Método principal para actualizar un producto y sincronizar de forma masiva sus variantes (tallas) e imágenes
     public boolean actualizarProductoConVariantes(String nombreOriginal, String nuevoNombre, String tipo, int idCategoria, String estado, String descripcion, List<Map<String, Object>> variantes, List<String> listaRutas, int idRepresentativo) {
+
         Connection con = null;
+
         try {
             con = ClaseConexion.getConexion();
+            
+            // PASO 1: Desactivamos el autocommit para manejar todo como una única Transacción Segura
             con.setAutoCommit(false);
 
-            // Actualizacion Global (mantiene todas las variantes sincronizadas con la misma descripción)
+            // PASO 2: Actualización de campos globales para todas las prendas que comparten el mismo nombre antiguo
             String sqlGlobal = "UPDATE Prendas SET Prenda_nombre = ?, Prenda_tipo = ?, Categoria_id = ?, Prenda_estado = ?, Prenda_descripcion = ? WHERE Prenda_nombre = ?;";
+            
             try (PreparedStatement psGlobal = con.prepareStatement(sqlGlobal)) {
                 psGlobal.setString(1, nuevoNombre);
                 psGlobal.setString(2, tipo);
@@ -351,52 +372,72 @@ public class PrendasDAO {
                 psGlobal.executeUpdate();
             }
 
-            List<Integer> idsEntrantes = new ArrayList<>();
-            for (Map<String, Object> var : variantes) {
-                if (var.containsKey("id") && var.get("id") != null) {
-                    idsEntrantes.add(((Number) var.get("id")).intValue());
-                }
-            }
+                // Identificar qué IDs se recibieron
+                //Creamos una lista que va almacenar los id entrantes
+                List<Integer> idsEntrantes = new ArrayList<>();
 
+                //Se revisan cada variantes que vienen de frontend
+                for (Map<String, Object> var : variantes) {
+                    
+                    //Si la variante viene con un dato id
+                    if (var.containsKey("id") && var.get("id") != null) {
+                        //Vamos almacenandolo en la lista idEntrantes
+                        idsEntrantes.add(((Number) var.get("id")).intValue());
+                    }
+                }
+
+            // Consultar qué IDs existen actualmente en la Base de Datos para comparar
             String sqlBuscarActuales = "SELECT Prenda_id FROM Prendas WHERE Prenda_nombre = ? AND Prenda_estado != 'eliminada';";
+            
             List<Integer> idsEnBD = new ArrayList<>();
+            
             try (PreparedStatement psBuscar = con.prepareStatement(sqlBuscarActuales)) {
-                psBuscar.setString(1, nuevoNombre);
+                
+                psBuscar.setString(1, nuevoNombre); // Usamos nuevoNombre porque el SQL Global ya lo cambió
                 
                 try (ResultSet rs = psBuscar.executeQuery()) {
-                    
+                    //Revisamos de esa vista de variantes que ids estan en la base de datos
                     while (rs.next()) {
                         idsEnBD.add(rs.getInt("Prenda_id"));
                     }
                 }
             }
 
+            // PASO 5: Eliminar (Desactivar) las variantes que la base de datos tiene pero que el usuario quitó en la pantalla
             String sqlDesactivarVar = "UPDATE Prendas SET Prenda_estado = 'eliminada' WHERE Prenda_id = ?;";
+            
             try (PreparedStatement psDesactivar = con.prepareStatement(sqlDesactivarVar)) {
+                
                 for (int idBD : idsEnBD) {
+                    
+                    //Vamos preparando la ejecucion de cada eliminacion de las variantes
                     if (!idsEntrantes.contains(idBD)) {
                         psDesactivar.setInt(1, idBD);
-                        psDesactivar.addBatch();
+                        psDesactivar.addBatch(); // Encolar la desactivación
                     }
                 }
-                psDesactivar.executeBatch();
+                psDesactivar.executeBatch(); // Ejecutar todas las eliminaciones juntas
             }
 
+            // PASO 6: Preparar las estructuras para Actualizar existentes o Insertar nuevas variantes
             String sqlUpdateVariante = "UPDATE Prendas SET Prenda_talla = ?, Prenda_stock = ?, Prenda_valor = ?, Prenda_estado = ? WHERE Prenda_id = ?;";
             String sqlInsertVariante = "INSERT INTO Prendas (Prenda_nombre, Prenda_tipo, Prenda_valor, Prenda_talla, Categoria_id, Prenda_stock, Prenda_estado, Prenda_descripcion) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
             try (PreparedStatement psUp = con.prepareStatement(sqlUpdateVariante);
                  PreparedStatement psIns = con.prepareStatement(sqlInsertVariante)) {
-                
+
                 boolean tieneNuevas = false;
                 boolean tieneExistentes = false;
 
                 for (Map<String, Object> var : variantes) {
+                    
                     String talla = (String) var.get("talla");
                     int stock = ((Number) var.get("stock")).intValue();
                     double valor = ((Number) var.get("valor")).doubleValue();
 
+                    //Si la variante ya tiene ID, se actualizan sus datos particulares
                     if (var.containsKey("id") && var.get("id") != null) {
+                        
                         int idVar = ((Number) var.get("id")).intValue();
                         psUp.setString(1, talla);
                         psUp.setInt(2, stock);
@@ -407,6 +448,7 @@ public class PrendasDAO {
                         tieneExistentes = true;
                     }
                     
+                    //Si la variante no tiene ID, es un registro nuevo creado por el usuario
                     else {
                         psIns.setString(1, nuevoNombre);
                         psIns.setString(2, tipo);
@@ -421,43 +463,32 @@ public class PrendasDAO {
                     }
                 }
 
+                // Ejecutamos los lotes pendientes sólo si contienen elementos
                 if (tieneExistentes) psUp.executeBatch();
                 if (tieneNuevas) psIns.executeBatch();
             }
 
+            //Guardar las rutas de las imágenes asociadas al lote de prendas
             guardarImagenesBatch(idRepresentativo, listaRutas, con);
 
+            //Si todo el proceso se completó con éxito, consolidamos los cambios en la BD
             con.commit();
             return true;
         } 
-        
         catch (SQLException e) {
+            // En caso de cualquier error, cancelamos toda la operación para no corromper los datos
             if (con != null) {
                 try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
+            
             System.out.println("Error en la transacción de actualización: " + e.getMessage());
             return false;
         } 
-        
         finally {
+            // Garantizamos el cierre de la conexión pase lo que pase
             if (con != null) {
                 try { con.close(); } catch (SQLException e) { e.printStackTrace(); }
             }
-        }
-    }
-
-    public boolean desactivarProductoCompleto(String nombrePrenda) {
-        String sql = "UPDATE Prendas SET Prenda_estado = 'eliminada' WHERE Prenda_nombre = ?;";
-        try (Connection con = ClaseConexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            
-            ps.setString(1, nombrePrenda);
-            return ps.executeUpdate() > 0;
-        } 
-        
-        catch (SQLException e) {
-            System.out.println("Error al desactivar el producto: " + e.getMessage());
-            return false;
         }
     }
 }

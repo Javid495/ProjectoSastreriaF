@@ -148,10 +148,14 @@ public class ServeltModificarProducto extends HttpServlet {
                 response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error al ejecutar la transacción de actualización en la Base de Datos.\"}");
             }
             
-        } catch (NumberFormatException e) {
+        } 
+        
+        catch (NumberFormatException e) {
             System.out.println("Error de parseo numérico en el Servlet: " + e.getMessage());
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Formato numérico inválido en los datos enviados.\"}");
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             System.out.println("Error crítico en ModificarPrendaServlet: " + e.getMessage());
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"" + e.getMessage() + "\"}");
         }

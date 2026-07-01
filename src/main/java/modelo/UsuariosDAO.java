@@ -10,19 +10,33 @@ import Dtos.Pedidos;
 public class UsuariosDAO {
 
 
-    // BUSCAR DATOS PERSONALES DEL USUARIO
+    // Metodo que busca los datos del usuario
     public IniciarSesion obtenerDatosUsuario(int usuarioId) {
+        
+       
         IniciarSesion user = null;
+        
+        //La siguiente consulta busca los datos del usuario en la tabla usuarios y registro
         String sql = "SELECT u.Usuarios_id, r.Registro_Usuario, r.Registro_Email, r.Registro_Telefono, u.Usuario_imagen, u.Permisos_roles_id " +
                      "FROM Usuarios u JOIN Registro r ON u.Registro_id = r.Registro_id WHERE u.Usuarios_id = ?";
         
+        //En el bloque try
+        //Preparamos la conexion ccon la base de datos
+        //preparamos la insericion
+        //Y asignamos en el ? el id que viene del servelt
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, usuarioId);
             
+            //Ejecutamos la consulta
             try (ResultSet rs = ps.executeQuery()) {
+                
+                //Verificamos si nos trae daos del usuario
                 if (rs.next()) {
+                    
+                     //Del dto de iniciarsesion nos traemos el objecto declara do de iniciarsesion
                     user = new IniciarSesion();
+                    
                     user.setId(rs.getInt("Usuarios_id"));
                     user.setUsuario(rs.getString("Registro_Usuario"));
                     user.setEmail(rs.getString("Registro_Email"));
@@ -48,8 +62,10 @@ public class UsuariosDAO {
 
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, usuarioId);
+             ps.setInt(1, usuarioId);
+             
             try (ResultSet rs = ps.executeQuery()) {
+                
                 while (rs.next()) {
                     String rutaImg = rs.getString("img");
                     if (rutaImg == null) rutaImg = "images/Prendas/prenda_b.jpg";
@@ -67,6 +83,7 @@ public class UsuariosDAO {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        
         return lista;
     }
 
@@ -87,6 +104,7 @@ public class UsuariosDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, usuarioId);
             ps.setInt(2, usuarioId);
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Pedidos p = new Pedidos();
@@ -100,9 +118,13 @@ public class UsuariosDAO {
                     lista.add(p);
                 }
             }
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        
         return lista;
     }
 
@@ -111,6 +133,8 @@ public class UsuariosDAO {
         // 🌟 Añadimos u.Usuario_imagen al UPDATE integrado
         String sql = "UPDATE Registro r JOIN Usuarios u ON r.Registro_id = u.Registro_id " +
                      "SET r.Registro_Usuario = ?, r.Registro_Telefono = ?, r.Registro_Email = ?, u.Usuario_imagen = ? WHERE u.Usuarios_id = ?";
+        
+        
         try (Connection con = ClaseConexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre);
@@ -139,6 +163,8 @@ public class UsuariosDAO {
             ps.setInt(2, prendaId);
 
             System.out.println("📌 [UsuariosDAO] Registrando prenda " + prendaId + " en el historial del usuario " + usuarioId + " con fecha de hoy.");
+            
+            //Retorna un booleano si se realizo una inserccion
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {

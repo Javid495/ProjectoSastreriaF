@@ -21,7 +21,9 @@ public class ResenaDAO {
             ps.setString(4, r.getImagenResena()); // Ruta por defecto o cargada
             
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } 
+        
+        catch (SQLException e) {
             System.err.println("Error al insertar reseña: " + e.getMessage());
             return false;
         }

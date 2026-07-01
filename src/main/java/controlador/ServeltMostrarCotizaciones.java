@@ -40,6 +40,7 @@ public class ServeltMostrarCotizaciones extends HttpServlet {
         // Construcción manual del JSON (Mapeando el nuevo índice de la cotización)
         StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < cotizaciones.size(); i++) {
+            
             String[] item = cotizaciones.get(i);
             json.append("{");
             json.append("\"id\":").append(item[0]).append(","); // ID de la Solicitud de Medida
@@ -58,6 +59,7 @@ public class ServeltMostrarCotizaciones extends HttpServlet {
             json.append("}");
             if (i < cotizaciones.size() - 1) json.append(",");
         }
+        
         json.append("]");
         
         out.print(json.toString());

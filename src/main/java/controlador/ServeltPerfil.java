@@ -19,6 +19,7 @@ import java.util.Map;
 
 @WebServlet("/PerfilUsuario")
 public class ServeltPerfil extends HttpServlet {
+    
     private UsuariosDAO usuarioDAO = new UsuariosDAO();
     private Gson gson = new Gson();
 
@@ -98,10 +99,14 @@ public class ServeltPerfil extends HttpServlet {
             usuarioLog.setImagen(imagenAvatar); // 🌟 Sincronizamos el nuevo avatar en sesión
 
             out.print("{\"status\":\"success\",\"message\":\"Información guardada con éxito\"}");
-        } else {
+        } 
+        
+        else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"status\":\"error\",\"message\":\"No se pudieron guardar las modificaciones en la base de datos\"}");
         }
+        
+        
         out.flush();
     }
 }

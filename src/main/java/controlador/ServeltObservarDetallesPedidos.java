@@ -63,9 +63,7 @@ public class ServeltObservarDetallesPedidos extends HttpServlet {
 
             } else {
                 
-                // =================================================================
-                // 🛒 FLUJO ORIGINAL: PROCESAR PRODUCTOS DE CATÁLOGO (Tu código intacto)
-                // =================================================================
+                //Obtener detalles de pedios del catalogo
                 List<String[]> detalles = dao.obtenerProductosPorPedido(idPedido);
 
                 json.append("[");

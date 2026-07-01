@@ -38,14 +38,21 @@ public class ServeltEliminarIndividual extends HttpServlet {
 
             if (eliminadoExitoso) {
                 response.getWriter().write("{\"status\": \"Exito\"}");
-            } else {
+            } 
+            
+            else {
                 response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"No se pudo eliminar el registro en la base de datos.\"}");
             }
 
-        } catch (NumberFormatException e) {
+        } 
+        
+        catch (NumberFormatException e) {
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El ID provisto no es un número válido.\"}");
             System.out.print(e);
-        } catch (Exception e) {
+            
+        } 
+        
+        catch (Exception e) {
             response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error crítico: " + e.getMessage() + "\"}");
         }
     }

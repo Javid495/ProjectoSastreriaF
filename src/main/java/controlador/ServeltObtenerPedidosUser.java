@@ -58,13 +58,18 @@ public class ServeltObtenerPedidosUser extends HttpServlet {
                         
                         json.append(String.format(", \"detalleMedida\": {\"tipoPrenda\": \"%s\", \"tela\": \"%s\", \"valor\": \"%s\", \"comentario\": \"%s\"}",
                                 deMedida[0], deMedida[1], deMedida[2], comentario));
-                    } else {
+                    } 
+                    
+                    else {
                         json.append(", \"detalleMedida\": null");
                     }
+                    
                     // Enviamos un array de productos vacío para mantener consistencia en el Frontend
                     json.append(", \"productos\": []");
                     
-                } else {
+                } 
+                
+                else {
                     // Caso B: Es un pedido de prendas del catálogo (Carrito estándar)
                     List<String[]> productos = dao.obtenerProductosPorPedido(p.getIdPedido());
                     
@@ -92,6 +97,7 @@ public class ServeltObtenerPedidosUser extends HttpServlet {
             json.append("]}");
             out.print(json.toString());
         }
+        
         else {
             out.print("{\"logeado\": false, \"mensaje\": \"Debes iniciar sesión para ver tus pedidos.\"}");
         }

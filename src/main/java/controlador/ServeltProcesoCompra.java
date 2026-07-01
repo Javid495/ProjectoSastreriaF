@@ -42,7 +42,10 @@ public class ServeltProcesoCompra extends HttpServlet {
             //asigno el id de lo obtenido anterirormente
             int idUsuario = cuentaUsuario.getId(); 
 
+            //El string bulider nos ayuda a construir una cadena de texto
             StringBuilder buffer = new StringBuilder();
+            
+            //Permite leer laa peticion que viene del servidor
             BufferedReader reader = request.getReader();
                 
             String linea;
@@ -51,12 +54,14 @@ public class ServeltProcesoCompra extends HttpServlet {
             while ((linea = reader.readLine()) != null) {
                 buffer.append(linea);
             }
+            
             String jsonRaw = buffer.toString();
 
             // Saber si es inserción temporal (B1) o pedido definitivo (B2)
             String accion = extraerValorJson(jsonRaw, "accion");
 
             CompraPedidosDAO dao = new CompraPedidosDAO();
+            
             boolean exito = false;
 
             //En caso de que el registro del carrito se de manera temporal
@@ -67,7 +72,7 @@ public class ServeltProcesoCompra extends HttpServlet {
                 
                 //SI esta lista llega a entrar vacia
                 if (listaProductos.isEmpty()) {
-                    System.out.println("⚠️ ALERTA: No se encontraron productos para el carrito temporal.");
+                    System.out.println("No se encontraron productos para el carrito temporal.");
                     response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"El carrito no contiene productos válidos.\"}");
                     return;
                 }
@@ -84,16 +89,16 @@ public class ServeltProcesoCompra extends HttpServlet {
                 String metodoPago = extraerValorJson(jsonRaw, "metodoPago");
                 String tipoPedido = extraerValorJson(jsonRaw, "tipoPedido");
 
-                // 🔀 BIFURCACIÓN DE COMPRA DEFINITIVA
+                // Bifurcacion de ompras
                 if ("A Medida".equalsIgnoreCase(tipoPedido)) {
                     
-                    // 🧵 Flujo definitivo para pedidos personalizados
+                    // Flujo definitivo para pedidos personalizados
                     int idCotizacion = extraerIntJson(jsonRaw, "CotizacionPedido_Id");
                     exito = dao.confirmarPedidoAMedidaDefinitivo(idUsuario, direccion, telefono, metodoPago, tipoPedido, idCotizacion);
                     
                 } else {
                     
-                    // 🛍️ Flujo definitivo para catálogo regular
+                    // Flujo definitivo para catálogo regular
                     List<int[]> listaProductos = parsearProductosDesdeJson(jsonRaw);
 
                     if (listaProductos.isEmpty()) {
@@ -113,7 +118,10 @@ public class ServeltProcesoCompra extends HttpServlet {
                 response.getWriter().write("{\"status\": \"Error\", \"mensaje\": \"Error transaccional en la base de datos.\"}");
             }
 
-        } catch (Throwable t) {
+        } 
+        
+        //En caso de algun error en el registro de compra
+        catch (Throwable t) {
             System.out.println("====== ALERTA DE ERROR EN SERVLET ======");
             t.printStackTrace(); 
             System.out.println("========================================");
@@ -133,7 +141,7 @@ public class ServeltProcesoCompra extends HttpServlet {
         }
     }
 
-    // 🛠️ HELPER MODULAR: Aísla la lógica de conversión de productos para no duplicar código
+    //Aísla la lógica de conversión de productos para no duplicar código
     private List<int[]> parsearProductosDesdeJson(String jsonRaw) {
         List<int[]> listaProductos = new ArrayList<>();
         
@@ -201,7 +209,8 @@ public class ServeltProcesoCompra extends HttpServlet {
     }
 
     private int extraerIntJson(String json, String llave) {
-    // PASO 1: Compilar la expresión regular con soporte de comillas opcionales
+    
+    //Compilar la expresión regular con soporte de comillas opcionales
     // El signo "?" hace que la comilla doble sea totalmente opcional
     Pattern p = Pattern.compile("\"" + llave + "\"\\s*:\\s*\"?(\\d+)\"?");
 

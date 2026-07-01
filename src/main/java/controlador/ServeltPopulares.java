@@ -41,7 +41,9 @@ public class ServeltPopulares extends HttpServlet {
             // 4. Imprimimos el JSON hacia el Frontend
             out.print(json);
             
-        } catch (Exception e) {
+        } 
+        
+        catch (Exception e) {
             e.printStackTrace();
             // En caso de error interno, respondemos con un código 500
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al procesar las prendas populares.");

@@ -13,7 +13,7 @@ public class IniciarSesion {
     private String telefono;
     
     // Geters y setters que haran de cables para almacenar y guardar los 
-    //dato de la base de datos
+    // dato de la base de datos
     public IniciarSesion() {}
     
     //Establecer nuestros getters y setters
