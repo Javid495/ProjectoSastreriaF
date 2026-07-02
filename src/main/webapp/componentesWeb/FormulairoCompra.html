@@ -1,0 +1,34 @@
+
+<div class="compra__carrito">
+    <h2 class="compra__titulo">Confirmación de Pedido</h2>     
+    <div class="section__input">
+        <form class="carrito__formulario">
+            <label class="carrito__subt">Dirección:</label>
+            <input type="text" id="inputDireccion" class="direccion__input" placeholder="Ej: Calle 10 #2-3">
+
+            <div id="contenedorTelefono" style="display: none; flex-direction: column;">
+                <label class="carrito__subt">Teléfono:</label>
+                <input type="text" id="inputTelefono" class="direccion__input" placeholder="Ej: 3001234567">
+            </div>
+
+            <label class="carrito__subt">Total:</label>
+            <p class="carrito__subtotal" id="MostrarTotal">0.00</p>
+
+            <p class="sub--titulo">Métodos de pago:</p>
+            <div class="metodos__p">
+                <button type="button" class="btn__metodop" id="btnNequi">
+                    <img src="../images/Nequi.png" alt="Nequi" class="metodos__imagen img--nequi">
+                </button>
+
+                <button type="button" class="btn__metodop" id="btnDaviplata">
+                    <img src="../images/Group 6.png" alt="Daviplata" class="metodos__imagen img--daviplata">
+                </button>
+            </div>
+
+            <div class="contenedor--botones">
+                <button type="button" class="header__login boton--compra" id="cancelarCompra">Cancelar Compra</button>
+                <button type="submit" class="header__login boton--compra" id="ConfirmarCompra">Confirmar Compra</button>
+            </div>
+        </form>
+    </div>
+</div>

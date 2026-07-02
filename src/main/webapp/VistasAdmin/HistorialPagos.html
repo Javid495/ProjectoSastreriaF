@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Pagos - Suescun</title>
+    <link rel="stylesheet" href="../css/HistorialPagos.css">
+</head>
+<body>
+    <aside class="sidebar">
+            
+    </aside>
+
+    <main class="cuerpo__pedidos" id="modulo-pagos">
+
+        <div class="cuerpo__encabezado">
+            <h1 class="cuerpo__tiulo">Historial de Pagos</h1>
+            
+            <div class="pestanas__tipo-pedido">
+                <button class="tab-tipo active" id="tab-ultimos-pagos">Últimos Pagos</button>
+                <button class="tab-tipo" id="tab-metricas">Métricas de Ganancias</button>
+            </div>
+    
+            <div class="filtrados__filter" id="filtro-periodo-container">
+                <label for="periodo-caja" class="filter__label">Período:</label>
+                <select id="periodo-caja" class="filter__select">
+                    <option value="todos">Ver Todos</option>
+                    <option value="diario">Ganancias de Hoy</option>
+                    <option value="semanal">Esta Semana</option>
+                    <option value="mensual">Este Mes</option>
+                </select>
+            </div>
+        </div>
+
+        <section class="seccion__resumen-ganancias" id="resumenGanancias">
+            <div class="tarjeta__balance diaria">
+                <span class="balance__etiqueta">Ganancias Diarias</span>
+                <p class="balance__monto" id="monto-diario">$ 0</p>
+            </div>
+            <div class="tarjeta__balance semanal">
+                <span class="balance__etiqueta">Ganancias Semanales</span>
+                <p class="balance__monto" id="monto-semanal">$ 0</p>
+            </div>
+            <div class="tarjeta__balance mensual">
+                <span class="balance__etiqueta">Ganancias Mensuales</span>
+                <p class="balance__monto" id="monto-mensual">$ 0</p>
+            </div>
+        </section>
+
+        <div class="contenedor__pedidos" id="contenedorPagos">
+            </div>
+
+    </main>
+    <script src="../js/HistorialPagos.js" type="module"></script>
+</body>
+</html>

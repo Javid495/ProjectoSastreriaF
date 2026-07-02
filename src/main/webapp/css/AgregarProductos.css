@@ -1,0 +1,285 @@
+@import url(style.css);
+@import url(Componentes/sidebar.css);
+@import url(Componentes/BotonesAdmin.css);
+
+        body{
+            padding-bottom: 0;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- CONTENIDO DEL FORMULARIO --- */
+        .main-content {
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Botón Regresar */
+        .btn-back {
+            width: 45px;
+            height: 45px;
+            background-color: var(--color-FondoInputs);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .btn-back svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: red; /* Flecha roja como en la imagen */
+            stroke-width: 3;
+        }
+
+        .titulo-formulario {
+            font-family: var(--tipo-letra);
+            font-size: 36px;
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        /* Estilos de los Grupos del Formulario */
+        .form-group {
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-size: 22px;
+            font-weight: 400;
+        }
+
+        .input-text {
+            width: 100%;
+            height: 45px;
+            background-color: var(--color-input-bg);
+            border: var(--estilo-borde);
+            border-radius: 12px;
+            padding: 0 20px;
+            font-size: 18px;
+            font-family: var(--font-main);
+            
+        }
+
+        /* Fila de Talla, Precio, Stock */
+        .form-row {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+
+        .form-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-group-inline label {
+            font-size: 22px;
+            white-space: nowrap;
+        }
+
+        .input-inline {
+            width: 140px;
+            height: 45px;
+            background-color: var(--color-input-bg);
+            border: var(--estilo-borde);
+            border-radius: 12px;
+            padding: 0 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        /* Zona de Imágenes
+        .image-upload-container {
+            background-color: var(--color-FondoInputs);
+            border-radius: 8px;
+            padding: 30px;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        } */
+
+        /* Contenedor Gris de Imágenes */
+        .imagenes-upload-container {
+            background-color: var(--color-FondoInputs);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* Contenedor de la miniatura */
+        .img-miniatura-admin {
+            position: relative; /* Clave para que la X se acomode adentro */
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color, #ccc);
+        }
+
+        .img-miniatura-admin img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Evita que la foto se deforme */
+        }
+
+        /* El botón de eliminar (X) */
+        .btn-eliminar-foto {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 0, 0, 0.85); /* Rojo transparente */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Lo hace un círculo perfecto */
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .btn-add-image {
+            width: 180px;
+            height: 180px;
+            background-color: #8e8e8e;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .btn-add-image span {
+            color: white;
+            font-size: 50px;
+            font-weight: 300;
+        }
+
+        /* Área de Descripción */
+        .textarea-description {
+            width: 100%;
+            height: 150px;
+            background-color: var(--color-input-bg);
+            border: var(--estilo-borde);
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-family: var(--font-main);
+            resize: none;
+            margin-bottom: 10%;
+        }
+
+        /* Botones de Acción Inferiores */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .btn-form {
+            border: none;
+            border-radius: 8px;
+            padding: 15px 40px;
+            font-size: 22px;
+            cursor: pointer;
+            min-width: 260px;
+            font-family: var(--font-main);
+            font-weight: 400;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-delete {
+            background-color: var(--color-btn-eliminar);
+        }
+
+        .btn-save {
+            background-color: var(--color-btn-agregar);
+        }
+
+        .btn-form:hover {
+            filter: brightness(0.92);
+        }
+
+/* =========================================================================
+   NUEVOS ESTILOS PARA VARIANTES DINÁMICAS (INTEGRADOS AL SISTEMA)
+========================================================================= */
+
+/* Botón para añadir nuevas variantes */
+.btn-secundario-admin {
+    align-self: flex-start;
+    background-color: var(--color-input-bg);
+    border: var(--estilo-borde);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-secundario-admin:hover {
+    background-color: var(--color-FondoInputs);
+}
+
+/* Botón para eliminar una fila de variante específica */
+.btn-remover-variante {
+    background: none;
+    border: none;
+    color: #ff4d4d; /* Un rojo sutil que combina con tu botón de regreso */
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+}
+
+.btn-remover-variante:hover {
+    transform: scale(1.2);
+}
+
+/* Estado oculto para la primera fila (para que no borren la única variante) */
+.btn-remover-variante.visualmente-oculto {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    padding: 0;
+}
+
+/* Ajuste fino para el select de categoría */
+.select-categoria {
+    width: 200px; /* Le damos un poco más de aire que a los números */
+    text-align: left;
+    padding-left: 10px;
+}

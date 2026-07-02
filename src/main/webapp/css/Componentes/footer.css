@@ -1,55 +1,41 @@
-/* Estilos del pie de pagina */
 .footer {
   background-color: var(--color-secundario);
   padding: 2rem 1.5rem;
-  position: absolute;
-  width: 100% ;
-  bottom: 0px;
+  width: 100%;
+  z-index: 100;
 }
 
 .footer__content {
   max-width: var(--ancho-maximo);
-  margin: auto;
+  margin: 0 auto; /* Centrado perfecto del contenido interno */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 2rem;
 }
-
-.footer {
-  background-color: var(--color-secundario);
-  padding: 2rem 1.5rem;
-  margin-top: 3rem;
-}
-
-.footer__content {
-  max-width: var(--ancho-maximo);
-  margin: auto;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 2rem;
-}
-
 
 .footer__social h3 {
   font-size: 1rem;
   margin-bottom: 20px;
 }
 
-.footer__icons{
+.footer__icons {
   display: flex;
   gap: 50px;
 }
 
 .icon--social {
-  width: var(--icon-size-sm);
-  height: var(--icon-size-sm);
+  width: var(--icon-size-sm, 24px);
+  height: var(--icon-size-sm, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.icon__image{
-    width: 80%;
+.icon__image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .footer__icon {

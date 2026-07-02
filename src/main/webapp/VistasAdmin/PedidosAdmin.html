@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos - Suescun</title>
+    <link rel="stylesheet" href="../css/AdminPedidos.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <!-- Side bar -->
+        <aside class="sidebar">
+            
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <h1 class="titulo-vista">Pedidos</h1>
+
+            <div class="cotizaciones-bar">
+                <span>Ver Pedidos a Cotizar</span>
+                <div class="btn-play"></div>
+            </div>
+
+            <!-- Filtro por estados -->
+            <nav class="pestanas-estados-container">
+                <button class="tab-estado" onclick="cambiarFiltroEstado('pendientes', this)">Pendientes</button>
+                <button class="tab-estado active" onclick="cambiarFiltroEstado('elaboracion', this)">Elaboración</button>
+                <button class="tab-estado" onclick="cambiarFiltroEstado('entregar', this)">Por Entregar</button>
+                <button class="tab-estado" onclick="cambiarFiltroEstado('entregado', this)">Entregados</button> 
+            </nav>
+
+            <div class="pedidos-board" id="tablero-pedidos">
+                
+                
+              
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../js/PedidosAdmin.js"></script>
+</body>
+</html>

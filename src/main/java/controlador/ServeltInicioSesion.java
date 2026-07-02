@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
-import modelo.IniciarSesion;
-import dao.LoginDAO;
+import Dtos.IniciarSesion;
+import modelo.LoginDAO;
 
-    
+    //Servelt Encargado de abrir la sesion
     @WebServlet("/Login")
     
     public class ServeltInicioSesion extends HttpServlet{
@@ -20,7 +20,7 @@ import dao.LoginDAO;
                 throws ServletException, IOException{
             
             try{
-            String UsuarioOrEmail = Solicitud.getParameter("txtUser");
+                String UsuarioOrEmail = Solicitud.getParameter("txtUser");
                 String Contrasena = Solicitud.getParameter("txtContra");
                 
                 System.out.println("Se obtuvieron los datos");
@@ -32,15 +32,32 @@ import dao.LoginDAO;
                 IniciarSesion userAcceses = ver.validarUsuario(UsuarioOrEmail, Contrasena);
                 
                 if (userAcceses != null){
-                
+                                   
+                    
                     //En caso de que la comprobacion retorne una respuesta positiva
                     //Se crea la sesion del usuario
                     HttpSession session = Solicitud.getSession();
-                    session.setAttribute(   "PerfilUsuario", userAcceses);
                     
-                    //Se retorna una respuesta al js para informar que todo este bien
+                    //Se guarda la sesio del usaurio
+                    session.setAttribute("PerfilUsuario", userAcceses);
                     
-                    respuesta.getWriter().write("Hecho");
+                    //Se busca el rol del usuario
+                    int rol = userAcceses.getRolUsuario();
+                    
+                    String Ruta = "";
+                    
+                    //Se redirecciona segun el rol del usuario
+                    if (rol == 2){
+                        Ruta = "VistasAdmin/InicioAdmin.html";
+                    }
+                    
+                    else if (rol == 1){
+                        Ruta = "index.html";
+                    }
+                    
+                    //Se construye y se retorna una respuesta de tipo Json
+                    respuesta.setContentType("application/json");
+                    respuesta.getWriter().write("{\"status\": \"Hecho\", \"redireccion\": \"" + Ruta + "\"}");
                     
                 }
                 else{
@@ -50,10 +67,9 @@ import dao.LoginDAO;
                 }
             }
             catch(Exception a){
-                System.out.println("Hey hay algun error al momento de enviar lo datos al servelt");
+                System.out.println("Hey hay algun error al momento de enviar lo datos al servelt" + a);
             }
-        
-                
+               
         }
     
     }

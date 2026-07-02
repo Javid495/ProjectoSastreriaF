@@ -1,0 +1,95 @@
+@import url(style.css);
+@import url(Componentes/sidebar.css);
+@import url(Componentes/cardsVistaAdmin.css);
+@import url(Componentes/BotonesAdmin.css);
+
+body{
+    padding-bottom:0 ;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+        /* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    padding: 50px 60px;
+}
+
+.titulo-seccion {
+    font-family: var(--tipo-letra);
+    font-size: 38px;
+    font-style: italic;
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+/* --- TARJETAS DE RESUMEN (SUPERIORES) --- */
+.resumen-container {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 70px;
+}
+
+.card-resumen {
+    background-color: var(--color-FondoInputs);
+    border-radius: var(--radio-card);
+    width: 380px;
+    height: 220px;
+    padding: 30px;
+}
+
+.card-resumen h3 {
+    font-size: 26px;
+    font-weight: 400;
+}
+
+/* Ajustes para estilizar el contenido de las tarjetas de resumen */
+.card-resumen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px; /* Le da una altura consistente */
+    padding: 20px;
+    background-color: #e0e0e0; /* Gris base que ya manejas */
+    border-radius: 8px;
+}
+
+/* El número grande e imponente */
+.numero-contador {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+/* Variación interactiva para resaltar la tarjeta cliqueable */
+.card-resumen--interactiva {
+    background-color: #eaeaea;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-resumen--interactiva:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilo del botón interno de acción */
+.btn-resumen-accion {
+    display: inline-block;
+    align-self: flex-start;
+    background-color: #5d2b90; /* Tu morado característico */
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-resumen-accion:hover {
+    background-color: #4a2074;
+}        

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../css/Catalogo.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogo</title>
+</head>
+<body>
+    <header class="header">
+
+    </header>
+
+    <main class="main">
+
+    <div id="btnCompra">
+
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <section class="search">
+      <div class="search__container">
+        <span class="search__brand">
+            <span class="icon icon--logo"><img src="../images/Logo.png" alt=""></span>
+        </span>
+        <span class="search__brand">ModaS</span>
+        <input type="text" class="search__input" placeholder="Buscar productos...">
+        <button class="search__voice"><img class="search__microfono" src="../images/Microfono.png" alt=""></button>
+      </div>
+
+      <section class="filtrados">
+            <!-- Filtro de tallas -->
+            <div class="filtrados__filter">
+  
+              <!-- Etiqueta del filtro -->
+              <label for="size" class="filter__label">Talla:</label>
+  
+              <!-- Selector de talla -->
+              <select id="size" class="filter__select">
+                  <option value="">Seleccionar</option>
+                  <option value="s">S</option>
+                  <option value="m">M</option>
+                  <option value="l">L</option>
+                  <option value="xl">XL</option>
+              </select>
+            </div>
+  
+            <!-- Filtro de tallas -->
+            <div class="filtrados__filter">
+  
+              <!-- Etiqueta del filtro -->
+              <label for="size" class="filter__label">Tipo de Prenda: </label>
+  
+              <!-- Selector de talla -->
+              <select id="size" class="filter__select filter--ti">
+                  <option value="">Seleccionar</option>
+                  <option value="camisas">Camisas</option>
+                  <option value="pantalones">Pantalones</option>
+                  <option value="buzos">Buzos</option>
+                  <option value="pijamas">Pijamas</option>
+              </select>
+            </div>          
+      </section>
+
+    </section>
+
+
+    <section class="popular">
+
+        <!-- Card -->
+        
+        <div class="popular__cards">
+
+        </div>
+
+        
+    </section>
+
+
+    <footer class="footer">
+
+    </footer>
+
+    <script src="../js/Catalogo.js" type="module"></script>
+</body>
+</html>

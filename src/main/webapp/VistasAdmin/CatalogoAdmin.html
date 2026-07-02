@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/AdminCatalogo.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="admin-container">
+
+        
+        <aside class="sidebar">
+            
+        </aside>
+
+        <main class="main-content" id="modulo-catalogo">
+
+
+            <section class="search">
+              <div class="search__container">
+                <input type="text" class="search__input" placeholder="Buscar productos...">
+                <button class="search__voice"><img class="search__microfono" src="../images/Microfono.png" alt=""></button>
+              </div>
+        
+              <section class="filtrados">
+                    <!-- Filtro de tallas -->       
+                    
+          
+                    <!-- Filtro de tallas -->
+                    <div class="filtrados__filter">
+                        <label for="category" class="filter__label">Categoria: </label>
+                        <select id="category" class="filter__select filter--ti">
+                            <option value="">Seleccionar</option>
+                        </select>
+                    </div>
+                </section>
+            </section>
+    
+            <div class="inventario-container" id = "inventario-container">
+                
+            </div>
+
+            <div class="btn--edicion">
+                <button class="btn-blanco btn--eliminar" id="Eliminar" >Eliminar Varios</button>
+                <button class="btn-blanco btn--agregar" id="AgregarP" >Agregar Prenda</button>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/CatalogoAdmin.js?v=1.1" type="module"></script>
+</body>
+</html>

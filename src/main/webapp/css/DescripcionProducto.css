@@ -40,6 +40,7 @@ body{
   display: flex;
   justify-self: center;
   border-radius: var(--radio-card);
+  width: 100%;
 }
 
 /* Flechas */
@@ -148,29 +149,56 @@ body{
 
 /* Estilos de reseñas */
 
-.product--resenas{
-  margin-top: 1em;
+.product--resenas {
+    margin-top: 2rem;
+}
+
+/* Contenedor donde se van a renderizar todas tus tarjetas */
+.resenas {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
 }
 
 .resenas__card {
-  background-color: var(--color-secundario);
-  padding: 1rem;
-  border-radius: var(--radio-card);
-  text-align: center;
-  width: 45vh;
-  height: 9rem;
-  max-height: 20em;
+    background-color: var(--color-secundario);
+    padding: 1.25rem;
+    border-radius: var(--radio-card);
+    text-align: left;      /* 🌟 Cambiado a 'left' para una lectura natural cuando hay fotos */
+    width: 100%;
+    max-width: 460px;      /* Controla el ancho máximo en pantallas grandes */
+    height: auto;          /* 🌟 SOLUCIÓN CRÍTICA: Cambiado de 9rem a 'auto' para que crezca según el contenido */
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Suaviza el diseño visual */
 }
 
-.resenas__user{
-  font-size: 0.95rem;
+.resenas__user {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--color-letra);
 }
 
-.resenas__comentario{
-  margin-top: 20px;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-  font-size: 15px;
+.resenas__comentario {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--color-letra);
+    margin: 0;             /* Limpiamos márgenes fijos que puedan empujar elementos fuera de tiempo */
+    word-break: break-word; /* Evita que palabras exageradamente largas rompan la tarjeta */
+}
+
+/* 🌟 NUEVA CLASE: Controla el diseño de la imagen integrada de manera responsiva */
+.resenas__img {
+    max-width: 180px;      /* Tamaño ideal para que no sature la tarjeta */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
 }
 
 
@@ -234,70 +262,68 @@ body{
 
 /* Estilos del contenedor de comentarios */
 
-.cuerpo--opaco{
-  background-color: rgba(0,0,0, 0.40);
-  position: absolute;
-  width: 100%;
-  height: 84.3%;
-  z-index: 1;
-  transition: all 1s;
+.section__comments {
+    width: 90%;
+    max-width: 550px; /* Tamaño ideal en escritorio */
+    height: auto;     /* 🌟 CAMBIO CRÍTICO: Deja de ser rígido y se adapta a su contenido */
+    background-color: #dadada;
+    position: fixed;  /* fixed mantiene la ventana centrada en pantalla aunque haya scroll */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrado matemático perfecto horizontal y vertical */
+    border: solid 3px white;
+    padding: 25px;
+    padding-bottom: 80px; /* 🌟 Espacio reservado para que los botones de abajo no se salgan */
+    z-index: 1002;
+    font-family: var(--tipo-letra);
+    border-radius: 16px;
+    display: none;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
 }
 
-.section__comments{
-  width: 50%;
-  height: 30%;
-  background-color: #dadada;
-  position: absolute;
-  border: solid 3px white;
-  padding: 10px;
-  z-index: 2;
-  font-family: var(--tipo-letra);
-  border-radius: 10px;
-  top: 20%;
-  display: none;
-  transition: all 1s;
-} 
-
-.mostrarResena{
-  display: block;
+.mostrarResena {
+    display: block; /* Se activa dinámicamente con JS */
 }
 
-.section__input{
-  display: flex;
-  margin-top: 20px;
-  justify-content: center;
-  height: 40%;
+/* Redimensionamiento adaptado para la caja de texto */
+.section__input {
+    display: flex;
+    margin-top: 15px;
+    justify-content: center;
+    height: auto;
 }
 
-.section__titulo{
-  font-weight: bold;
-  font-size: 25px;
-  margin-top: 20px;
-  margin-left: 20px;
+.section__comment {
+    width: 100%;
+    height: 140px; /* Tamaño confortable para escribir en móviles y PC */
+    border-radius: 10px;
+    padding: 12px;
+    font-family: sans-serif;
+    resize: none; /* Evita que el usuario distorsione la tarjeta estirándola */
+    border: 1px solid #ccc;
 }
 
-.section__comment{
-  width: 90%;
-  height: 24vh;
-  border-radius: 10px;
-  padding: 10px;
-  text-align: left;
+/* Reposicionamiento seguro de los botones inferiores */
+.btn--publicar {
+    bottom: 20px;
+    right: 25px;
 }
 
-.btn--resena{
-  background-color: #FD9B9B;
-  position:absolute;
-  font-family: var(--tipo-letra);
+.btn--agrega {
+    left: 25px;
+    bottom: 20px;
 }
 
-.btn--publicar{
-  bottom: -9%;
-  right: 2%;
-}
-
-.btn--agrega{
-  left: 2%;
-  bottom: -9%;
+/* El fondo oscuro debe cubrir todo de forma absoluta sobre el layout */
+.cuerpo--opaco {
+    background-color: rgba(0,0,0, 0.50);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001;
+    transition: all 0.3s ease;
 }
 
 .button__closed{
@@ -320,7 +346,38 @@ body{
   align-items: center;
 }
 
+/* Lista desplegable para selector de tallas */
+.product__button{
+  padding: 0.5em 5em;
+  margin-left: 10px; 
+  border-radius: 10px;
+  margin-top: 10px;
+} 
 
+.product__size-container {
+    display: flex;
+    align-items: center;
+    font-family: var(--tipo-letra);
+}
+
+#selectTalla {
+  background-color: var(--color-secundario);
+  color: var(--color-letra);
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+}
+
+/* Estilos del contenedor de stock */
+.form-control{
+  text-align: center;
+  font-family: var(--tipo-letra);
+  padding: 8px;
+  border-radius: 10px;
+  background-color: var(--color-secundario);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Media querys de la vista de detalles */
 @media (max-width: 992px) {
 
   .icon--logoheader{

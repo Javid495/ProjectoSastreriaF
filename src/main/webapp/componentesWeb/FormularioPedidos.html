@@ -1,0 +1,66 @@
+<div class="modal-overlay">
+    <div class="modal-container">
+        
+        <div class="modal-header">
+            <button type="button" class="btn-back" id="btn-volver">
+                <i class="fa-solid fa-chevron-left"><img src="../images/DetallesProducto/Vector.png" alt=""></i>
+            </button>
+            <h2>Descripción del pedido a medida:</h2>
+        </div>
+    
+        <form id="form-solicitud-personalizada">
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tipo-prenda">Tipo de prendas Disponibles:</label>
+                    <input type="text" id="tipo-prenda" class="input-grey" list="sugerencias-prendas" placeholder="Ej. Camisa, Pantalón, Vestido..." autocomplete="off">
+                    <datalist id="sugerencias-prendas">
+                        <option value="Camisa"></option>
+                        <option value="Camisa Manga Larga"></option>
+                        <option value="Pantalones"></option>
+                        <option value="Vestido"></option>
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="sugerencia-telas">Sugerencia de telas:</label>
+                    <input type="text" id="sugerencia-telas" class="input-grey" list="sugerencias-telas-list" placeholder="Selecciona o escribe una tela">
+                    <datalist id="sugerencias-telas-list">
+                        </datalist>
+                </div>
+            </div>
+    
+            <div class="inline-row">
+                <div class="form-group form-group--row">
+                    <label for="talla-prenda">Talla de referencia:</label>
+                    <input type="text" id="talla-prenda" class="input-grey input-talla" placeholder="Ej: M o 32">
+                </div>
+                
+                <div class="form-group form-group--row medidas-inputs" id="contenedor-medidas-dinamicas">
+                    <label style="display:block; width:100%; margin-bottom: 8px;">Medidas requeridas:</label>
+                    <p style="color: #888; font-size: 13px;">Escribe el tipo de prenda para ver las medidas necesarias...</p>
+                </div>
+            </div>
+    
+            <div class="form-group">
+                <label for="desc-pedido">Descripción detallada del diseño:</label>
+                <textarea id="desc-pedido" class="textarea-full" placeholder="Especifica detalles como tipo de cuello, botones, bolsillos o ajustes especiales..."></textarea>
+            </div>
+    
+            <div class="form-group">
+                <label>Boceto o imagen de referencia para el diseño:</label>
+                <div class="upload-zone">
+                    <label for="file-upload" class="plus-box">
+                        <i class="fa-solid fa-plus"><img src="../images/Pedidos/Vector (1).png" alt=""></i>
+                        <input type="file" id="file-upload" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+            </div>
+    
+            <div class="modal-footer">
+                <button type="button" class="btn-footer btn-cancelar" id="btn-Cancelar">Cancelar</button>
+                <button type="submit" class="btn-footer btn-confirmar">Enviar Especificaciones</button>
+            </div>
+        </form>
+    
+    </div>
+</div>

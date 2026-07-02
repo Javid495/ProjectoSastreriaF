@@ -122,6 +122,95 @@ body{
     width: 100%;
 }
 
+/* 🕶️ Capa oscura de fondo que congela la pantalla trasera */
+.alerta-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45); /* Oscurece el entorno */
+    backdrop-filter: blur(4px); /* Difumina lo que esté atrás (Sidebar, inputs, etc.) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999 !important; /* Capa suprema sobre cualquier z-index de tu app */
+    animation: fadeInOverlay 0.25s ease-out forwards;
+}
+
+/* 📦 Caja contenedora de la alerta */
+.alerta-caja {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    max-width: 420px;
+    width: 85%;
+    text-align: center;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    animation: scaleInAlerta 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Identificadores visuales por tipo de respuesta */
+.alerta-error { 
+    border-top: 6px solid #e74c3c; 
+}
+.alerta-success { 
+    border-top: 6px solid #2ecc71; 
+}
+
+/* Elementos internos */
+.alerta-icono {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.alerta-mensaje {
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 22px;
+}
+
+/* 🔘 Botón de cierre estilizado */
+.alerta-boton-cerrar {
+    background-color: #2c3e50;
+    color: #ffffff;
+    border: none;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.alerta-boton-cerrar:hover {
+    background-color: #1a252f;
+}
+
+.alerta-boton-cerrar:active {
+    transform: scale(0.97);
+}
+
+/* 🎬 Animaciones de UI de alta fidelidad */
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleInAlerta {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Desvanecimiento al cerrar */
+.alerta-fade-out {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
 @media (max-width: 992px) {
 
   .login__form {

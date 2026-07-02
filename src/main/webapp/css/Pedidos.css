@@ -1,4 +1,6 @@
 @import url(style.css);
+@import url(Componentes/FormularioPedidos.css);
+@import url(Componentes/CardMostrarDetallesProduct.css);
 
 
 /* Estilos Encabezado de pagina */
@@ -57,11 +59,329 @@
   font-family: "Courgette", cursive;
   border-radius: var(--radio-card);
   text-align: center;
-  width: 50%;
+  width: 65%;
   font-size: 15px;
 }
-
 
 .card__title {
   font-size: 25px;
 }
+
+/* Boton Realizar pedido */
+.btn-RealizarPedido{
+  width: 15%;
+  background-color: var(--color-FondoInputs);
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 8px 14px;
+  justify-self: end;
+  margin-bottom: 2em;
+  margin-right: 2em;
+}
+
+.cart__button {
+  width: 100%;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-RealizarPedido:hover{
+  filter: brightness(0.95);
+}
+
+.cart__text{
+  font-weight: bold;
+  color: var(--color-Tipografia);
+}
+
+.cart__icon {
+  width: 22px;
+  margin-left: 10px;
+}
+
+/* Control de las pestañas superiores */
+.pestanas__tipo-pedido {
+    display: flex;
+    gap: 10px;
+    background-color: var(--color-FondoInputs);
+    padding: 6px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.tab-tipo {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-tipo.active {
+    background-color: var(--color-primario);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-weight: 600;
+}
+
+/* Modificación de la Card tradicional para diseños personalizados */
+.card--cotizacion {
+    width: 100%; /* Para que use eficientemente el 1fr del grid general */
+    max-width: 340px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Tag superior de aviso de estado */
+.card__status-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 0;
+    margin-top: -1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: 10px;
+}
+
+.status--cotizado {
+    background-color: #5d2b90; /* Morado del Admin para consistencia */
+    color: white;
+}
+
+.card__meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #444;
+}
+
+/* Caja de desglose del valor asignado */
+.card__propuesta-economica {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.cotizacion__precio {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    display: block;
+}
+
+.cotizacion__nota {
+    font-size: 12px;
+    color: #555;
+    font-style: italic;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* Contenedor de botones de interacción */
+.card__cotizacion-acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: auto; /* Empuja los botones abajo si hay mucho texto */
+}
+
+.btn-cotizacion {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.2s;
+}
+
+.btn-cotizacion:hover {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+}
+
+.btn-cotizacion--rechazar {
+    background-color: var(--color-salmon);
+    color: #000;
+}
+
+.btn-cotizacion--aceptar {
+    background-color: var(--color-verde-pedido);
+    color: #000;
+}
+/* 1. EL SOMBREADO: Bloquea y oscurece el fondo de la pantalla de Pedidos */
+.sombreado.aparecerSombreado {
+    background-color: rgba(0,0,0, 0.40);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+/* 2. VENTANA FLOTANTE DEL FORMULARIO DE COMPRA */
+.compra__carrito {
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    background-color: var(--color-FondoVentEmergetes, #f4f4f4); /* Asegura un fallback si la variable no carga */
+    padding: 30px;
+    border-radius: 20px;
+    width: 55%; 
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* 3. TARJETA DE CONFIRMACIÓN DE ÉXITO */
+.confirmacion__pago {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1200;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    gap: 20px;
+    border-radius: 10px;
+    width: 40%;
+    min-width: 300px;
+}
+
+.btn--confirmar {
+    position: absolute;
+    bottom: -20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    padding: 10px;
+    background-color: #FD9B9B;
+    border-style: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.carrito__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.direccion__input {
+    border-radius: 10px;
+    padding: 6px;
+    background-color: var(--color-FondoInputs, #e0e0e0);
+    border-style: none;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.carrito__subtotal {
+    font-size: 30px;
+    margin-left: 5%;
+}
+
+.sub--titulo {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.metodos__p {
+    background-color: var(--color-FondoInputs, #e0e0e0);
+    display: flex;
+    justify-content: space-around;
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 20px;
+}
+
+.btn__metodop {
+    cursor: pointer;
+    border-style: none;
+    width: 50%;
+    background-color: transparent;
+}
+
+.contenedor--botones {
+    display: flex;
+    justify-content: space-around;
+}
+
+.boton--compra {
+    cursor: pointer;
+    width: 30%;
+    font-size: 20px;
+    background-color: #FD9B9B;
+}
+
+/* 📸 ZONA DE CARGA DE IMÁGENES Y MINIATURAS */
+.upload-zone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* Contenedor de cada miniatura */
+.preview-thumb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: visible; /* Permite que la 'X' sobresalga un poco */
+}
+
+.preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--color-secundario, #ddd);
+}
+
+/* Pequeño botón rojo para eliminar la foto */
+.btn-remove-thumb {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.1s ease;
+}
+
+.btn-remove-thumb:hover {
+  transform: scale(1.1);
+  background-color: #cc0000;
+}
+

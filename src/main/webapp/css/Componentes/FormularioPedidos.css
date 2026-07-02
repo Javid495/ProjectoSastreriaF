@@ -1,0 +1,256 @@
+@import url(../style.css);
+
+/* OVERLAY (FONDO OSCURECIDO) */
+.modal-overlay {
+    position: fixed; /* 🌟 CAMBIO: 'fixed' para que el fondo oscuro bloquee y acompañe la pantalla completa */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; 
+    transition: opacity 0.3s ease;
+    padding: 20px; /* Margen de seguridad para pantallas pequeñas */
+    box-sizing: border-box;
+}
+
+/* CONTENEDOR BLANCO CENTRAL */
+.modal-container {
+    background-color: white;
+    width: 90%;
+    max-width: 1200px;
+    padding: 30px 40px; /* Un poco más compacto para optimizar espacio */
+    border-radius: 20px;
+    position: relative; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+
+    /* 🌟 SOLUCIÓN AL CORTE Y DESBORDAMIENTO: */
+    height: 100%;          /* 1. Elimina el 75% fijo para que no corte el footer */
+    max-height: 90vh;      /* 2. No permite que la tarjeta sea más alta que el 90% de la pantalla */
+    overflow-y: auto;      /* 3. Si el contenido excede la pantalla, crea un scroll interno impecable */
+    
+    display: flex;
+    flex-direction: column;
+}
+
+/* CABECERA (Flecha + Título) */
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-shrink: 0; /* Evita que la cabecera se achique */
+}
+
+.btn-back {
+    background-color: var(--color-salmon);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #000;
+    font-size: 0.9rem;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #000;
+}
+
+/* FILAS Y FORMULARIO */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #000;
+}
+
+/* INPUTS GRISES */
+.input-grey {
+    background-color: var(--color-gris-claro);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* FILA EN LÍNEA (Talla y Medidas) */
+.inline-row {
+    display: flex;
+    flex-wrap: wrap;         /* 🌟 CRÍTICO: Permite que los elementos bajen de fila si no caben en el ancho actual */
+    align-items: flex-start; /* 🌟 CAMBIO: Alineación al inicio para evitar deformaciones verticales al envolver */
+    gap: 20px;               /* Reducido un poco (de 40px) para maximizar el espacio utilizable */
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+/* CONTENEDOR DE CADA GRUPO (Label + Input) */
+.form-group--row {
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+    flex-shrink: 0;          /* 🌟 CRÍTICO: Impide que Flexbox comprima este contenedor y encime las letras */
+}
+
+/* AJUSTE REFINADO PARA LAS ETIQUETAS DE MEDIDAS */
+.form-group--row label {
+    font-size: 0.9rem;       /* Ajuste sutil de tamaño para que respire mejor el diseño */
+    white-space: nowrap;     /* 🌟 NUEVO: Evita que el texto de la etiqueta se rompa en líneas raras */
+}
+
+/* INTERFAZ DE MEDIDAS (Contenedor general de los inputs oscuros) */
+.medidas-inputs {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;         /* 🌟 NUEVO: Si las 4 medidas están juntas aquí, fluirán hacia abajo elegantemente en pantallas compactas */
+}
+
+.input-dark {
+    background-color: var(--color-medidas);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 60px;             /* Un toque más de ancho por si se ingresan números de 3 dígitos con decimales */
+    padding: 8px;
+    text-align: center;
+    font-size: 0.95rem;
+    outline: none;
+    flex-shrink: 0;          /* Evita que el input se vuelva invisible o diminuto */
+}
+
+
+/* TEXTAREA */
+.textarea-full {
+    background-color: var(--color-gris-medio);
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    width: 100%;
+    height: 110px;
+    resize: none;
+    outline: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* INTERFAZ DE CARGA DE ARCHIVO / PRENDA DE REFERENCIA */
+.upload-zone {
+    background-color: var(--color-gris-claro);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Control preventivo para la imagen de referencia */
+.upload-zone img {
+    max-width: 100%;
+    max-height: 140px; /* Evita que fotos gigantescas empujen el layout */
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.plus-box {
+    background-color: var(--color-gris-oscuro);
+    width: 135px;
+    height: 90px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.plus-box:hover {
+    background-color: #6e6e6e;
+}
+
+.plus-box i {
+    color: white;
+    font-size: 2rem;
+}
+
+/* 🌟 FOOTER TOTALMENTE ASEGURADO (PRECIO + BOTÓN) */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;      /* 🌟 TRUCO: Se magnetiza automáticamente al fondo de la tarjeta */
+    padding-top: 20px;   
+    border-top: 1px solid rgba(0, 0, 0, 0.1); /* Línea sutil de separación */
+    width: 100%;
+    flex-shrink: 0;        /* Impide que el footer colapse o se deforme */
+}
+
+/* Contenedor del precio final */
+.modal-footer h3, 
+.modal-footer .precio-cotizado {
+    font-family: var(--tipo-letra);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 600;
+    margin: 0;
+    color: #000;
+    white-space: nowrap; /* Evita saltos de línea raros en el texto del precio */
+}
+
+.btn-footer {
+    padding: 10px 45px;
+    border-radius: 14px;
+    border: none;
+    font-family: var(--tipo-letra);
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.btn-cancelar {
+    background-color: var(--color-salmon);
+    color: #000;
+}
+
+.btn-confirmar {
+    background-color: var(--color-verde-pedido);
+    color: #000;
+}
+
+.btn-footer:hover {
+    transform: scale(1.04);
+    filter: brightness(0.97);
+}
+
+/* Icono regreso */
+.fa-solid img {
+    width: 16px;
+}

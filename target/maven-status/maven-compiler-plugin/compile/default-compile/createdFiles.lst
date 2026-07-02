@@ -1,7 +1,0 @@
-dao\ClaseConexion.class
-controlador\ServeltRegistro.class
-dao\RegistroDAO.class
-dao\LoginDAO.class
-modelo\IniciarSesion.class
-controlador\ServeltInicioSesion.class
-modelo\Registro.class

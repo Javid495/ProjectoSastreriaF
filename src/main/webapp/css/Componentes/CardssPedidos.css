@@ -1,0 +1,80 @@
+/* ==========================================================================
+   MÓDULO DE TARJETAS DE PEDIDOS REUTILIZABLES
+   ========================================================================== */
+
+/* Contenedor gris de la sección de pedidos */
+.pedidos-board {
+    background-color: var(--color-FondoInputs);
+    border-radius: 0 0 var(--radio-card) var(--radio-card); /* Ajuste para acoplarse bajo las pestañas */
+    padding: 40px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    min-height: 450px;
+    align-items: flex-start;
+}
+
+/* Tarjeta de Pedido Base */
+.card-pedido {
+    background-color: var(--color-primario);
+    border-radius: var(--radio-card);
+    width: 320px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Información interna de la tarjeta */
+.pedido-cliente {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: var(--color-letra);
+}
+
+.pedido-meta {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--color-letra);
+    width: 100%;
+}
+
+.pedido-estado-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+/* Select de estado interno estilo diseño */
+.select-estado-pedido {
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 16px;
+    font-family: var(--font-main);
+    cursor: pointer;
+}
+
+/* Botón "Ver Detalles" Rosado */
+.btn-detalles-pedido {
+    background-color: var(--color-btn-cancelar, #ff9999); /* Reutiliza tu tono rosado/rojo suave */
+    border: none;
+    border-radius: 8px;
+    padding: 10px 35px;
+    font-family: var(--font-main);
+    font-size: 18px;
+    color: var(--color-letra);
+    cursor: pointer;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    transition: filter 0.2s;
+}
+
+.btn-detalles-pedido:hover {
+    filter: brightness(0.95);
+}

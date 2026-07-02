@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos - ModaS</title>
+    <link rel="stylesheet" href="../css/Pedidos.css">
+</head>
+<body>
+    <header class="header"></header>
+
+    <main class="cuerpo__pedidos">
+
+        <div class="cuerpo__encabezado">
+            <h1 class="cuerpo__tiulo">Mis Pedidos</h1>
+            
+            <div class="pestanas__tipo-pedido">
+                <button class="tab-tipo active" onclick="cambiarTipoPedido('catalogo', this)">Pedido Pendientes</button>
+                <button class="tab-tipo" onclick="cambiarTipoPedido('medida', this)">Pedidos Cotizados</button>
+            </div>
+    
+            <div class="filtrados__filter" id="filtro-estado-container">
+                <label for="size" class="filter__label">Estado:</label>
+                <select id="size" class="filter__select">
+                    <option value="">Seleccionar</option>
+                    <option value="pendientes">Pendientes</option>
+                    <option value="elaboracion">Elaboracion</option>
+                    <option value="por entregar">Por Entregar</option>
+                    <option value="entregados">Entregados</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="contenedor__pedidos" id="contenedorPedidos">
+
+
+        </div>
+
+        <div class="btn-RealizarPedido">        
+            <button class="cart__button">
+                <span class="cart__text">Solicitud Pedido a Media</span>
+                <img src="../images/Pedidos/Vector (1).png" alt="Añadir" class="cart__icon">
+            </button>
+        </div>
+
+        <div id="MostraPedido"></div>
+
+        <div class="sombreado"></div>
+    
+        <div id="compraCarrito"></div>
+    
+        <div id="confirmacionPago"></div>
+
+    </main>
+
+    <footer class="footer"></footer>
+
+    <script src="../js/Pedido.js" type="module"></script>
+</body>
+</html>

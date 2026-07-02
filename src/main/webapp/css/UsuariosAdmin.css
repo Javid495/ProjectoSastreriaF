@@ -1,0 +1,160 @@
+@import url(style.css);
+@import url(Componentes/sidebar.css);
+
+/* --- VISTA DE LISTADO GENERAL --- */
+.usuarios-lista-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+/* Tarjeta contenedora inspirada en la Card de Catálogo */
+.card-usuario {
+    background-color: var(--color-FondoInputs);
+    border-radius: var(--radio-card);
+    padding: 18px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.usuario-perfil-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.usuario-avatar-circular {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primario);
+    background-color: var(--color-primario);
+}
+
+.usuario-datos h3 {
+    margin: 0 0 4px 0;
+    font-size: 19px;
+    color: var(--color-Tipografia);
+}
+
+.usuario-datos p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: var(--color-gris-oscuro);
+}
+
+/* Botón estilizado como "Modificar Detalles" de tu captura */
+.btn-ver-mas {
+    background-color: var(--color-primario);
+    border: var(--estilo-borde);
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-family: var(--tipo-letra);
+    font-size: 16px;
+    font-style: italic;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btn-ver-mas:hover {
+    background-color: var(--color-secundario);
+}
+
+/* --- VISTA DE DETALLES DEL USUARIO --- */
+.detalles-split-layout {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Ficha del perfil izquierdo (Captura Perfil.html) */
+.perfil-ficha-gris {
+    background-color: #e5e5e5;
+    border-radius: var(--radio-card);
+    padding: 35px 20px;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.02);
+}
+
+.avatar-wrapper-detalles {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+}
+
+.avatar-wrapper-detalles img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfil-ficha-gris h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: var(--color-letra);
+}
+
+.info-items-admin {
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.info-items-admin p {
+    margin-bottom: 12px;
+}
+
+/* Panel de Historial de Actividad (Derecho) */
+.titulo-historial {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: var(--color-letra);
+    border-bottom: 2px solid var(--color-secundario);
+    padding-bottom: 6px;
+}
+
+.timeline-scroll-contenedor {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Filas del historial */
+.card-evento-historial {
+    background-color: #f9f9f9;
+    border-left: 5px solid var(--color-secundario);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #eee;
+    border-left: 5px solid var(--color-secundario);
+}
+
+.evento-descripcion {
+    font-size: 15px;
+    color: #222;
+}
+
+.evento-timestamp {
+    font-size: 13px;
+    color: var(--color-gris-oscuro);
+    text-align: right;
+    white-space: nowrap;
+}

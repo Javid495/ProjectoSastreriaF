@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificación de Productos - Suescun</title>
+    <link rel="stylesheet" href="../css/ModificarPrendas.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+        </aside>
+
+        <main class="main-content">
+            <form action="../ModificarPrendaServlet" id ="actualizarProducto" method="POST">
+                
+                <input type="hidden" name="idPrenda" id="idPrenda">
+                
+                <label class="seccion-label">Imagenes del Producto:</label>
+                <div class="imagenes-galeria-container">
+                    
+                    <div class="imagenes__container" id ="contenedorImgs"></div>
+
+                    <button type="button" class="btn-subir-imagenes">Agregar imagenes</button>
+                    <input type="file" id="inputArchivoOculto" accept="image/*" multiple style="display: none;">
+                </div>
+                
+                <div class="form-row-inline">
+                    <label class="seccion-label">Nombre del Producto :</label>
+                    <input type="text" name="nombreProducto" class="input-largo" id="nombreProducto" value="">
+                </div>
+
+                <div class="form-row-inline">
+                    <label class="seccion-label">Categoría :</label>
+                    <select name="categoriaPrenda" class="input-largo opciones" id="categoriaProducto">
+                        <option value="" disabled selected>Categorías...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
+                    <label class="seccion-label" style="margin-bottom: 0;">Gestión de Tallajes e Inventario:</label>
+                    <button type="button" class="btn-subir-imagenes" id="btnAgregarVariante" style="padding: 5px 15px; font-size: 16px;">+ Añadir Talla</button>
+                </div>
+
+                <div class="precios-row" style="margin-bottom: 10px; font-weight: bold;">
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Talla</span></div>
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Stock</span></div>
+                    <div class="precio-group"><span class="seccion-label" style="font-size: 18px; width: 160px; text-align: center;">Precio</span></div>
+                    <div style="width: 24px;"></div> 
+                </div>
+
+                <div id="contenedorVariantes">
+                </div>
+
+                <div class="form-block">
+                    <label class="seccion-label">Descripcion del producto:</label>
+                    <textarea name="descripcionPrenda" class="textarea-modificar" id="descripcion"></textarea>
+                </div>
+
+                <div class="btn--edicion">
+                    <button type="button" class="btn-blanco btn--eliminar" id="CancelarCambios">Cancelar</button>
+                    <button type="submit" class="btn-blanco btn--agregar" id="aceptarCambios">Aplicar Cambios</button>
+                </div>
+
+            </form>
+
+            <section class="resenas-admin-section" style="margin-top: 50px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
+                <label class="seccion-label" style="font-size: 22px; font-weight: bold; display: block; margin-bottom: 15px;">
+                    Reseñas de los Clientes:
+                </label>
+                
+                <div id="contenedorResenasAdmin" class="contenedor-resenas-admin">
+                    <p class="estado-resenas" style="color: #777; font-style: italic;">Cargando opiniones...</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    <script src="../js/DetallesPrendaAdmin.js" type="module"></script>
+</body>
+</html>
